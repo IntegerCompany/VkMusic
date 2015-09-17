@@ -7,5 +7,13 @@ import com.company.integer.vkmusic.pojo.UserSO;
  */
 public class AppState {
 
-    UserSO loggedUser;
+    private static UserSO loggedUser;
+
+    public static UserSO getLoggedUser() {
+        return loggedUser;
+    }
+
+    public static void setLoggedUser(UserSO loggedUser) {
+        AppState.loggedUser = loggedUser;
+    }
 }
