@@ -4,7 +4,36 @@
     tools:context="com.company.integer.vkmusic.LoginActivity"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="#fffaa2">
+    android:background="#e0e2d4">
 
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/pb_signing_in"
+        android:layout_gravity="center_horizontal"
+        android:indeterminate="true" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/signin_error_container"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Some Error"
+            android:id="@+id/tv_signin_error" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Try sign in again"
+            android:id="@+id/btn_try_signin_again"
+            android:layout_gravity="center_horizontal" />
+    </LinearLayout>
 
 </LinearLayout>
