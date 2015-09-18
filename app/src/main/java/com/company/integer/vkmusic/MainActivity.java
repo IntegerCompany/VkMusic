@@ -12,10 +12,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.company.integer.vkmusic.interfaces.MusicPlayerInterface;
 import com.company.integer.vkmusic.interfaces.MusicPlayerListener;
+import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
 import com.company.integer.vkmusic.services.MusicPlayerService;
 import com.company.integer.vkmusic.supportclasses.AppState;
 
@@ -26,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
     private static final String LOG_TAG = "MainActivity";
     private Button btnStart, btnPause, btnNext, btnPrevious;
     private SeekBar seekBarProgress;
+    private TextView tvNowPlaying;
 
     private int mediaFileLengthInMilliseconds;
     private Handler handler = new Handler();
@@ -47,24 +50,7 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
 
     @Override
     public void endOfPlaylist() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                // All code goes here coz service wii call this method from not UI thread
-            }
-        });
-    }
 
-    @Override
-    public void switchedToNextTrack() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                // All code goes here coz service wii call this method from not UI thread
-
-
-            }
-        });
     }
 
     @Override
@@ -72,28 +58,27 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
         seekBarProgress.setSecondaryProgress(percent);
     }
 
+    @Override
+    public void onCurrentTrackChanged(MusicTrackPOJO musicTrack) {
+        tvNowPlaying.setText("Now playing \n" + musicTrack.getArtist() + "\n \n" + musicTrack.getTitle());
+    }
+
     private void startMusicPlayerService() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Intent serviceIntent = new Intent(MainActivity.this, MusicPlayerService.class);
-                startService(serviceIntent);
-                ServiceConnection sConn = new ServiceConnection() {
 
-                    public void onServiceConnected(ComponentName name, IBinder binder) {
-                        Log.d(LOG_TAG, "MainActivity onServiceConnected");
-                        musicPlayerService = ((MusicPlayerService.MyBinder) binder).getService();
-                        musicPlayer = musicPlayerService.getMusicPlayer(MainActivity.this);
-                        musicPlayerService.getMusicTracks(AppState.getLoggedUser().getUserId(), 1, 10);
-                    }
-
-                    public void onServiceDisconnected(ComponentName name) {
-                        Log.d("MainActivity", "MainActivity onServiceDisconnected");
-                    }
-                };
-                bindService(serviceIntent, sConn, 0);
+        Intent serviceIntent = new Intent(MainActivity.this, MusicPlayerService.class);
+        startService(serviceIntent);
+        ServiceConnection sConn = new ServiceConnection() {
+            public void onServiceConnected(ComponentName name, IBinder binder) {
+                Log.d(LOG_TAG, "MainActivity onServiceConnected");
+                musicPlayerService = ((MusicPlayerService.MyBinder) binder).getService();
+                musicPlayer = musicPlayerService.getMusicPlayer(MainActivity.this);
+                musicPlayerService.getMusicTracks(AppState.getLoggedUser().getUserId(), 1, 10);
             }
-        }).start();
+            public void onServiceDisconnected(ComponentName name) {
+                Log.d("MainActivity", "MainActivity onServiceDisconnected");
+            }
+        };
+        bindService(serviceIntent, sConn, 0);
 
     }
 
@@ -115,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
         btnNext = (Button) findViewById(R.id.btn_next);
         btnPrevious = (Button) findViewById(R.id.btn_previous);
         seekBarProgress = (SeekBar) findViewById(R.id.seek_musicprogress);
+        tvNowPlaying = (TextView) findViewById(R.id.tv_now_playing);
     }
 
     private void initViews() {
@@ -163,11 +149,9 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
         seekBarProgress.setOnTouchListener(new View.OnTouchListener() {
                                                @Override
                                                public boolean onTouch(View v, MotionEvent event) {
-                                                   if (musicPlayer.isPlaying()) {
-                                                       SeekBar sb = (SeekBar) v;
-                                                       int playPositionInMillisecconds = (mediaFileLengthInMilliseconds / 100) * sb.getProgress();
-                                                       musicPlayer.setCurrentTrackTime(playPositionInMillisecconds);
-                                                   }
+                                                   SeekBar sb = (SeekBar) v;
+                                                   int playPositionInMillisecconds = (mediaFileLengthInMilliseconds / 100) * sb.getProgress();
+                                                   musicPlayer.setCurrentTrackTime(playPositionInMillisecconds);
                                                    return false;
                                                }
                                            }

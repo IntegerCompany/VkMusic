@@ -51,4 +51,15 @@
         android:layout_centerHorizontal="true"
         android:indeterminate="false" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/tv_now_playing"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/seek_musicprogress"
+        android:textSize="16sp"
+        android:layout_marginTop="16dp"
+        android:gravity="top|center" />
+
 </RelativeLayout>

@@ -41,6 +41,7 @@ public class MusicPlayerService extends Service{
         GsonBuilder gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();
         Log.d(LOG_TAG, "MusicPlayerService onCreate");
+        Log.d(LOG_TAG, "this thread is" + Thread.currentThread().getName());
     }
 
     @Override
