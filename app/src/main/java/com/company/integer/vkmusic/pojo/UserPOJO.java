@@ -3,11 +3,11 @@ package com.company.integer.vkmusic.pojo;
 /**
  * Created by Andriy on 9/17/2015.
  */
-public class UserSO {
+public class UserPOJO {
 
     private String userId;
 
-    public UserSO(String userId) {
+    public UserPOJO(String userId) {
         this.userId = userId;
     }
 

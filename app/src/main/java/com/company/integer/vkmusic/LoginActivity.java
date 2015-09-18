@@ -9,7 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.company.integer.vkmusic.pojo.UserSO;
+import com.company.integer.vkmusic.pojo.UserPOJO;
 import com.company.integer.vkmusic.supportclasses.AppState;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
@@ -44,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onResult(VKAccessToken res) {
                 startMainActivity();
-                AppState.setLoggedUser(new UserSO(res.userId));
+                AppState.setLoggedUser(new UserPOJO(res.userId));
             }
             @Override
             public void onError(VKError error) {

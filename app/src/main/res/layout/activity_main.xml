@@ -20,10 +20,10 @@
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="stop"
-        android:id="@+id/btn_stop"
-        android:layout_below="@+id/btn_start"
-        android:layout_centerHorizontal="true" />
+        android:text="Next"
+        android:id="@+id/btn_next"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/btn_pause" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -31,23 +31,23 @@
         android:layout_height="wrap_content"
         android:text="pause"
         android:id="@+id/btn_pause"
-        android:layout_below="@+id/btn_stop"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/btn_start" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="getLength"
-        android:id="@+id/btn_get_length"
-        android:layout_below="@+id/btn_pause"
-        android:layout_centerHorizontal="true" />
+        android:text="Previous"
+        android:id="@+id/btn_previous"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/btn_next" />
 
     <SeekBar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/seek_musicprogress"
-        android:layout_below="@+id/btn_get_length"
+        android:layout_below="@+id/btn_previous"
         android:layout_centerHorizontal="true"
         android:indeterminate="false" />
 

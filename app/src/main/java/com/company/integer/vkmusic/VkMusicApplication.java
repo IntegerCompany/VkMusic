@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Intent;
 import android.widget.Toast;
 
+import com.company.integer.vkmusic.supportclasses.AppState;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKAccessTokenTracker;
 import com.vk.sdk.VKSdk;
@@ -28,6 +29,7 @@ public class VkMusicApplication extends Application {
         super.onCreate();
         vkAccessTokenTracker.startTracking();
         VKSdk.initialize(this);
+        AppState.setupAppState(this);
     }
 
     private void startMainActivity(){
