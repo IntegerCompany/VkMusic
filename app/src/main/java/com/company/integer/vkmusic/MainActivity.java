@@ -61,6 +61,11 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
     @Override
     public void onCurrentTrackChanged(MusicTrackPOJO musicTrack) {
         tvNowPlaying.setText("Now playing \n" + musicTrack.getArtist() + "\n \n" + musicTrack.getTitle());
+        mediaFileLengthInMilliseconds = musicTrack.getDuration() * 1000;
+        seekBarProgress.setProgress((int) (((float) musicPlayer.getCurrentTrackTime() / mediaFileLengthInMilliseconds) * 100)); // This math construction give a percentage of "was playing"/"song length"
+        if (musicPlayer.getCurrentTrackTime() ==0 )
+            seekBarProgress.setProgress(0);
+
     }
 
     private void startMusicPlayerService() {
