@@ -27,6 +27,11 @@ public interface MusicPlayerInterface {
      */
     void setPlayList(ArrayList<MusicTrackPOJO> tracks, int position);
 
+    /**     *
+     * @param tracksToAdd Adding that tracks to end of current playlist
+     */
+    void addTracksToCurrentPlaylist(ArrayList<MusicTrackPOJO> tracksToAdd);
+
     /**
      * Get current playlist tracks
      * @return current playlist
@@ -56,6 +61,12 @@ public interface MusicPlayerInterface {
      * @return position of current track
      */
     int getCurrentTrackPosition();
+
+    /**
+     * Starts playing track on position from playlist
+     * @param position - playing track from playlist at this position
+     */
+    void setCurrentTrackPosition(int position);
 
     /**
      * Get current track playing time

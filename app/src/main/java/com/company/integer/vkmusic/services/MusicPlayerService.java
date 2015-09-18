@@ -55,11 +55,6 @@ public class MusicPlayerService extends Service{
         return musicPlayer;
     }
 
-    public class MyBinder extends Binder {
-        public MusicPlayerService getService() {
-            return MusicPlayerService.this;
-        }
-    }
     public void getMusicTracks(String ownerId, int from, int count){
         VKParameters params = new VKParameters();
         params.put(VKApiConst.OWNER_ID, AppState.getLoggedUser().getUserId());
@@ -86,5 +81,11 @@ public class MusicPlayerService extends Service{
                 Log.e(LOG_TAG, error.errorMessage);
             }
         });
+    }
+
+    public class MyBinder extends Binder {
+        public MusicPlayerService getService() {
+            return MusicPlayerService.this;
+        }
     }
 }
