@@ -9,4 +9,5 @@ public interface MusicPlayerListener {
 
     void switchedToNextTrack();
 
+    void onPlayerTrackUpdating(int percent);
 }

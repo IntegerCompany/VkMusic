@@ -26,20 +26,28 @@ public class MusicPlayer implements MusicPlayerInterface {
 
     public MusicPlayer(){
         player = new MediaPlayer();
-        player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+        player.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
             @Override
-            public void onCompletion(MediaPlayer mp) {
-                try {
-                    if (nextTrack()) {
-                        musicPlayerListener.switchedToNextTrack();
-                    }else{
-                        musicPlayerListener.endOfPlaylist();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            public void onBufferingUpdate(MediaPlayer mp, int percent) {
+                musicPlayerListener.onPlayerTrackUpdating(percent);
             }
         });
+//        player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+//            @Override
+//            public void onCompletion(MediaPlayer mp) {
+//                try {
+//                    if (nextTrack()) {
+//                        musicPlayerListener.switchedToNextTrack();
+//                    } else {
+//                        musicPlayerListener.endOfPlaylist();
+//                    }
+//
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+
     }
 
     @Override
@@ -73,6 +81,7 @@ public class MusicPlayer implements MusicPlayerInterface {
         Log.d(LOG_TAG, "Next track");
         if (currentTrackPosition + 1 > playlist.size() - 1) return false;
         currentTrackPosition++;
+        currentTrack = playlist.get(currentTrackPosition);
         playCurrentTrack();
         return true;
     }
@@ -82,6 +91,7 @@ public class MusicPlayer implements MusicPlayerInterface {
         Log.d(LOG_TAG, "Previous track");
         if (currentTrackPosition - 1 < 0) return false;
         currentTrackPosition--;
+        currentTrack = playlist.get(currentTrackPosition);
         playCurrentTrack();
         return true;
     }
@@ -123,6 +133,7 @@ public class MusicPlayer implements MusicPlayerInterface {
     }
 
     private void playCurrentTrack() throws IOException {
+        player.reset();
         player.setDataSource(currentTrack.getUrl());
         player.prepare();
         player.start();

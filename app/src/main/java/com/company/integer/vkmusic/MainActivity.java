@@ -67,6 +67,11 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
         });
     }
 
+    @Override
+    public void onPlayerTrackUpdating(int percent) {
+        seekBarProgress.setSecondaryProgress(percent);
+    }
+
     private void startMusicPlayerService() {
         new Thread(new Runnable() {
             @Override
