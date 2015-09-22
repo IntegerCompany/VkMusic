@@ -15,7 +15,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:padding="12dp"
-        android:src="@drawable/play" />
+        android:src="@mipmap/play_item" />
 
     <TextView
         android:layout_marginTop="6dp"
@@ -61,7 +61,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:padding="16dp"
-        android:src="@drawable/add"
+        android:src="@mipmap/add"
         android:layout_toLeftOf="@+id/btn_download_item"
         android:visibility="gone" />
 
@@ -70,6 +70,6 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:padding="16dp"
-        android:src="@drawable/download"
+        android:src="@mipmap/download"
         android:layout_alignParentRight="true" />
 </RelativeLayout>

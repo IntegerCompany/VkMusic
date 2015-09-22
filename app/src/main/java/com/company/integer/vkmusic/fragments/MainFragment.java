@@ -107,7 +107,7 @@ public class MainFragment extends Fragment {
 
             @Override
             public void onPanelExpanded(View view) {
-                ivClosePanel.setImageDrawable(getResources().getDrawable(R.drawable.replay));
+                ivClosePanel.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_menu_close_clear_cancel));
             }
 
             @Override

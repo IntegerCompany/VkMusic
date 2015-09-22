@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         int height = size.y;
 
         fabPlayPause.setTranslationX(-(width / 2 - dpToPx(79)) * k);
-        fabPlayPause.setTranslationY(-(height - dpToPx(462)) * k);
+        fabPlayPause.setTranslationY(-(height - dpToPx(454)) * k);
         fabPrevious.setTranslationX(-(width / 2 - dpToPx(79) + dpToPx(24)) * k);
         fabPrevious.setTranslationY(-(height - dpToPx(446) + dpToPx(27)) * k);
         fabNext.setTranslationX(-(width / 2 - dpToPx(79) - dpToPx(24)) * k);
