@@ -1,11 +1,51 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <fragment
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:name="com.company.integer.vkmusic.fragments.MainFragment"
+        android:id="@+id/fragment_container"
+        tools:layout="@layout/fragment_main" />
 
-    <TextView android:text="@string/hello_world" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_previous"
+        app:fabSize="mini"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="114dp"
+        android:layout_marginBottom="24dp"
+        android:layout_gravity="bottom|right"
+        app:backgroundTint="@color/primaryColorDark"
+        android:src="@mipmap/previous"
 
-</RelativeLayout>
+        />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_play_pause"
+        app:fabSize="normal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="52dp"
+        android:layout_marginBottom="32dp"
+        android:src="@mipmap/play"
+
+        android:layout_gravity="bottom|right"
+        />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_next"
+        app:fabSize="mini"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="24dp"
+        android:src="@mipmap/next"
+
+        app:backgroundTint="@color/primaryColorDark"
+        android:layout_gravity="bottom|right"/>
+</FrameLayout>
+
+
