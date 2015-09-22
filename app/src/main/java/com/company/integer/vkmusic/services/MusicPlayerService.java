@@ -41,6 +41,7 @@ public class MusicPlayerService extends Service implements MusicPlayerInterface,
         tracksDataLoader.setTracksLoadingListener(this);
         musicPlayer.setMusicPlayerListener(this);
 
+
     }
 
     @Override
