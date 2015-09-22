@@ -21,6 +21,7 @@ import com.company.integer.vkmusic.interfaces.TracksLoaderInterface;
 import com.company.integer.vkmusic.interfaces.TracksLoaderListener;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
 import com.company.integer.vkmusic.services.MusicPlayerService;
+import com.company.integer.vkmusic.supportclasses.AppState;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
         fabPlayPause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!musicPlayer.isPlaying()){
+                if (!musicPlayer.isPlaying()) {
                     try {
                         musicPlayer.play();
                         mediaFileLengthInMilliseconds = musicPlayer.getCurrentTrack().getDuration() * 1000;
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
                     } catch (IOException e) {
                         Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
-                }else{
+                } else {
                     musicPlayer.pause();
                     fabPlayPause.setImageDrawable(getResources().getDrawable(R.mipmap.play));
                 }
@@ -102,27 +103,23 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
 
     @Override
     public void onPlayerTrackUpdating(int percent) {
-        mainFragment.getSeekBarProgress().setSecondaryProgress(percent);
+        mainFragment.getSeekBar().setSecondaryProgress(percent);
     }
 
     @Override
     public void onCurrentTrackChanged(MusicTrackPOJO musicTrack) {
-        //tvNowPlaying.setText("Now playing \n" + musicTrack.getArtist() + "\n \n" + musicTrack.getTitle());
+        mainFragment.setCurrentTrack();
         mediaFileLengthInMilliseconds = musicTrack.getDuration() * 1000;
-        mainFragment.getSeekBarProgress().setProgress((int) (((float) musicPlayer.getCurrentTrackTime() / mediaFileLengthInMilliseconds) * 100)); // This math construction give a percentage of "was playing"/"song length"
+        mainFragment.getSeekBar().setProgress((int) (((float) musicPlayer.getCurrentTrackTime() / mediaFileLengthInMilliseconds) * 100)); // This math construction give a percentage of "was playing"/"song length"
         if (musicPlayer.getCurrentTrackTime() == 0)
-            mainFragment.getSeekBarProgress().setProgress(0);
+            mainFragment.getSeekBar().setProgress(0);
 
     }
 
     @Override
     public void tracksLoaded(ArrayList<MusicTrackPOJO> newPlaylist, int queryType) {
-        try {
-            musicPlayer.setPlayList(newPlaylist, musicPlayer.getCurrentTrackPosition());
-            musicPlayer.play();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        musicPlayer.setPlayList(newPlaylist, musicPlayer.getCurrentTrackPosition());
+        mainFragment.setupViewPager();
     }
 
     @Override
@@ -143,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
                 musicPlayer.setMusicPlayerListener(MainActivity.this);
                 dataLoader.setTracksLoadingListener(MainActivity.this);
                 mainFragment.setMusicPlayer(musicPlayer);
+                dataLoader.getTracksByUserId(AppState.getLoggedUser().getUserId(), 1, 10);
             }
 
             public void onServiceDisconnected(ComponentName name) {
@@ -181,6 +179,10 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
     public int dpToPx(int dp) {
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         return (int) ((dp * displayMetrics.density) + 0.5);
+    }
+
+    public MusicPlayerInterface getMusicPlayer(){
+        return musicPlayer;
     }
 
 }

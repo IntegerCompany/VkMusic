@@ -29,6 +29,7 @@ import android.widget.TextView;
 import com.company.integer.vkmusic.MainActivity;
 import com.company.integer.vkmusic.R;
 import com.company.integer.vkmusic.adapters.SimpleRecyclerAdapter;
+import com.company.integer.vkmusic.adapters.ViewPagerAdapter;
 import com.company.integer.vkmusic.interfaces.MusicPlayerInterface;
 import com.company.integer.vkmusic.supportclasses.VersionModel;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
@@ -53,9 +54,11 @@ public class MainFragment extends Fragment {
     private ArgbEvaluator evaluator;
     private ImageView ivDivider;
     private ImageView ivClosePanel;
-    private SeekBar seekBarProgress;
+    private SeekBar seekBar;
     private TextView tvNowPlaying;
     private MusicPlayerInterface musicPlayer;
+    private ViewPager viewPager;
+    private TabLayout tabLayout;
 
     private int mediaFileLengthInMilliseconds;
     private Handler handler = new Handler();
@@ -85,8 +88,9 @@ public class MainFragment extends Fragment {
         playerLine = view.findViewById(R.id.player_line);
         ivClosePanel = (ImageView) view.findViewById(R.id.iv_close_panel);
         ivDivider = (ImageView) view.findViewById(R.id.iv_divider);
-        seekBarProgress = (SeekBar) view.findViewById(R.id.seekBar);
-        seekBarProgress.setMax(99);
+        seekBar = (SeekBar) view.findViewById(R.id.seekBar);
+        seekBar.setMax(99);
+        tabLayout = (TabLayout) view.findViewById(R.id.tl_main);
         evaluator = new ArgbEvaluator();
 
 
@@ -95,7 +99,7 @@ public class MainFragment extends Fragment {
         slidingUpPanelLayout.setPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
             @Override
             public void onPanelSlide(View view, float v) {
-                ((MainActivity)getActivity()).setTranslations(v);
+                ((MainActivity) getActivity()).setTranslations(v);
                 fabAdd.setScaleX(v);
                 fabAdd.setScaleY(v);
                 fabAdd.setAlpha(v);
@@ -109,7 +113,7 @@ public class MainFragment extends Fragment {
                         getResources().getColor(R.color.accentColor)));
                 tvNameOfSongFragment.setAlpha(v);
                 tvAuthorFragment.setAlpha(v);
-                ivDivider.setAlpha(1-v);
+                ivDivider.setAlpha(1 - v);
                 ivClosePanel.setImageDrawable(null);
             }
 
@@ -125,22 +129,19 @@ public class MainFragment extends Fragment {
 
             @Override
             public void onPanelAnchored(View view) {
-                Log.d("panel","onPanelAnchored");
+                Log.d("panel", "onPanelAnchored");
             }
 
             @Override
             public void onPanelHidden(View view) {
-                Log.d("panel","onPanelHidden");
+                Log.d("panel", "onPanelHidden");
             }
         });
 
-        final ViewPager viewPager = (ViewPager) view.findViewById(R.id.vp_main);
-        setupViewPager(viewPager);
-        TabLayout tabLayout = (TabLayout) view.findViewById(R.id.tl_main);
-        tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.primaryColorDark));
-        tabLayout.setupWithViewPager(viewPager);
+        viewPager = (ViewPager) view.findViewById(R.id.vp_main);
 
-        seekBarProgress.setOnTouchListener(new View.OnTouchListener() {
+
+        seekBar.setOnTouchListener(new View.OnTouchListener() {
                                                @Override
                                                public boolean onTouch(View v, MotionEvent event) {
                                                    SeekBar sb = (SeekBar) v;
@@ -155,82 +156,21 @@ public class MainFragment extends Fragment {
     }
 
 
-    static class ViewPagerAdapter extends FragmentPagerAdapter {
-        private final List<android.support.v4.app.Fragment> mFragmentList = new ArrayList<>();
-        private final List<String> mFragmentTitleList = new ArrayList<>();
 
-        public ViewPagerAdapter(FragmentManager manager) {
-            super(manager);
-        }
 
-        @Override
-        public android.support.v4.app.Fragment getItem(int position) {
-            return mFragmentList.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return mFragmentList.size();
-        }
-
-        public void addFrag(android.support.v4.app.Fragment fragment, String title) {
-            mFragmentList.add(fragment);
-            mFragmentTitleList.add(title);
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mFragmentTitleList.get(position);
-        }
-    }
-
-    public static class DummyFragment extends android.support.v4.app.Fragment {
-        int color;
-        SimpleRecyclerAdapter adapter;
-
-        public DummyFragment() {
-        }
-
-        @SuppressLint("ValidFragment")
-        public DummyFragment(int color) {
-            this.color = color;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            View view = inflater.inflate(R.layout.dummy_fragment, container, false);
-
-            final FrameLayout frameLayout = (FrameLayout) view.findViewById(R.id.dummyfrag_bg);
-            frameLayout.setBackgroundColor(color);
-
-            RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.dummyfrag_scrollableview);
-
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity().getBaseContext());
-            recyclerView.setLayoutManager(linearLayoutManager);
-            recyclerView.setHasFixedSize(true);
-
-            List<String> list = new ArrayList<String>();
-            for (int i = 0; i < VersionModel.data.length; i++) {
-                list.add(VersionModel.data[i]);
-            }
-
-            adapter = new SimpleRecyclerAdapter(list);
-            recyclerView.setAdapter(adapter);
-
-            return view;
-        }
-    }
-
-    private void setupViewPager(ViewPager viewPager) {
+    public void setupViewPager() {
         ViewPagerAdapter adapter = new ViewPagerAdapter(((AppCompatActivity)getActivity()).getSupportFragmentManager());
-        adapter.addFrag(new DummyFragment(getResources().getColor(R.color.accent_material_light)), "My music");
-        adapter.addFrag(new DummyFragment(getResources().getColor(R.color.ripple_material_light)), "Recommended");
-        adapter.addFrag(new DummyFragment(getResources().getColor(R.color.button_material_dark)), "Saved");
+        adapter.addFrag(new TabFragment(), "My music");
+        adapter.addFrag(new TabFragment(), "Recommended");
+        adapter.addFrag(new TabFragment(), "Saved");
         viewPager.setAdapter(adapter);
+
+        tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.primaryColorDark));
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     public void primarySeekBarProgressUpdater() {
-        seekBarProgress.setProgress((int) (((float) musicPlayer.getCurrentTrackTime() / mediaFileLengthInMilliseconds) * 100)); // This math construction give a percentage of "was playing"/"song length"
+        seekBar.setProgress((int) (((float) musicPlayer.getCurrentTrackTime() / mediaFileLengthInMilliseconds) * 100)); // This math construction give a percentage of "was playing"/"song length"
         if (musicPlayer.isPlaying()) {
             Runnable notification = new Runnable() {
                 public void run() {
@@ -245,8 +185,15 @@ public class MainFragment extends Fragment {
         this.musicPlayer = musicPlayer;
     }
 
-    public SeekBar getSeekBarProgress(){
-        return seekBarProgress;
+    public SeekBar getSeekBar(){
+        return seekBar;
+    }
+
+    public void setCurrentTrack(){
+        tvNameOfSongPlayerLine.setText(musicPlayer.getCurrentTrack().getTitle());
+        tvNameOfSongFragment.setText(musicPlayer.getCurrentTrack().getTitle());
+        tvAuthorPlayerLine.setText(musicPlayer.getCurrentTrack().getArtist());
+        tvAuthorFragment.setText(musicPlayer.getCurrentTrack().getArtist());
     }
 
 }
