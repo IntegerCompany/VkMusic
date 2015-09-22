@@ -17,13 +17,15 @@ import android.widget.Toast;
 
 import com.company.integer.vkmusic.interfaces.MusicPlayerInterface;
 import com.company.integer.vkmusic.interfaces.MusicPlayerListener;
+import com.company.integer.vkmusic.interfaces.TracksLoaderInterface;
+import com.company.integer.vkmusic.interfaces.TracksLoaderListener;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
 import com.company.integer.vkmusic.services.MusicPlayerService;
-import com.company.integer.vkmusic.supportclasses.AppState;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements MusicPlayerListener{
+public class MainActivity extends AppCompatActivity implements MusicPlayerListener, TracksLoaderListener{
 
     private static final String LOG_TAG = "MainActivity";
     private Button btnStart, btnPause, btnNext, btnPrevious;
@@ -35,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
 
     MusicPlayerService musicPlayerService;
     MusicPlayerInterface musicPlayer;
+    TracksLoaderInterface dataLoader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +48,6 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
         setUIListeners();
         startMusicPlayerService();
     }
-
-
 
     @Override
     public void endOfPlaylist() {
@@ -68,6 +69,21 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
 
     }
 
+    @Override
+    public void tracksLoaded(ArrayList<MusicTrackPOJO> musicTracks, int queryType) {
+        try {
+            musicPlayer.setPlayList(musicTracks, 0);
+            musicPlayer.play();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void tracksLoadingError(String errorMessage) {
+        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+    }
+
     private void startMusicPlayerService() {
 
         Intent serviceIntent = new Intent(MainActivity.this, MusicPlayerService.class);
@@ -76,8 +92,10 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
             public void onServiceConnected(ComponentName name, IBinder binder) {
                 Log.d(LOG_TAG, "MainActivity onServiceConnected");
                 musicPlayerService = ((MusicPlayerService.MyBinder) binder).getService();
-                musicPlayer = musicPlayerService.getMusicPlayer(MainActivity.this);
-                musicPlayerService.getMusicTracks(AppState.getLoggedUser().getUserId(), 1, 10);
+                musicPlayer = musicPlayerService;
+                dataLoader = musicPlayerService;
+                musicPlayer.setMusicPlayerListener(MainActivity.this);
+                dataLoader.setTracksLoadingListener(MainActivity.this);
             }
             public void onServiceDisconnected(ComponentName name) {
                 Log.d("MainActivity", "MainActivity onServiceDisconnected");
@@ -162,9 +180,6 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
                                            }
         );
     }
-
-
-
 
 
 

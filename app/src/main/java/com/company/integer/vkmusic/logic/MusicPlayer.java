@@ -1,4 +1,4 @@
-package com.company.integer.vkmusic.musicplayer;
+package com.company.integer.vkmusic.logic;
 
 import android.media.MediaPlayer;
 import android.util.Log;
@@ -32,21 +32,6 @@ public class MusicPlayer implements MusicPlayerInterface {
                 musicPlayerListener.onPlayerTrackUpdating(percent);
             }
         });
-//        player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-//            @Override
-//            public void onCompletion(MediaPlayer mp) {
-//                try {
-//                    if (nextTrack()) {
-//                        musicPlayerListener.switchedToNextTrack();
-//                    } else {
-//                        musicPlayerListener.endOfPlaylist();
-//                    }
-//
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
 
     }
 
