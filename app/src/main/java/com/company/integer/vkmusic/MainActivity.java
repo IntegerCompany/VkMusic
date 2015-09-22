@@ -21,6 +21,7 @@ import com.company.integer.vkmusic.interfaces.TracksLoaderInterface;
 import com.company.integer.vkmusic.interfaces.TracksLoaderListener;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
 import com.company.integer.vkmusic.services.MusicPlayerService;
+import com.company.integer.vkmusic.supportclasses.AppState;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -107,7 +108,6 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
 
     @Override
     public void onCurrentTrackChanged(MusicTrackPOJO musicTrack) {
-        //tvNowPlaying.setText("Now playing \n" + musicTrack.getArtist() + "\n \n" + musicTrack.getTitle());
         mediaFileLengthInMilliseconds = musicTrack.getDuration() * 1000;
         mainFragment.getSeekBarProgress().setProgress((int) (((float) musicPlayer.getCurrentTrackTime() / mediaFileLengthInMilliseconds) * 100)); // This math construction give a percentage of "was playing"/"song length"
         if (musicPlayer.getCurrentTrackTime() == 0)
@@ -117,12 +117,8 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
 
     @Override
     public void tracksLoaded(ArrayList<MusicTrackPOJO> newPlaylist, int queryType) {
-        try {
-            musicPlayer.setPlayList(newPlaylist, musicPlayer.getCurrentTrackPosition());
-            musicPlayer.play();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        musicPlayer.setPlayList(newPlaylist, musicPlayer.getCurrentTrackPosition());
+
     }
 
     @Override
@@ -143,6 +139,8 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
                 musicPlayer.setMusicPlayerListener(MainActivity.this);
                 dataLoader.setTracksLoadingListener(MainActivity.this);
                 mainFragment.setMusicPlayer(musicPlayer);
+                dataLoader.getRecommendationsByUserID(AppState.getLoggedUser().getUserId(), 0, 10);
+
             }
 
             public void onServiceDisconnected(ComponentName name) {

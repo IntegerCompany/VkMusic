@@ -33,6 +33,7 @@ public class MusicPlayerService extends Service implements MusicPlayerInterface,
     private ArrayList<MusicTrackPOJO> myTracksPlaylist = new ArrayList<>();
     private ArrayList<MusicTrackPOJO> recommendationsPlaylist = new ArrayList<>();
     private ArrayList<MusicTrackPOJO> savedPlaylist = new ArrayList<>();
+    private ArrayList<MusicTrackPOJO> searchPlaylist = new ArrayList<>();
 
     @Override
     public void onCreate() {
@@ -40,7 +41,6 @@ public class MusicPlayerService extends Service implements MusicPlayerInterface,
         tracksDataLoader.setTracksLoadingListener(this);
         musicPlayer.setMusicPlayerListener(this);
 
-        tracksDataLoader.getTracksByUserId(AppState.getLoggedUser().getUserId(), 1, 10);
     }
 
     @Override
@@ -153,6 +153,11 @@ public class MusicPlayerService extends Service implements MusicPlayerInterface,
     }
 
     @Override
+    public void getRecommendationsByUserID(String userId, int from, int count) {
+        tracksDataLoader.getRecommendationsByUserID(userId, from, count);
+    }
+
+    @Override
     public void setTracksLoadingListener(TracksLoaderListener tracksLoaderListener) {
         dataLoadingCallbackForUI = tracksLoaderListener;
     }
@@ -163,8 +168,30 @@ public class MusicPlayerService extends Service implements MusicPlayerInterface,
             case MY_TRACKS:
                 getTracksByUserId(AppState.getLoggedUser().getUserId(), myTracksPlaylist.size(), AppState.TRACKS_PER_LOADING);
                 break;
+            case RECOMMENDATIONS:
+                getRecommendationsByUserID(tracksDataLoader.getLastSearchQuery(), recommendationsPlaylist.size(), AppState.TRACKS_PER_LOADING);
+                break;
+            case SEARCH:
+                search(tracksDataLoader.getLastSearchQuery(), searchPlaylist.size(), AppState.TRACKS_PER_LOADING);
+                break;
+
         }
 
+    }
+
+    @Override
+    public ArrayList<MusicTrackPOJO> getTracksFromSource(int source) {
+        switch (source){
+            case MY_TRACKS:
+                return myTracksPlaylist;
+            case RECOMMENDATIONS:
+                return recommendationsPlaylist;
+            case SAVED:
+                return savedPlaylist;
+            case SEARCH:
+                return searchPlaylist;
+        }
+        return new ArrayList<>();
     }
     // TracksDataLoader interface methods end-----------
 
@@ -177,6 +204,16 @@ public class MusicPlayerService extends Service implements MusicPlayerInterface,
                 dataLoadingCallbackForUI.tracksLoaded(myTracksPlaylist, source);
                 break;
             case RECOMMENDATIONS:
+                recommendationsPlaylist.addAll(newTracks);
+                dataLoadingCallbackForUI.tracksLoaded(recommendationsPlaylist, source);
+                break;
+            case SAVED:
+                savedPlaylist.addAll(newTracks);
+                dataLoadingCallbackForUI.tracksLoaded(savedPlaylist, source);
+                break;
+            case SEARCH:
+                searchPlaylist.addAll(newTracks);
+                dataLoadingCallbackForUI.tracksLoaded(searchPlaylist, source);
                 break;
         }
 

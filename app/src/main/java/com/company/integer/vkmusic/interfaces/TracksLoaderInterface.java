@@ -1,5 +1,9 @@
 package com.company.integer.vkmusic.interfaces;
 
+import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
+
+import java.util.ArrayList;
+
 /**
  * Created by Andriy on 9/21/2015.
  */
@@ -22,6 +26,14 @@ public interface TracksLoaderInterface {
     void getTracksByUserId(String userId, int from, int count);
 
     /**
+     * Returns recommendations from VK
+     * @param userId recommendations for that user
+     * @param from from track with that number we will load new ones
+     * @param count how many tracks will be returned in response
+     */
+    void getRecommendationsByUserID(String userId, int from, int count);
+
+    /**
      * Callback for track loading
      * @param tracksLoaderListener callback
      */
@@ -32,5 +44,12 @@ public interface TracksLoaderInterface {
      * @param source adds new tracks to playlist from that source
      */
     void uploadMore(int source);
+
+    /**
+     *
+     * @param source for that source will be returned playlist
+     * @return playlist from that source
+     */
+    ArrayList<MusicTrackPOJO> getTracksFromSource(int source);
 
 }
