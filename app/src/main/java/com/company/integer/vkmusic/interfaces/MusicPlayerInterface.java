@@ -85,6 +85,10 @@ public interface MusicPlayerInterface {
      */
     void setMusicPlayerListener(MusicPlayerListener musicPlayerListener);
 
+    /**
+     *
+     * @return is some music playing right now
+     */
     boolean isPlaying();
 
 

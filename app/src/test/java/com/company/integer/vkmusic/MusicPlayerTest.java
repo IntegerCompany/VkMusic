@@ -2,7 +2,7 @@ package com.company.integer.vkmusic;
 
 
 import com.company.integer.vkmusic.interfaces.MusicPlayerListener;
-import com.company.integer.vkmusic.musicplayer.MusicPlayer;
+import com.company.integer.vkmusic.logic.MusicPlayer;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
 
 import org.junit.Before;

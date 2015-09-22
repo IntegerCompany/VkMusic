@@ -8,40 +8,39 @@ import android.util.Log;
 
 import com.company.integer.vkmusic.interfaces.MusicPlayerInterface;
 import com.company.integer.vkmusic.interfaces.MusicPlayerListener;
-import com.company.integer.vkmusic.musicplayer.MusicPlayer;
+import com.company.integer.vkmusic.interfaces.TracksLoaderInterface;
+import com.company.integer.vkmusic.interfaces.TracksLoaderListener;
+import com.company.integer.vkmusic.logic.MusicPlayer;
+import com.company.integer.vkmusic.logic.TracksDataLoader;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
 import com.company.integer.vkmusic.supportclasses.AppState;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import com.vk.sdk.api.VKApiConst;
-import com.vk.sdk.api.VKError;
-import com.vk.sdk.api.VKParameters;
-import com.vk.sdk.api.VKRequest;
-import com.vk.sdk.api.VKResponse;
 
-import org.json.JSONException;
-
-import java.lang.reflect.Type;
+import java.io.IOException;
 import java.util.ArrayList;
 
-public class MusicPlayerService extends Service{
+public class MusicPlayerService extends Service implements MusicPlayerInterface, MusicPlayerListener, TracksLoaderInterface, TracksLoaderListener {
 
     private final String LOG_TAG = "MusicPlayerService";
 
     MyBinder binder = new MyBinder();
-    private Gson gson;
 
+    private TracksDataLoader tracksDataLoader = new TracksDataLoader();
+    private TracksLoaderListener dataLoadingCallbackForUI;
 
     private MusicPlayer musicPlayer = new MusicPlayer();
+    private MusicPlayerListener playerCallbackForUI;
+
+    private ArrayList<MusicTrackPOJO> myTracksPlaylist = new ArrayList<>();
+    private ArrayList<MusicTrackPOJO> recommendationsPlaylist = new ArrayList<>();
+    private ArrayList<MusicTrackPOJO> savedPlaylist = new ArrayList<>();
 
     @Override
     public void onCreate() {
         super.onCreate();
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gson = gsonBuilder.create();
-        Log.d(LOG_TAG, "MusicPlayerService onCreate");
-        Log.d(LOG_TAG, "this thread is" + Thread.currentThread().getName());
+        tracksDataLoader.setTracksLoadingListener(this);
+        musicPlayer.setMusicPlayerListener(this);
+
+        tracksDataLoader.getTracksByUserId(AppState.getLoggedUser().getUserId(), 1, 10);
     }
 
     @Override
@@ -50,42 +49,153 @@ public class MusicPlayerService extends Service{
         return binder;
     }
 
-    public MusicPlayerInterface getMusicPlayer(MusicPlayerListener musicPlayerListener){
-        musicPlayer.setMusicPlayerListener(musicPlayerListener);
-        return musicPlayer;
+
+
+    // MusicPlayer interface methods-----------
+    @Override
+    public void play() throws IOException {
+        musicPlayer.play();
     }
 
-    public void getMusicTracks(String ownerId, int from, int count){
-        VKParameters params = new VKParameters();
-        params.put(VKApiConst.OWNER_ID, AppState.getLoggedUser().getUserId());
-        params.put(VKApiConst.COUNT, "1");
-        VKRequest requestAudio = new VKRequest("audio.get", VKParameters.from(VKApiConst.OWNER_ID, ownerId,VKApiConst.OFFSET, from, VKApiConst.COUNT, count));
-        requestAudio.executeWithListener(new VKRequest.VKRequestListener() {
-            @Override
-            public void onComplete(VKResponse response) {
-                super.onComplete(response);
-                try {
-                    ArrayList<MusicTrackPOJO> musicTracks;
-                    Type musicTracksType = new TypeToken<ArrayList<MusicTrackPOJO>>() {
-                    }.getType();
-                    musicTracks = gson.fromJson(response.json.getJSONObject("response").getJSONArray("items").toString(), musicTracksType);
-                    musicPlayer.setPlayList(musicTracks, 0);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onError(VKError error) {
-                super.onError(error);
-                Log.e(LOG_TAG, error.errorMessage);
-            }
-        });
+    @Override
+    public void pause() {
+        musicPlayer.pause();
     }
+
+    @Override
+    public void setPlayList(ArrayList<MusicTrackPOJO> tracks, int position) {
+        musicPlayer.setPlayList(tracks, position);
+    }
+
+    @Override
+    public void addTracksToCurrentPlaylist(ArrayList<MusicTrackPOJO> tracksToAdd) {
+        musicPlayer.addTracksToCurrentPlaylist(tracksToAdd);
+    }
+
+    @Override
+    public ArrayList<MusicTrackPOJO> getPlaylist() {
+        return musicPlayer.getPlaylist();
+    }
+
+    @Override
+    public boolean nextTrack() throws IOException {
+        return musicPlayer.nextTrack();
+    }
+
+    @Override
+    public boolean previousTrack() throws IOException {
+        return musicPlayer.previousTrack();
+    }
+
+    @Override
+    public void setCurrentTrackTime(int time) {
+        musicPlayer.setCurrentTrackTime(time);
+    }
+
+    @Override
+    public int getCurrentTrackPosition() {
+        return musicPlayer.getCurrentTrackPosition();
+    }
+
+    @Override
+    public void setCurrentTrackPosition(int position) {
+        musicPlayer.setCurrentTrackPosition(position);
+    }
+
+    @Override
+    public int getCurrentTrackTime() {
+        return musicPlayer.getCurrentTrackTime();
+    }
+
+    @Override
+    public MusicTrackPOJO getCurrentTrack() {
+        return musicPlayer.getCurrentTrack();
+    }
+
+    @Override
+    public void setMusicPlayerListener(MusicPlayerListener musicPlayerListener) {
+        playerCallbackForUI = musicPlayerListener;
+    }
+
+    @Override
+    public boolean isPlaying() {
+        return musicPlayer.isPlaying();
+    }
+    // MusicPlayer interface methods end--------
+
+    // MusicPlayer callbacks-------
+    @Override
+    public void endOfPlaylist() {
+
+        playerCallbackForUI.endOfPlaylist();
+    }
+
+    @Override
+    public void onPlayerTrackUpdating(int percent) {
+        playerCallbackForUI.onPlayerTrackUpdating(percent);
+    }
+
+    @Override
+    public void onCurrentTrackChanged(MusicTrackPOJO musicTrack) {
+        playerCallbackForUI.onCurrentTrackChanged(musicTrack);
+    }
+    // MusicPlayer callbacks end-------
+
+    // TracksDataLoader interface methods-----------
+    @Override
+    public void search(String query, int from, int count) {
+        tracksDataLoader.search(query, from, count);
+    }
+
+    @Override
+    public void getTracksByUserId(String userId, int from, int count) {
+        tracksDataLoader.getTracksByUserId(userId, from, count);
+    }
+
+    @Override
+    public void setTracksLoadingListener(TracksLoaderListener tracksLoaderListener) {
+        dataLoadingCallbackForUI = tracksLoaderListener;
+    }
+
+    @Override
+    public void uploadMore(int source) {
+        switch (source){
+            case MY_TRACKS:
+                getTracksByUserId(AppState.getLoggedUser().getUserId(), myTracksPlaylist.size(), AppState.TRACKS_PER_LOADING);
+                break;
+        }
+
+    }
+    // TracksDataLoader interface methods end-----------
+
+    // TracksDataLoader callbacks methods-----------
+    @Override
+    public void tracksLoaded(ArrayList<MusicTrackPOJO> newTracks, int source) {
+        switch (source){
+            case MY_TRACKS:
+                myTracksPlaylist.addAll(newTracks);
+                dataLoadingCallbackForUI.tracksLoaded(myTracksPlaylist, source);
+                break;
+            case RECOMMENDATIONS:
+                break;
+        }
+
+
+
+    }
+
+    @Override
+    public void tracksLoadingError(String errorMessage) {
+        dataLoadingCallbackForUI.tracksLoadingError(errorMessage);
+    }
+    // TracksDataLoader callbacks methods end-----------
+
 
     public class MyBinder extends Binder {
         public MusicPlayerService getService() {
             return MusicPlayerService.this;
         }
     }
+
+
 }
