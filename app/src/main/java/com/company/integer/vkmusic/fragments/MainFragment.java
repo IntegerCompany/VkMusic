@@ -3,10 +3,12 @@ package com.company.integer.vkmusic.fragments;
 
 import android.animation.ArgbEvaluator;
 import android.annotation.SuppressLint;
-import android.app.Fragment;
+
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -16,15 +18,18 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.company.integer.vkmusic.MainActivity;
 import com.company.integer.vkmusic.R;
 import com.company.integer.vkmusic.adapters.SimpleRecyclerAdapter;
+import com.company.integer.vkmusic.interfaces.MusicPlayerInterface;
 import com.company.integer.vkmusic.supportclasses.VersionModel;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
@@ -46,8 +51,14 @@ public class MainFragment extends Fragment {
     private TextView tvCurrentTime;
     private View playerLine;
     private ArgbEvaluator evaluator;
-    ImageView ivDivider;
-    ImageView ivClosePanel;
+    private ImageView ivDivider;
+    private ImageView ivClosePanel;
+    private SeekBar seekBarProgress;
+    private TextView tvNowPlaying;
+    private MusicPlayerInterface musicPlayer;
+
+    private int mediaFileLengthInMilliseconds;
+    private Handler handler = new Handler();
 
     public MainFragment() {
         // Required empty public constructor
@@ -74,6 +85,8 @@ public class MainFragment extends Fragment {
         playerLine = view.findViewById(R.id.player_line);
         ivClosePanel = (ImageView) view.findViewById(R.id.iv_close_panel);
         ivDivider = (ImageView) view.findViewById(R.id.iv_divider);
+        seekBarProgress = (SeekBar) view.findViewById(R.id.seekBar);
+        seekBarProgress.setMax(99);
         evaluator = new ArgbEvaluator();
 
 
@@ -126,6 +139,17 @@ public class MainFragment extends Fragment {
         TabLayout tabLayout = (TabLayout) view.findViewById(R.id.tl_main);
         tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.primaryColorDark));
         tabLayout.setupWithViewPager(viewPager);
+
+        seekBarProgress.setOnTouchListener(new View.OnTouchListener() {
+                                               @Override
+                                               public boolean onTouch(View v, MotionEvent event) {
+                                                   SeekBar sb = (SeekBar) v;
+                                                   int playPositionInMillisecconds = (mediaFileLengthInMilliseconds / 100) * sb.getProgress();
+                                                   musicPlayer.setCurrentTrackTime(playPositionInMillisecconds);
+                                                   return false;
+                                               }
+                                           }
+        );
 
         return view;
     }
@@ -203,6 +227,26 @@ public class MainFragment extends Fragment {
         adapter.addFrag(new DummyFragment(getResources().getColor(R.color.ripple_material_light)), "Recommended");
         adapter.addFrag(new DummyFragment(getResources().getColor(R.color.button_material_dark)), "Saved");
         viewPager.setAdapter(adapter);
+    }
+
+    public void primarySeekBarProgressUpdater() {
+        seekBarProgress.setProgress((int) (((float) musicPlayer.getCurrentTrackTime() / mediaFileLengthInMilliseconds) * 100)); // This math construction give a percentage of "was playing"/"song length"
+        if (musicPlayer.isPlaying()) {
+            Runnable notification = new Runnable() {
+                public void run() {
+                    primarySeekBarProgressUpdater();
+                }
+            };
+            handler.postDelayed(notification, 1000);
+        }
+    }
+
+    public void setMusicPlayer(MusicPlayerInterface musicPlayer) {
+        this.musicPlayer = musicPlayer;
+    }
+
+    public SeekBar getSeekBarProgress(){
+        return seekBarProgress;
     }
 
 }
