@@ -30,6 +30,10 @@ public class MusicPlayerService extends Service implements MusicPlayerInterface,
     private MusicPlayer musicPlayer = new MusicPlayer();
     private MusicPlayerListener playerCallbackForUI;
 
+    private ArrayList<MusicTrackPOJO> myTracksPlaylist = new ArrayList<>();
+    private ArrayList<MusicTrackPOJO> recommendationsPlaylist = new ArrayList<>();
+    private ArrayList<MusicTrackPOJO> savedPlaylist = new ArrayList<>();
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -122,6 +126,7 @@ public class MusicPlayerService extends Service implements MusicPlayerInterface,
     // MusicPlayer callbacks-------
     @Override
     public void endOfPlaylist() {
+
         playerCallbackForUI.endOfPlaylist();
     }
 
@@ -151,12 +156,32 @@ public class MusicPlayerService extends Service implements MusicPlayerInterface,
     public void setTracksLoadingListener(TracksLoaderListener tracksLoaderListener) {
         dataLoadingCallbackForUI = tracksLoaderListener;
     }
+
+    @Override
+    public void uploadMore(int source) {
+        switch (source){
+            case MY_TRACKS:
+                getTracksByUserId(AppState.getLoggedUser().getUserId(), myTracksPlaylist.size(), AppState.TRACKS_PER_LOADING);
+                break;
+        }
+
+    }
     // TracksDataLoader interface methods end-----------
 
     // TracksDataLoader callbacks methods-----------
     @Override
-    public void tracksLoaded(ArrayList<MusicTrackPOJO> musicTracks, int queryType) {
-        dataLoadingCallbackForUI.tracksLoaded(musicTracks, queryType);
+    public void tracksLoaded(ArrayList<MusicTrackPOJO> newTracks, int source) {
+        switch (source){
+            case MY_TRACKS:
+                myTracksPlaylist.addAll(newTracks);
+                dataLoadingCallbackForUI.tracksLoaded(myTracksPlaylist, source);
+                break;
+            case RECOMMENDATIONS:
+                break;
+        }
+
+
+
     }
 
     @Override

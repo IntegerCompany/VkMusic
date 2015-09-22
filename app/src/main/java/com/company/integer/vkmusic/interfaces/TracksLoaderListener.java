@@ -9,9 +9,9 @@ import java.util.ArrayList;
  */
 public interface TracksLoaderListener {
 
-    int MY_TRACKS = 1, SOMEONES_TRACKS = 2, SEARCH = 3;
+    int MY_TRACKS = 1, RECOMMENDATIONS = 2, SAVED = 3, SEARCH = 4;
 
-    void tracksLoaded(ArrayList<MusicTrackPOJO> musicTracks, int queryType);
+    void tracksLoaded(ArrayList<MusicTrackPOJO> newPlaylist, int queryType);
 
     void tracksLoadingError(String errorMessage);
 }

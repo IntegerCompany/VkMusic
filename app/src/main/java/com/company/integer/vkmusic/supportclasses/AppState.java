@@ -11,6 +11,8 @@ import com.google.gson.Gson;
  */
 public class AppState {
 
+    public static final int TRACKS_PER_LOADING = 10;
+
     private static UserPOJO loggedUser;
     private static Context context;
     private static SharedPreferences sharedPreferences;

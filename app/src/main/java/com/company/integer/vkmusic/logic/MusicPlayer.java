@@ -21,8 +21,8 @@ public class MusicPlayer implements MusicPlayerInterface {
 
     private ArrayList<MusicTrackPOJO> playlist = new ArrayList<>();
     private MusicTrackPOJO currentTrack;
-    private int currentTrackPosition;
-    private int currentTrackTime;
+    private int currentTrackPosition = 0;
+    private int currentTrackTime = 0;
 
     public MusicPlayer(){
         player = new MediaPlayer();
@@ -71,7 +71,10 @@ public class MusicPlayer implements MusicPlayerInterface {
     @Override
     public boolean nextTrack() throws IOException {
         Log.d(LOG_TAG, "Next track");
-        if (currentTrackPosition + 1 > playlist.size() - 1) return false;
+        if (currentTrackPosition + 1 > playlist.size() - 1) {
+            musicPlayerListener.endOfPlaylist();
+            return false;
+        }
         currentTrackPosition++;
         currentTrackTime = 0;
         currentTrack = playlist.get(currentTrackPosition);

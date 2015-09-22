@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
 
     @Override
     public void endOfPlaylist() {
-
+        musicPlayerService.uploadMore(MY_TRACKS);
     }
 
     @Override
@@ -70,9 +70,9 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
     }
 
     @Override
-    public void tracksLoaded(ArrayList<MusicTrackPOJO> musicTracks, int queryType) {
+    public void tracksLoaded(ArrayList<MusicTrackPOJO> newPlaylist, int queryType) {
         try {
-            musicPlayer.setPlayList(musicTracks, 0);
+            musicPlayer.setPlayList(newPlaylist, musicPlayer.getCurrentTrackPosition());
             musicPlayer.play();
         } catch (IOException e) {
             e.printStackTrace();

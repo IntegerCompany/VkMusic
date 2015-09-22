@@ -11,4 +11,6 @@ public interface TracksLoaderInterface {
 
     void setTracksLoadingListener(TracksLoaderListener tracksLoaderListener);
 
+    void uploadMore(int source);
+
 }

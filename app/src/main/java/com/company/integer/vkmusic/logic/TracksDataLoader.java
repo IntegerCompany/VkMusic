@@ -43,7 +43,7 @@ public class TracksDataLoader implements TracksLoaderInterface {
         VKParameters params = new VKParameters();
         params.put(VKApiConst.OWNER_ID, AppState.getLoggedUser().getUserId());
         params.put(VKApiConst.COUNT, "1");
-        VKRequest requestAudio = new VKRequest("audio.get", VKParameters.from(VKApiConst.OWNER_ID, userId,VKApiConst.OFFSET, from, VKApiConst.COUNT, count));
+        VKRequest requestAudio = new VKRequest("audio.get", VKParameters.from(VKApiConst.OWNER_ID, userId, VKApiConst.OFFSET, from, VKApiConst.COUNT, count));
         requestAudio.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
@@ -71,6 +71,11 @@ public class TracksDataLoader implements TracksLoaderInterface {
     @Override
     public void setTracksLoadingListener(TracksLoaderListener tracksLoaderListener) {
         this.tracksLoaderListener = tracksLoaderListener;
+    }
+
+    @Override
+    public void uploadMore(int source) {
+        //Maybe will be unused
     }
 
 
