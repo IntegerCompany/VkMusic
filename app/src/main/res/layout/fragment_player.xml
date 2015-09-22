@@ -1,0 +1,126 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.company.integer.vkmusic.fragments.PlayerFragment"
+    android:background="#424352"
+    android:paddingBottom="48dp"
+    android:clickable="true">
+
+    <include
+        layout="@layout/player_line"
+        android:layout_height="56dp"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="false"
+        android:id="@+id/player_line" />
+
+
+    <ImageView
+
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:background="#727394"
+        android:id="@+id/container"
+        android:layout_below="@+id/player_line">
+
+    </ImageView>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:id="@+id/imageView"
+        android:background="#56576E"
+        android:layout_below="@+id/container" />
+
+    <SeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/seekBar"
+        android:layout_alignParentBottom="false"
+        android:layout_above="@+id/tv_current_time" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0:35"
+        android:id="@+id/tv_current_time"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp" />
+
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:id="@+id/imageView4"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/player_line"
+        android:src="@drawable/adiation_sign_round"
+        android:layout_marginTop="50dp" />
+
+    <ImageView
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:id="@+id/imageView2"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="false"
+        android:layout_toLeftOf="@+id/imageView3"
+        android:src="@drawable/random"
+        android:padding="12dp" />
+
+    <ImageView
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:id="@+id/imageView3"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/replay"
+        android:padding="12dp" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_add"
+        app:fabSize="mini"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:backgroundTint="@color/primaryColorDark"
+        android:src="@drawable/rewind"
+        android:alpha="1"
+        android:layout_marginTop="297dp"
+        android:layout_marginLeft="44dp" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_download"
+        app:fabSize="mini"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:backgroundTint="@color/primaryColorDark"
+        android:src="@drawable/rewind"
+        android:alpha="1"
+        android:layout_marginTop="297dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="44dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Name of the song"
+        android:id="@+id/tv_name_of_song_fragment"
+        android:layout_below="@+id/fab_add"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="88dp"
+        android:textSize="20sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Author"
+        android:id="@+id/tv_author_name_fragment"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/tv_name_of_song_fragment"
+        android:layout_marginTop="8dp"
+        android:textSize="16sp" />
+
+</RelativeLayout>
