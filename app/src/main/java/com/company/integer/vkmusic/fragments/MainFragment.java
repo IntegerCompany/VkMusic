@@ -4,6 +4,8 @@ package com.company.integer.vkmusic.fragments;
 import android.animation.ArgbEvaluator;
 import android.annotation.SuppressLint;
 
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -54,6 +56,7 @@ public class MainFragment extends Fragment {
     private ArgbEvaluator evaluator;
     private ImageView ivDivider;
     private ImageView ivClosePanel;
+    private ImageView ivAlbumPhoto;
     private SeekBar seekBar;
     private TextView tvNowPlaying;
     private MusicPlayerInterface musicPlayer;
@@ -88,9 +91,13 @@ public class MainFragment extends Fragment {
         playerLine = view.findViewById(R.id.player_line);
         ivClosePanel = (ImageView) view.findViewById(R.id.iv_close_panel);
         ivDivider = (ImageView) view.findViewById(R.id.iv_divider);
+        ivAlbumPhoto = (ImageView) view.findViewById(R.id.iv_album_photo);
         seekBar = (SeekBar) view.findViewById(R.id.seekBar);
         seekBar.setMax(99);
+        seekBar.setSecondaryProgress(80);
+       // seekBar.getProgressDrawable().setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.accentColor), PorterDuff.Mode.MULTIPLY));
         tabLayout = (TabLayout) view.findViewById(R.id.tl_main);
+
         evaluator = new ArgbEvaluator();
 
 
@@ -99,6 +106,8 @@ public class MainFragment extends Fragment {
         slidingUpPanelLayout.setPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
             @Override
             public void onPanelSlide(View view, float v) {
+                int[]location = new int[2];
+                ivAlbumPhoto.getLocationOnScreen(location);
                 ((MainActivity) getActivity()).setTranslations(v);
                 fabAdd.setScaleX(v);
                 fabAdd.setScaleY(v);
@@ -196,4 +205,11 @@ public class MainFragment extends Fragment {
         tvAuthorFragment.setText(musicPlayer.getCurrentTrack().getArtist());
     }
 
+    public void setMediaFileLengthInMilliseconds(int mediaFileLengthInMilliseconds) {
+        this.mediaFileLengthInMilliseconds = mediaFileLengthInMilliseconds;
+    }
+
+    public int getMediaFileLengthInMilliseconds() {
+        return mediaFileLengthInMilliseconds;
+    }
 }

@@ -30,6 +30,7 @@
                 android:layout_height="match_parent"
                 app:tabIndicatorColor="@color/primaryColorDark"
 
+                style="@style/Base.Widget.Design.TabLayout"
                 />
         </android.support.design.widget.AppBarLayout>
 

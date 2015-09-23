@@ -41,8 +41,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/seekBar"
         android:layout_alignParentBottom="false"
-        android:layout_above="@+id/tv_current_time"
-        android:progressTint="@color/accentColor" />
+        android:layout_above="@+id/tv_current_time" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -55,13 +54,13 @@
         android:layout_marginTop="16dp" />
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:id="@+id/iv_album_photo"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/player_line"
         android:src="@drawable/ic_guitar"
-        android:layout_marginTop="50dp" />
+        android:layout_marginTop="100dp" />
 
     <ImageView
         android:layout_width="48dp"
@@ -91,8 +90,8 @@
         app:backgroundTint="@color/primaryColorDark"
         android:src="@mipmap/add"
         android:alpha="1"
-        android:layout_marginTop="297dp"
-        android:layout_marginLeft="36dp" />
+        android:layout_marginTop="247dp"
+        android:layout_marginLeft="16dp" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_download"
@@ -103,27 +102,29 @@
         app:backgroundTint="@color/primaryColorDark"
         android:src="@mipmap/download"
         android:alpha="1"
-        android:layout_marginTop="297dp"
+        android:layout_marginTop="247dp"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="36dp" />
+        android:layout_marginRight="16dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Name of the song"
         android:id="@+id/tv_name_of_song_fragment"
-        android:layout_centerHorizontal="true"
         android:textSize="20sp"
-        android:layout_above="@+id/tv_author_name_fragment" />
+        android:layout_alignTop="@+id/container"
+        android:layout_alignRight="@+id/iv_album_photo"
+        android:layout_alignEnd="@+id/iv_album_photo"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Author"
         android:id="@+id/tv_author_name_fragment"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="8dp"
         android:textSize="16sp"
-        android:layout_above="@+id/seekBar" />
+        android:layout_below="@+id/tv_name_of_song_fragment"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

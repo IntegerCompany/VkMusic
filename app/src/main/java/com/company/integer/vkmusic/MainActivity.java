@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
     FloatingActionButton fabPlayPause;
     FloatingActionButton fabNext;
     private static final String LOG_TAG = "MainActivity";
-    private int mediaFileLengthInMilliseconds;
     MusicPlayerService musicPlayerService;
     MusicPlayerInterface musicPlayer;
     TracksLoaderInterface dataLoader;
@@ -57,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
                 if (!musicPlayer.isPlaying()) {
                     try {
                         musicPlayer.play();
-                        mediaFileLengthInMilliseconds = musicPlayer.getCurrentTrack().getDuration() * 1000;
+                        mainFragment.setMediaFileLengthInMilliseconds(musicPlayer.getCurrentTrack().getDuration() * 1000);
                         mainFragment.primarySeekBarProgressUpdater();
                         fabPlayPause.setImageDrawable(getResources().getDrawable(R.mipmap.pause));
                     } catch (IOException e) {
@@ -109,8 +108,8 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
     @Override
     public void onCurrentTrackChanged(MusicTrackPOJO musicTrack) {
         mainFragment.setCurrentTrack();
-        mediaFileLengthInMilliseconds = musicTrack.getDuration() * 1000;
-        mainFragment.getSeekBar().setProgress((int) (((float) musicPlayer.getCurrentTrackTime() / mediaFileLengthInMilliseconds) * 100)); // This math construction give a percentage of "was playing"/"song length"
+        mainFragment.setMediaFileLengthInMilliseconds(musicTrack.getDuration() * 1000);
+        mainFragment.getSeekBar().setProgress((int) (((float) musicPlayer.getCurrentTrackTime() / mainFragment.getMediaFileLengthInMilliseconds()) * 100)); // This math construction give a percentage of "was playing"/"song length"
         if (musicPlayer.getCurrentTrackTime() == 0)
             mainFragment.getSeekBar().setProgress(0);
 
@@ -169,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
         int height = size.y;
 
         fabPlayPause.setTranslationX(-(width / 2 - dpToPx(79)) * k);
-        fabPlayPause.setTranslationY(-(height - dpToPx(454)) * k);
+        fabPlayPause.setTranslationY(-(height - dpToPx(446)) * k);
         fabPrevious.setTranslationX(-(width / 2 - dpToPx(79) + dpToPx(24)) * k);
         fabPrevious.setTranslationY(-(height - dpToPx(446) + dpToPx(27)) * k);
         fabNext.setTranslationX(-(width / 2 - dpToPx(79) - dpToPx(24)) * k);
