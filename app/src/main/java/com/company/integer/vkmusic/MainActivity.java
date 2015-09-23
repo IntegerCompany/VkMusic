@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
 
     @Override
     public void endOfPlaylist() {
-        musicPlayerService.uploadMore(MY_TRACKS);
+        musicPlayerService.uploadMore(USE_PREVIOUS);
     }
 
     @Override

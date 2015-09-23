@@ -119,7 +119,7 @@ public class MusicPlayer implements MusicPlayerInterface {
     public int getCurrentTrackTime() {
         Log.d(LOG_TAG, "Get current track time");
         currentTrackTime = player.getCurrentPosition();
-        //yea, its looks weird, but there is now way to check player
+        //yea, its looks weird, but there is no another way to check player
         if (player.getCurrentPosition() > 999999999) currentTrackTime = 0;
         return currentTrackTime;
     }

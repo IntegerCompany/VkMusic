@@ -35,12 +35,13 @@ public class MusicPlayerService extends Service implements MusicPlayerInterface,
     private ArrayList<MusicTrackPOJO> savedPlaylist = new ArrayList<>();
     private ArrayList<MusicTrackPOJO> searchPlaylist = new ArrayList<>();
 
+    private int lastSource = MY_TRACKS;
+
     @Override
     public void onCreate() {
         super.onCreate();
         tracksDataLoader.setTracksLoadingListener(this);
         musicPlayer.setMusicPlayerListener(this);
-
 
     }
 
@@ -49,8 +50,6 @@ public class MusicPlayerService extends Service implements MusicPlayerInterface,
         Log.d(LOG_TAG, "MusicPlayerService onBind");
         return binder;
     }
-
-
 
     // MusicPlayer interface methods-----------
     @Override
@@ -175,7 +174,9 @@ public class MusicPlayerService extends Service implements MusicPlayerInterface,
             case SEARCH:
                 search(tracksDataLoader.getLastSearchQuery(), searchPlaylist.size(), AppState.TRACKS_PER_LOADING);
                 break;
-
+            case USE_PREVIOUS:
+                uploadMore(lastSource);
+                break;
         }
 
     }
@@ -184,12 +185,16 @@ public class MusicPlayerService extends Service implements MusicPlayerInterface,
     public ArrayList<MusicTrackPOJO> getTracksFromSource(int source) {
         switch (source){
             case MY_TRACKS:
+                lastSource = MY_TRACKS;
                 return myTracksPlaylist;
             case RECOMMENDATIONS:
+                lastSource = RECOMMENDATIONS;
                 return recommendationsPlaylist;
             case SAVED:
+                lastSource = SAVED;
                 return savedPlaylist;
             case SEARCH:
+                lastSource = SEARCH;
                 return searchPlaylist;
         }
         return new ArrayList<>();

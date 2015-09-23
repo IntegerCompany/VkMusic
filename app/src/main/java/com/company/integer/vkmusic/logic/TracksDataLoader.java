@@ -5,7 +5,6 @@ import android.util.Log;
 import com.company.integer.vkmusic.interfaces.TracksLoaderInterface;
 import com.company.integer.vkmusic.interfaces.TracksLoaderListener;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
-import com.company.integer.vkmusic.supportclasses.AppState;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -43,9 +42,6 @@ public class TracksDataLoader implements TracksLoaderInterface {
     public void search(String query, int from, int count) {
         lastSearchQuery = query;
         VKParameters params = new VKParameters();
-        params.put(VKApiConst.Q, AppState.getLoggedUser().getUserId());
-        params.put(VKApiConst.OFFSET, "" + from);
-        params.put(VKApiConst.COUNT, "" + count);
         VKRequest requestAudio = new VKRequest("audio.search", VKParameters.from(VKApiConst.Q, query, VKApiConst.OFFSET, from, VKApiConst.COUNT, count));
         requestAudio.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
@@ -74,8 +70,6 @@ public class TracksDataLoader implements TracksLoaderInterface {
     @Override
     public void getTracksByUserId(String userId, int from, int count) {
         VKParameters params = new VKParameters();
-        params.put(VKApiConst.OWNER_ID, AppState.getLoggedUser().getUserId());
-        params.put(VKApiConst.COUNT, "1");
         VKRequest requestAudio = new VKRequest("audio.get", VKParameters.from(VKApiConst.OWNER_ID, userId, VKApiConst.OFFSET, from, VKApiConst.COUNT, count));
         requestAudio.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
