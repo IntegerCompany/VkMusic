@@ -166,7 +166,9 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
 
     public void pauseMusic() {
         isPlaying = false;
-        sendBroadcast(new Intent("com.example.app.ACTION_PLAY"));
+        Intent playIntent = new Intent("com.example.app.ACTION_PLAY");
+        playIntent.putExtra("play",isPlaying);
+        sendBroadcast(playIntent);
     }
 
     public void setTranslations(float k) {

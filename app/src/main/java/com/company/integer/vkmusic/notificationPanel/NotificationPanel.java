@@ -3,11 +3,9 @@ package com.company.integer.vkmusic.notificationPanel;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.ContextCompat;
 import android.widget.RemoteViews;
 
 import com.company.integer.vkmusic.R;
@@ -21,6 +19,8 @@ public class NotificationPanel {
     private NotificationManager nManager;
     private NotificationCompat.Builder nBuilder;
     private RemoteViews remoteView;
+
+    private boolean isPlaing = true;
 
     public NotificationPanel(Context parent) {
         // TODO Auto-generated constructor stub
@@ -37,46 +37,46 @@ public class NotificationPanel {
         nBuilder.setContent(remoteView);
     }
 
-    public void buildNotification(){
-
-        if (nManager == null) {
-            nManager = (NotificationManager) parent.getSystemService(Context.NOTIFICATION_SERVICE);
-            nManager.notify(2, nBuilder.build());
-        }
-    }
     public Notification getNotification(){
         return nBuilder.build();
+    }
+
+    public void updateListeners(){
+        Intent playIntent = new Intent("com.example.app.ACTION_PLAY");
+        playIntent.putExtra("play",isPlaing);
+        PendingIntent pendingPlayIntent = PendingIntent.getBroadcast(parent, 100, playIntent, 0);
+        remoteView.setOnClickPendingIntent(R.id.play, pendingPlayIntent);
     }
 
     public void setListeners(RemoteViews view){
         //listener 1
         Intent playIntent = new Intent("com.example.app.ACTION_PLAY");
+        playIntent.putExtra("play",isPlaing);
         PendingIntent pendingPlayIntent = PendingIntent.getBroadcast(parent, 100, playIntent, 0);
         view.setOnClickPendingIntent(R.id.play, pendingPlayIntent);
 
         //listener 2
-        Intent pauseIntent = new Intent("com.example.app.ACTION_PAUSE");
+        Intent pauseIntent = new Intent("com.example.app.ACTION_BACK");
         PendingIntent pendingPauseIntent = PendingIntent.getBroadcast(parent, 100, pauseIntent, 0);
-        view.setOnClickPendingIntent(R.id.pause, pendingPauseIntent);
+        view.setOnClickPendingIntent(R.id.previous, pendingPauseIntent);
 
-        Intent closeIntent = new Intent("com.example.app.ACTION_CLOSE");
+        Intent closeIntent = new Intent("com.example.app.ACTION_NEXT");
         PendingIntent pendingCloseIntent = PendingIntent.getBroadcast(parent, 100, closeIntent, 0);
-        view.setOnClickPendingIntent(R.id.close, pendingCloseIntent);
+        view.setOnClickPendingIntent(R.id.next, pendingCloseIntent);
 
     }
 
     public void updateToPlay(boolean play){
-        int playColor;
-        int pauseColor;
+        int imageID;
         if (play) {
-            playColor = R.color.accentColor;
-            pauseColor = R.color.vk_white;
+            imageID = R.mipmap.play_item;
+            isPlaing = true;
         }else {
-            playColor = R.color.vk_white;
-            pauseColor = R.color.accentColor;
+            imageID = R.mipmap.pause_item;
+            isPlaing = false;
         }
-        remoteView.setTextColor(R.id.play, ContextCompat.getColor(parent, playColor));
-        remoteView.setTextColor(R.id.pause, ContextCompat.getColor(parent, pauseColor));
+        remoteView.setImageViewResource(R.id.play, imageID);
+        updateListeners();
     }
 
     public void notificationCancel() {
