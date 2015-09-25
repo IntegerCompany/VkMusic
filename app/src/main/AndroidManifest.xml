@@ -28,11 +28,18 @@
             </intent-filter>
         </activity>
 
+        <activity android:name="com.company.integer.vkmusic.notificationPanel.NotificationReturnSlot">
+            android:launchMode="singleTask"
+            android:taskAffinity=""
+            android:excludeFromRecents="true"
+        </activity>
+
         <service
             android:name=".services.MusicPlayerService"
             android:enabled="true"
-            android:exported="true" >
+            android:exported="true">
         </service>
+
     </application>
 
 </manifest>

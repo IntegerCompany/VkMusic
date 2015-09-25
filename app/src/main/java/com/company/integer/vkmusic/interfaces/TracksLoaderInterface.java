@@ -9,6 +9,7 @@ import java.util.ArrayList;
  */
 public interface TracksLoaderInterface {
 
+    int MY_TRACKS = 1, RECOMMENDATIONS = 2, SAVED = 3, SEARCH = 4, USE_PREVIOUS = 5;
     /**
      * VK search for music
      * @param query text from search field
