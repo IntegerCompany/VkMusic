@@ -1,37 +1,24 @@
 package com.company.integer.vkmusic;
 
-import android.app.Notification;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.graphics.Point;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.preference.MultiSelectListPreference;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
-import android.widget.Toast;
 
 import com.company.integer.vkmusic.fragments.MainFragment;
-import com.company.integer.vkmusic.interfaces.MusicPlayerInterface;
 import com.company.integer.vkmusic.interfaces.MusicPlayerListener;
 import com.company.integer.vkmusic.interfaces.TracksLoaderInterface;
 import com.company.integer.vkmusic.interfaces.TracksLoaderListener;
 import com.company.integer.vkmusic.logic.TracksDataLoader;
-import com.company.integer.vkmusic.notificationPanel.NotificationPanel;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
 import com.company.integer.vkmusic.services.MusicPlayerService;
 import com.company.integer.vkmusic.supportclasses.AppState;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -52,6 +39,8 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
     private ArrayList<MusicTrackPOJO> savedPlaylist = new ArrayList<>();
     private ArrayList<MusicTrackPOJO> searchPlaylist = new ArrayList<>();
 
+    private boolean isPlaying = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,9 +50,6 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
         tracksDataLoader.setTracksLoadingListener(this);
         tracksDataLoader.getTracksByUserId(AppState.getLoggedUser().getUserId(), 1, 10);
 
-        Intent i=new Intent(this, MusicPlayerService.class);
-        startService(i);
-
         mainFragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         fabPrevious = (FloatingActionButton) findViewById(R.id.fab_previous);
         fabPlayPause = (FloatingActionButton) findViewById(R.id.fab_play_pause);
@@ -72,13 +58,11 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
         fabPlayPause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //todo uncomment this
-//                if (!musicPlayer.isPlaying()) {
-//                    playMusic();
-//                } else {
-//                    pauseMusic();
-//                }
-                playMusic();
+                if (isPlaying) {
+                    playMusic();
+                } else {
+                    pauseMusic();
+                }
             }
         });
 
@@ -173,12 +157,15 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
+
+        isPlaying = true;
         Intent i=new Intent(this, MusicPlayerService.class);
         i.putExtra(MusicPlayerService.EXTRA_PLAYLIST, "EXTRA_PLAYLIST");
         startService(i);
     }
 
     public void pauseMusic() {
+        isPlaying = false;
         sendBroadcast(new Intent("com.example.app.ACTION_PLAY"));
     }
 
@@ -203,9 +190,9 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
         return (int) ((dp * displayMetrics.density) + 0.5);
     }
 
-    public MusicPlayerInterface getMusicPlayer(){
-//        return musicPlayer;
-        return null;
+    public ArrayList<MusicTrackPOJO> getPlaylist() {
+        Log.d(LOG_TAG, "Get playlist");
+        return myTracksPlaylist;
     }
 
     /**
@@ -239,24 +226,25 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
     // TracksDataLoader callbacks methods-----------
     @Override
     public void tracksLoaded(ArrayList<MusicTrackPOJO> newTracks, int source) {
+        //Starting service on track loaded
+        Intent i=new Intent(this, MusicPlayerService.class);
+
         switch (source){
             case TracksLoaderInterface.MY_TRACKS:
                 myTracksPlaylist.addAll(newTracks);
-                //todo send play list to service
-//                musicPlayer.setPlayList(myTracksPlaylist,0);
-                //dataLoadingCallbackForUI.tracksLoaded(myTracksPlaylist, source);
+                i.setAction("MY_TRACKS");
+                i.putParcelableArrayListExtra("MY_TRACKS",newTracks);
+                startService(i);
+                mainFragment.setupViewPager();
                 break;
             case TracksLoaderInterface.RECOMMENDATIONS:
                 recommendationsPlaylist.addAll(newTracks);
-                tracksLoaded(recommendationsPlaylist, source);
                 break;
             case TracksLoaderInterface.SAVED:
                 savedPlaylist.addAll(newTracks);
-                tracksLoaded(savedPlaylist, source);
                 break;
             case TracksLoaderInterface.SEARCH:
                 searchPlaylist.addAll(newTracks);
-                tracksLoaded(searchPlaylist, source);
                 break;
         }
 

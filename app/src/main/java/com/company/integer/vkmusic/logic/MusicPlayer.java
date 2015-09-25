@@ -17,7 +17,6 @@ public class MusicPlayer implements MusicPlayerInterface {
     private final String LOG_TAG = "Music Player";
 
     private MediaPlayer player;
-    private MusicPlayerListener musicPlayerListener;
 
     private ArrayList<MusicTrackPOJO> playlist = new ArrayList<>();
     private MusicTrackPOJO currentTrack;
@@ -29,7 +28,7 @@ public class MusicPlayer implements MusicPlayerInterface {
         player.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
             @Override
             public void onBufferingUpdate(MediaPlayer mp, int percent) {
-                musicPlayerListener.onPlayerTrackUpdating(percent);
+//                musicPlayerListener.onPlayerTrackUpdating(percent);
             }
         });
 
@@ -53,8 +52,8 @@ public class MusicPlayer implements MusicPlayerInterface {
         currentTrackPosition = position;
         currentTrackTime = 0;
         currentTrack = playlist.get(currentTrackPosition);
-        musicPlayerListener.onCurrentTrackChanged(currentTrack);
-        Log.d(LOG_TAG, "Set playlist");
+//        musicPlayerListener.onCurrentTrackChanged(currentTrack);
+        Log.d(LOG_TAG, "Set playlist length :" + playlist.size() );
     }
 
     @Override
@@ -72,13 +71,13 @@ public class MusicPlayer implements MusicPlayerInterface {
     public boolean nextTrack() throws IOException {
         Log.d(LOG_TAG, "Next track");
         if (currentTrackPosition + 1 > playlist.size() - 1) {
-            musicPlayerListener.endOfPlaylist();
+//            musicPlayerListener.endOfPlaylist();
             return false;
         }
         currentTrackPosition++;
         currentTrackTime = 0;
         currentTrack = playlist.get(currentTrackPosition);
-        musicPlayerListener.onCurrentTrackChanged(currentTrack);
+//        musicPlayerListener.onCurrentTrackChanged(currentTrack);
         playCurrentTrack();
         return true;
     }
@@ -90,7 +89,7 @@ public class MusicPlayer implements MusicPlayerInterface {
         currentTrackPosition--;
         currentTrackTime = 0;
         currentTrack = playlist.get(currentTrackPosition);
-        musicPlayerListener.onCurrentTrackChanged(currentTrack);
+        //musicPlayerListener.onCurrentTrackChanged(currentTrack);
         playCurrentTrack();
         return true;
     }
@@ -112,7 +111,7 @@ public class MusicPlayer implements MusicPlayerInterface {
         currentTrackPosition = position;
         currentTrackTime = 0;
         currentTrack = playlist.get(currentTrackPosition);
-        musicPlayerListener.onCurrentTrackChanged(currentTrack);
+//        musicPlayerListener.onCurrentTrackChanged(currentTrack);
     }
 
     @Override
@@ -132,7 +131,7 @@ public class MusicPlayer implements MusicPlayerInterface {
 
     @Override
     public void setMusicPlayerListener(MusicPlayerListener musicPlayerListener) {
-        this.musicPlayerListener = musicPlayerListener;
+//        this.musicPlayerListener = musicPlayerListener;
         Log.d(LOG_TAG, "Set music player listener");
     }
 

@@ -26,19 +26,18 @@ import com.company.integer.vkmusic.supportclasses.AppState;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class MusicPlayerService extends Service implements MusicPlayerInterface, MusicPlayerListener {
+public class MusicPlayerService extends Service implements MusicPlayerListener {
 
     private final String LOG_TAG = "MusicPlayerService";
     public final static String EXTRA_PLAYLIST = "EXTRA_PLAYLIST";
-
-    private TracksLoaderListener dataLoadingCallbackForUI;
+    public final static String MY_TRACKS = "MY_TRACKS";
 
     private MusicPlayer musicPlayer = new MusicPlayer();
 
     @Override
     public void onCreate() {
         super.onCreate();
-        musicPlayer.setMusicPlayerListener(this);
+
         registerMyBroadcastReceiver();
 
     }
@@ -47,12 +46,17 @@ public class MusicPlayerService extends Service implements MusicPlayerInterface,
     public int onStartCommand(Intent intent, int flags, int startId) {
 
 
-        if (EXTRA_PLAYLIST.equals(intent.getStringExtra(EXTRA_PLAYLIST))){
+        if (EXTRA_PLAYLIST.equals(intent.getStringExtra(EXTRA_PLAYLIST))) {
             try {
                 play();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }else if(MY_TRACKS.equals(intent.getAction())) {
+            ArrayList<MusicTrackPOJO> arrayList = intent.getParcelableArrayListExtra(MY_TRACKS);
+            Log.i("MY_TRACKS length = ", ""+ arrayList.size());
+            musicPlayer.setPlayList(arrayList,0);
+            musicPlayer.setCurrentTrackPosition(0);
         }
 
         return(START_NOT_STICKY);
@@ -65,7 +69,7 @@ public class MusicPlayerService extends Service implements MusicPlayerInterface,
     }
 
     // MusicPlayer interface methods-----------
-    @Override
+
     public void play() throws IOException {
 
         Log.w(getClass().getName(), "Got to play()!");
@@ -91,70 +95,11 @@ public class MusicPlayerService extends Service implements MusicPlayerInterface,
     }
 
 
-    @Override
     public void pause() {
         musicPlayer.pause();
     }
 
-    @Override
-    public void setPlayList(ArrayList<MusicTrackPOJO> tracks, int position) {
-        musicPlayer.setPlayList(tracks, position);
-    }
 
-    @Override
-    public void addTracksToCurrentPlaylist(ArrayList<MusicTrackPOJO> tracksToAdd) {
-        musicPlayer.addTracksToCurrentPlaylist(tracksToAdd);
-    }
-
-    @Override
-    public ArrayList<MusicTrackPOJO> getPlaylist() {
-        return musicPlayer.getPlaylist();
-    }
-
-    @Override
-    public boolean nextTrack() throws IOException {
-        return musicPlayer.nextTrack();
-    }
-
-    @Override
-    public boolean previousTrack() throws IOException {
-        return musicPlayer.previousTrack();
-    }
-
-    @Override
-    public void setCurrentTrackTime(int time) {
-        musicPlayer.setCurrentTrackTime(time);
-    }
-
-    @Override
-    public int getCurrentTrackPosition() {
-        return musicPlayer.getCurrentTrackPosition();
-    }
-
-    @Override
-    public void setCurrentTrackPosition(int position) {
-        musicPlayer.setCurrentTrackPosition(position);
-    }
-
-    @Override
-    public int getCurrentTrackTime() {
-        return musicPlayer.getCurrentTrackTime();
-    }
-
-    @Override
-    public MusicTrackPOJO getCurrentTrack() {
-        return musicPlayer.getCurrentTrack();
-    }
-
-    @Override
-    public void setMusicPlayerListener(MusicPlayerListener musicPlayerListener) {
-    }
-
-    @Override
-    public boolean isPlaying() {
-        return musicPlayer.isPlaying();
-    }
-    // MusicPlayer interface methods end--------
 
     // MusicPlayer callbacks-------
     @Override
@@ -204,12 +149,4 @@ public class MusicPlayerService extends Service implements MusicPlayerInterface,
         // register the receiver
         registerReceiver(broadcastReceiver, intentFilter);
     }
-
-    public class MyBinder extends Binder {
-        public MusicPlayerService getService() {
-            return MusicPlayerService.this;
-        }
-    }
-
-
 }

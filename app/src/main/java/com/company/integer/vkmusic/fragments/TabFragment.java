@@ -35,9 +35,9 @@ public class TabFragment extends Fragment {
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
 
-        List<MusicTrackPOJO> list = ((MainActivity) getActivity()).getMusicPlayer().getPlaylist();
+        List<MusicTrackPOJO> list = ((MainActivity) getActivity()).getPlaylist();
 
-        adapter = new SimpleRecyclerAdapter(((MainActivity) getActivity()).getMusicPlayer(),list,getActivity());
+        adapter = new SimpleRecyclerAdapter(list,getActivity());
         recyclerView.setAdapter(adapter);
 
         return view;

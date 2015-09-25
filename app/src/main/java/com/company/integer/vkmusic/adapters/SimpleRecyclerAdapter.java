@@ -23,9 +23,8 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     Context ctx;
     ImageView lastTrackPlayPauseButton;
 
-    public SimpleRecyclerAdapter(MusicPlayerInterface musicPlayer, List<MusicTrackPOJO> tracks, Context ctx) {
+    public SimpleRecyclerAdapter( List<MusicTrackPOJO> tracks, Context ctx) {
         this.tracks = tracks;
-        this.musicPlayer = musicPlayer;
         this.ctx = ctx;
     }
 
@@ -43,7 +42,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         trackViewHolder.author.setText(tracks.get(i).getArtist());
         trackViewHolder.title.setText(tracks.get(i).getTitle());
         trackViewHolder.duration.setText(getDurationString(tracks.get(i).getDuration()));
-        if(musicPlayer.getCurrentTrackPosition() == i){
+        if(1 == i){
             trackViewHolder.playPause.setImageDrawable(ctx.getResources().getDrawable(R.mipmap.pause_item));
         }else{
             trackViewHolder.playPause.setImageDrawable(ctx.getResources().getDrawable(R.mipmap.play_item));
