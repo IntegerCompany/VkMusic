@@ -33,6 +33,7 @@ import com.company.integer.vkmusic.R;
 import com.company.integer.vkmusic.adapters.SimpleRecyclerAdapter;
 import com.company.integer.vkmusic.adapters.ViewPagerAdapter;
 import com.company.integer.vkmusic.interfaces.MusicPlayerInterface;
+import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
 import com.company.integer.vkmusic.supportclasses.VersionModel;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
@@ -198,11 +199,11 @@ public class MainFragment extends Fragment {
         return seekBar;
     }
 
-    public void setCurrentTrack(){
-        tvNameOfSongPlayerLine.setText(musicPlayer.getCurrentTrack().getTitle());
-        tvNameOfSongFragment.setText(musicPlayer.getCurrentTrack().getTitle());
-        tvAuthorPlayerLine.setText(musicPlayer.getCurrentTrack().getArtist());
-        tvAuthorFragment.setText(musicPlayer.getCurrentTrack().getArtist());
+    public void setCurrentTrack(MusicTrackPOJO musicTrack){
+        tvNameOfSongPlayerLine.setText(musicTrack.getTitle());
+        tvNameOfSongFragment.setText(musicTrack.getTitle());
+        tvAuthorPlayerLine.setText(musicTrack.getArtist());
+        tvAuthorFragment.setText(musicTrack.getArtist());
     }
 
     public void setMediaFileLengthInMilliseconds(int mediaFileLengthInMilliseconds) {

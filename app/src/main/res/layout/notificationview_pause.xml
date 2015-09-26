@@ -23,16 +23,17 @@
         android:layout_alignTop="@+id/song_image" />
 
     <ImageButton
-        android:id="@+id/play"
+        android:id="@+id/pause"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@mipmap/play_item"
+        android:background="@mipmap/pause_item"
         android:contentDescription="play"
-        android:layout_toRightOf="@+id/previous"
+        android:layout_centerVertical="true"
         android:layout_marginRight="8dp"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="8dp"
-        android:layout_alignTop="@+id/song_image" />
+        android:layout_alignTop="@+id/song_image"
+        android:layout_toRightOf="@+id/previous" />
 
     <ImageButton
         android:id="@+id/next"
@@ -42,7 +43,7 @@
         android:background="@mipmap/next"
         android:layout_alignTop="@+id/song_image"
         android:layout_alignParentRight="false"
-        android:layout_toRightOf="@+id/play" />
+        android:layout_toRightOf="@+id/pause" />
 
     <TextView
         android:layout_width="wrap_content"

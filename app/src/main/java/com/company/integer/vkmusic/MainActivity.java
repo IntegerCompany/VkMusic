@@ -1,6 +1,9 @@
 package com.company.integer.vkmusic;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -11,7 +14,6 @@ import android.view.Display;
 import android.view.View;
 
 import com.company.integer.vkmusic.fragments.MainFragment;
-import com.company.integer.vkmusic.interfaces.MusicPlayerListener;
 import com.company.integer.vkmusic.interfaces.TracksLoaderInterface;
 import com.company.integer.vkmusic.interfaces.TracksLoaderListener;
 import com.company.integer.vkmusic.logic.TracksDataLoader;
@@ -22,7 +24,7 @@ import com.company.integer.vkmusic.supportclasses.AppState;
 import java.util.ArrayList;
 
 
-public class MainActivity extends AppCompatActivity implements MusicPlayerListener,
+public class MainActivity extends AppCompatActivity implements
         TracksLoaderInterface, TracksLoaderListener {
 
     FloatingActionButton fabPrevious;
@@ -33,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
 
     private TracksDataLoader tracksDataLoader;
     private int lastSource = TracksLoaderInterface.MY_TRACKS;
+    private BroadcastReceiver broadcastReceiver;
 
     private ArrayList<MusicTrackPOJO> myTracksPlaylist = new ArrayList<>();
     private ArrayList<MusicTrackPOJO> recommendationsPlaylist = new ArrayList<>();
@@ -58,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
         fabPlayPause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isPlaying) {
+                if (!isPlaying) {
                     playMusic();
                 } else {
                     pauseMusic();
@@ -69,68 +72,26 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
         fabNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent nextIntent = new Intent("com.example.app.ACTION_NEXT");
+                sendBroadcast(nextIntent);
             }
         });
 
         fabPrevious.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent pauseIntent = new Intent("com.example.app.ACTION_BACK");
+                sendBroadcast(pauseIntent);
             }
         });
     }
 
-//    protected ServiceConnection sConn = new ServiceConnection() {
-//        public void onServiceConnected(ComponentName name, IBinder binder) {
-//            Log.d(LOG_TAG, "MainActivity onServiceConnected");
-//            musicPlayerService = ((MusicPlayerService.MyBinder) binder).getService();
-//            musicPlayer.setMusicPlayerListener(MainActivity.this);
-//            dataLoader.setTracksLoadingListener(MainActivity.this);
-//            mainFragment.setMusicPlayer(musicPlayer);
-//        }
-//
-//    public void onServiceDisconnected(ComponentName name) {
-//        Log.d("MainActivity", "MainActivity onServiceDisconnected");
-//        musicPlayerService = null;
-//    }
-//};
     @Override
     protected void onStart() {
         super.onStart();
-
+        registerMyBroadcastReceiver();
+        sendBroadcast(new Intent("com.example.app.ACTION_UPDATE_TRACK"));
     }
-
-    @Override
-    public void endOfPlaylist() {
-        this.uploadMore(TracksLoaderInterface.USE_PREVIOUS);
-    }
-
-    @Override
-    public void onPlayerTrackUpdating(int percent) {
-        mainFragment.getSeekBar().setSecondaryProgress(percent);
-    }
-
-    @Override
-    public void onCurrentTrackChanged(MusicTrackPOJO musicTrack) {
-//        mainFragment.setCurrentTrack();
-//        mainFragment.setMediaFileLengthInMilliseconds(musicTrack.getDuration() * 1000);
-//        mainFragment.getSeekBar().setProgress((int) (((float) musicPlayer.getCurrentTrackTime() / mainFragment.getMediaFileLengthInMilliseconds()) * 100)); // This math construction give a percentage of "was playing"/"song length"
-//        if (musicPlayer.getCurrentTrackTime() == 0)
-//            mainFragment.getSeekBar().setProgress(0);
-
-    }
-
-//    @Override
-//    public void tracksLoaded(ArrayList<MusicTrackPOJO> newPlaylist, int queryType) {
-//        musicPlayer.setPlayList(newPlaylist, musicPlayer.getCurrentTrackPosition());
-//        mainFragment.setupViewPager();
-//    }
-//
-//    @Override
-//    public void tracksLoadingError(String errorMessage) {
-//        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
-//    }
 
     @Override
     public void onBackPressed() {
@@ -142,33 +103,23 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
     }
 
     public void playMusic() {
-//        try {
-//            musicPlayer.play();
-//            mainFragment.setMediaFileLengthInMilliseconds(musicPlayer.getCurrentTrack().getDuration() * 1000);
-//            mainFragment.primarySeekBarProgressUpdater();
-//            fabPlayPause.setImageDrawable(getResources().getDrawable(R.mipmap.pause));
-//            nPanel.buildNotification();
-//            nPanel.updateToPlay(true);
-//        } catch (NullPointerException e) {
-//            Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-//            Intent i=new Intent(this, MusicPlayerService.class);
-//            i.putExtra(MusicPlayerService.EXTRA_PLAYLIST, "EXTRA_PLAYLIST");
-//            startService(i);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
         isPlaying = true;
-        Intent i=new Intent(this, MusicPlayerService.class);
-        i.putExtra(MusicPlayerService.EXTRA_PLAYLIST, "EXTRA_PLAYLIST");
-        startService(i);
+        Intent playIntent = new Intent("com.example.app.ACTION_PLAY");
+        sendBroadcast(playIntent);
+    }
+
+    private void playMusicUIAction(){
+        fabPlayPause.setImageDrawable(getResources().getDrawable(R.mipmap.pause));
     }
 
     public void pauseMusic() {
         isPlaying = false;
-        Intent playIntent = new Intent("com.example.app.ACTION_PLAY");
-        playIntent.putExtra("play",isPlaying);
-        sendBroadcast(playIntent);
+        Intent pauseIntent = new Intent("com.example.app.ACTION_PAUSE");
+        sendBroadcast(pauseIntent);
+    }
+
+    private void pauseMusicUIAction(){
+        fabPlayPause.setImageDrawable(getResources().getDrawable(R.mipmap.play));
     }
 
     public void setTranslations(float k) {
@@ -278,16 +229,59 @@ public class MainActivity extends AppCompatActivity implements MusicPlayerListen
         }
     }
 
-    /**
-     * /**
-     *
-     * TRACK DATA LOADER END
-     *
-     * @param source for that source will be returned playlist
-     * @return
-     */
     @Override
     public ArrayList<MusicTrackPOJO> getTracksFromSource(int source) {
         return null;
+    }
+
+    public void registerMyBroadcastReceiver(){
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+
+                if(action.equalsIgnoreCase("com.example.app.ACTION_PLAY")) {
+                    isPlaying = true;
+                    playMusicUIAction();
+                }else if(action.equalsIgnoreCase("com.example.app.ACTION_PAUSE")) {
+                    isPlaying = false;
+                    pauseMusicUIAction();
+                }else if(action.equalsIgnoreCase("com.example.app.ACTION_BACK")){
+
+                }else if(action.equalsIgnoreCase("com.example.app.ACTION_NEXT")) {
+
+                }else if(action.equalsIgnoreCase("com.example.app.ACTION_TRACK_CHANGED")) {
+                    MusicTrackPOJO musicTrack = intent.getParcelableExtra("musicTrack");
+                    int time = intent.getExtras().getInt("CurrentTrackTime");
+                    mainFragment.setCurrentTrack(musicTrack);
+                    mainFragment.setMediaFileLengthInMilliseconds(musicTrack.getDuration() * 1000);
+                    mainFragment.getSeekBar().setProgress((int) (((float) time / mainFragment.getMediaFileLengthInMilliseconds()) * 100)); // This math construction give a percentage of "was playing"/"song length"
+                    if (time == 0)
+                        mainFragment.getSeekBar().setProgress(0);
+                }else if(action.equalsIgnoreCase("com.example.app.ACTION_TRACK_PROGRESS")) {
+                    int percent = intent.getExtras().getInt("percent");
+                    mainFragment.getSeekBar().setSecondaryProgress(percent);
+                }
+            }
+        };
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        // set the custom action
+        intentFilter.addAction("com.example.app.ACTION_PLAY");
+        intentFilter.addAction("com.example.app.ACTION_PAUSE");
+        intentFilter.addAction("com.example.app.ACTION_BACK");
+        intentFilter.addAction("com.example.app.ACTION_NEXT");
+        intentFilter.addAction("com.example.app.ACTION_TRACK_CHANGED");
+        intentFilter.addAction("com.example.app.ACTION_TRACK_PROGRESS");
+
+        // register the receiver
+        registerReceiver(broadcastReceiver, intentFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(broadcastReceiver);
     }
 }

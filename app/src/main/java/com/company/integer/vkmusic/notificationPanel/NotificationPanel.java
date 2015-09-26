@@ -18,9 +18,10 @@ public class NotificationPanel {
     private Context parent;
     private NotificationManager nManager;
     private NotificationCompat.Builder nBuilder;
-    private RemoteViews remoteView;
+    private RemoteViews remoteViewPlay;
+    private RemoteViews remoteViewPause;
 
-    private boolean isPlaing = true;
+    private boolean isPlaing = false;
 
     public NotificationPanel(Context parent) {
         // TODO Auto-generated constructor stub
@@ -29,54 +30,60 @@ public class NotificationPanel {
                 .setContentTitle("Parking Meter")
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setAutoCancel(false);
-
-        remoteView = new RemoteViews(parent.getPackageName(), R.layout.notificationview);
+        nManager = (NotificationManager) parent.getSystemService(Context.NOTIFICATION_SERVICE);
+        remoteViewPlay = new RemoteViews(parent.getPackageName(), R.layout.notificationview);
+        remoteViewPause = new RemoteViews(parent.getPackageName(), R.layout.notificationview_pause);
 
         //set the button listeners
-        setListeners(remoteView);
-        nBuilder.setContent(remoteView);
+        setListeners(remoteViewPlay);
+        nBuilder.setContent(remoteViewPlay);
     }
 
-    public Notification getNotification(){
-        return nBuilder.build();
-    }
+    public Notification getNotification(boolean play){
+        if(play){
+            nBuilder.setContent(remoteViewPause);
+            setListeners(remoteViewPause);
+            return nBuilder.build();
+        }else {
+            nBuilder.setContent(remoteViewPlay);
+            setListeners(remoteViewPlay);
+            return nBuilder.build();
+        }
 
-    public void updateListeners(){
-        Intent playIntent = new Intent("com.example.app.ACTION_PLAY");
-        playIntent.putExtra("play",isPlaing);
-        PendingIntent pendingPlayIntent = PendingIntent.getBroadcast(parent, 100, playIntent, 0);
-        remoteView.setOnClickPendingIntent(R.id.play, pendingPlayIntent);
     }
 
     public void setListeners(RemoteViews view){
         //listener 1
         Intent playIntent = new Intent("com.example.app.ACTION_PLAY");
-        playIntent.putExtra("play",isPlaing);
         PendingIntent pendingPlayIntent = PendingIntent.getBroadcast(parent, 100, playIntent, 0);
         view.setOnClickPendingIntent(R.id.play, pendingPlayIntent);
 
-        //listener 2
-        Intent pauseIntent = new Intent("com.example.app.ACTION_BACK");
+        Intent pauseIntent = new Intent("com.example.app.ACTION_PAUSE");
         PendingIntent pendingPauseIntent = PendingIntent.getBroadcast(parent, 100, pauseIntent, 0);
-        view.setOnClickPendingIntent(R.id.previous, pendingPauseIntent);
+        view.setOnClickPendingIntent(R.id.pause, pendingPauseIntent);
 
-        Intent closeIntent = new Intent("com.example.app.ACTION_NEXT");
-        PendingIntent pendingCloseIntent = PendingIntent.getBroadcast(parent, 100, closeIntent, 0);
-        view.setOnClickPendingIntent(R.id.next, pendingCloseIntent);
+        //listener 2
+        Intent backIntent = new Intent("com.example.app.ACTION_BACK");
+        PendingIntent pendingBackIntent = PendingIntent.getBroadcast(parent, 100, backIntent, 0);
+        view.setOnClickPendingIntent(R.id.previous, pendingBackIntent);
+
+        Intent nextIntent = new Intent("com.example.app.ACTION_NEXT");
+        PendingIntent pendingNextIntent = PendingIntent.getBroadcast(parent, 100, nextIntent, 0);
+        view.setOnClickPendingIntent(R.id.next, pendingNextIntent);
 
     }
 
     public void updateToPlay(boolean play){
-        int imageID;
-        if (play) {
-            imageID = R.mipmap.play_item;
-            isPlaing = true;
+        if (!play) {
+            Notification mNotify = getNotification(false);
+            mNotify.flags |= Notification.FLAG_ONGOING_EVENT;
+            nManager.notify(1337,mNotify);
         }else {
-            imageID = R.mipmap.pause_item;
-            isPlaing = false;
+            Notification mNotify = getNotification(true);
+            mNotify.flags |= Notification.FLAG_ONGOING_EVENT;
+            nManager.notify(1337,mNotify);
         }
-        remoteView.setImageViewResource(R.id.play, imageID);
-        updateListeners();
+        isPlaing = play;
     }
 
     public void notificationCancel() {

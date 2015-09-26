@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.company.integer.vkmusic.interfaces.MusicPlayerListener;
 import com.company.integer.vkmusic.logic.MusicPlayer;
 import com.company.integer.vkmusic.notificationPanel.NotificationPanel;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
@@ -15,28 +16,28 @@ import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class MusicPlayerService extends Service {
+public class MusicPlayerService extends Service implements MusicPlayerListener {
 
     private final String LOG_TAG = "MusicPlayerService";
     public final static String EXTRA_PLAYLIST = "EXTRA_PLAYLIST";
     public final static String MY_TRACKS = "MY_TRACKS";
 
     private MusicPlayer musicPlayer = new MusicPlayer();
-    private NotificationPanel nPanel = new NotificationPanel(this);
+    private NotificationPanel nPanel;
 
     @Override
     public void onCreate() {
         super.onCreate();
         registerMyBroadcastReceiver();
+        nPanel = new NotificationPanel(this);
+        musicPlayer.setMusicPlayerListener(this);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
 
-        if (EXTRA_PLAYLIST.equals(intent.getStringExtra(EXTRA_PLAYLIST))) {
-            play();
-        }else if(MY_TRACKS.equals(intent.getAction())) {
+        if(MY_TRACKS.equals(intent.getAction())) {
             ArrayList<MusicTrackPOJO> arrayList = intent.getParcelableArrayListExtra(MY_TRACKS);
             Log.i("MY_TRACKS length = ", ""+ arrayList.size());
             musicPlayer.setPlayList(arrayList,0);
@@ -48,7 +49,6 @@ public class MusicPlayerService extends Service {
 
     @Override
     public IBinder onBind(Intent arg0) {
-        Log.d(LOG_TAG, "MusicPlayerService onBind");
         return null;
     }
 
@@ -58,7 +58,7 @@ public class MusicPlayerService extends Service {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        startForeground(1337, nPanel.getNotification());
+        startForeground(1337, nPanel.getNotification(true));
     }
 
 
@@ -73,13 +73,11 @@ public class MusicPlayerService extends Service {
                 String action = intent.getAction();
 
                 if(action.equalsIgnoreCase("com.example.app.ACTION_PLAY")) {
-                    if (intent.getExtras().getBoolean("play")){
-                        play();
-                        nPanel.updateToPlay(true);
-                    }else{
-                        pause();
-                        nPanel.updateToPlay(false);
-                    }
+                    play();
+                    nPanel.updateToPlay(true);
+                }else if(action.equalsIgnoreCase("com.example.app.ACTION_PAUSE")) {
+                    pause();
+                    nPanel.updateToPlay(false);
                 }else if(action.equalsIgnoreCase("com.example.app.ACTION_BACK")){
                     try {
                         musicPlayer.previousTrack();
@@ -94,6 +92,9 @@ public class MusicPlayerService extends Service {
                         e.printStackTrace();
                     }
                 }
+                else if(action.equalsIgnoreCase("com.example.app.ACTION_UPDATE_TRACK")) {
+                    onCurrentTrackChanged(musicPlayer.getCurrentTrack());
+                }
             }
         };
 
@@ -101,10 +102,31 @@ public class MusicPlayerService extends Service {
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
         // set the custom action
         intentFilter.addAction("com.example.app.ACTION_PLAY");
+        intentFilter.addAction("com.example.app.ACTION_PAUSE");
         intentFilter.addAction("com.example.app.ACTION_BACK");
         intentFilter.addAction("com.example.app.ACTION_NEXT");
-
+        intentFilter.addAction("com.example.app.ACTION_UPDATE_TRACK");
         // register the receiver
         registerReceiver(broadcastReceiver, intentFilter);
+    }
+
+    @Override
+    public void endOfPlaylist() {
+
+    }
+
+    @Override
+    public void onPlayerTrackUpdating(int percent) {
+        Intent in = new Intent("com.example.app.ACTION_TRACK_PROGRESS");
+        in.putExtra("percent",percent);
+        sendBroadcast(in);
+    }
+
+    @Override
+    public void onCurrentTrackChanged(MusicTrackPOJO musicTrack) {
+        Intent in = new Intent("com.example.app.ACTION_TRACK_CHANGED");
+        in.putExtra("CurrentTrackTime",musicPlayer.getCurrentTrackTime());
+        in.putExtra("musicTrack",musicTrack);
+        sendBroadcast(in);
     }
 }
