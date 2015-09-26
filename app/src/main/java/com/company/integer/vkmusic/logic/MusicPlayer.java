@@ -1,5 +1,6 @@
 package com.company.integer.vkmusic.logic;
 
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.util.Log;
 
@@ -29,7 +30,7 @@ public class MusicPlayer implements MusicPlayerInterface {
         player.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
             @Override
             public void onBufferingUpdate(MediaPlayer mp, int percent) {
-                musicPlayerListener.onPlayerTrackUpdating(percent);
+
             }
         });
 
@@ -54,7 +55,7 @@ public class MusicPlayer implements MusicPlayerInterface {
         currentTrackTime = 0;
         currentTrack = playlist.get(currentTrackPosition);
         musicPlayerListener.onCurrentTrackChanged(currentTrack);
-        Log.d(LOG_TAG, "Set playlist");
+        Log.d(LOG_TAG, "Set playlist length :" + playlist.size());
     }
 
     @Override
@@ -119,7 +120,7 @@ public class MusicPlayer implements MusicPlayerInterface {
     public int getCurrentTrackTime() {
         Log.d(LOG_TAG, "Get current track time");
         currentTrackTime = player.getCurrentPosition();
-        //yea, its looks weird, but there is now way to check player
+        //yea, its looks weird, but there is no another way to check player
         if (player.getCurrentPosition() > 999999999) currentTrackTime = 0;
         return currentTrackTime;
     }
@@ -153,7 +154,4 @@ public class MusicPlayer implements MusicPlayerInterface {
 
 
     }
-
-
-
 }

@@ -5,7 +5,6 @@ import android.util.Log;
 import com.company.integer.vkmusic.interfaces.TracksLoaderInterface;
 import com.company.integer.vkmusic.interfaces.TracksLoaderListener;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
-import com.company.integer.vkmusic.supportclasses.AppState;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -28,21 +27,49 @@ public class TracksDataLoader implements TracksLoaderInterface {
 
     TracksLoaderListener tracksLoaderListener;
     Gson gson;
+    String lastSearchQuery = "";
 
     public TracksDataLoader(){
         GsonBuilder gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();
     }
 
+    public String getLastSearchQuery(){
+        return lastSearchQuery;
+    }
+
     @Override
     public void search(String query, int from, int count) {
+        lastSearchQuery = query;
+        VKParameters params = new VKParameters();
+        VKRequest requestAudio = new VKRequest("audio.search", VKParameters.from(VKApiConst.Q, query, VKApiConst.OFFSET, from, VKApiConst.COUNT, count));
+        requestAudio.executeWithListener(new VKRequest.VKRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                super.onComplete(response);
+                try {
+                    ArrayList<MusicTrackPOJO> musicTracks;
+                    Type musicTracksType = new TypeToken<ArrayList<MusicTrackPOJO>>() {
+                    }.getType();
+                    musicTracks = gson.fromJson(response.json.getJSONObject("response").getJSONArray("items").toString(), musicTracksType);
+                    tracksLoaderListener.tracksLoaded(musicTracks, TracksLoaderListener.SEARCH);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(VKError error) {
+                super.onError(error);
+                Log.e(LOG_TAG, error.errorMessage);
+                tracksLoaderListener.tracksLoadingError(error.errorMessage);
+            }
+        });
     }
 
     @Override
     public void getTracksByUserId(String userId, int from, int count) {
         VKParameters params = new VKParameters();
-        params.put(VKApiConst.OWNER_ID, AppState.getLoggedUser().getUserId());
-        params.put(VKApiConst.COUNT, "1");
         VKRequest requestAudio = new VKRequest("audio.get", VKParameters.from(VKApiConst.OWNER_ID, userId, VKApiConst.OFFSET, from, VKApiConst.COUNT, count));
         requestAudio.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
@@ -69,13 +96,47 @@ public class TracksDataLoader implements TracksLoaderInterface {
     }
 
     @Override
+    public void getRecommendationsByUserID(String userId, int from, int count) {
+        VKParameters params = new VKParameters();
+        VKRequest requestAudio = new VKRequest("audio.getRecommendations", VKParameters.from(VKApiConst.OWNER_ID, userId, VKApiConst.OFFSET, from, VKApiConst.COUNT, count));
+        requestAudio.executeWithListener(new VKRequest.VKRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                super.onComplete(response);
+                try {
+                    ArrayList<MusicTrackPOJO> musicTracks;
+                    Type musicTracksType = new TypeToken<ArrayList<MusicTrackPOJO>>() {
+                    }.getType();
+                    musicTracks = gson.fromJson(response.json.getJSONObject("response").getJSONArray("items").toString(), musicTracksType);
+                    tracksLoaderListener.tracksLoaded(musicTracks, TracksLoaderListener.RECOMMENDATIONS);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(VKError error) {
+                super.onError(error);
+                Log.e(LOG_TAG, error.errorMessage);
+                tracksLoaderListener.tracksLoadingError(error.errorMessage);
+            }
+        });
+    }
+
+    @Override
     public void setTracksLoadingListener(TracksLoaderListener tracksLoaderListener) {
         this.tracksLoaderListener = tracksLoaderListener;
     }
 
     @Override
     public void uploadMore(int source) {
-        //Maybe will be unused
+        //Unused
+    }
+
+    @Override
+    public ArrayList<MusicTrackPOJO> getTracksFromSource(int source) {
+        //Unused
+        return null;
     }
 
 

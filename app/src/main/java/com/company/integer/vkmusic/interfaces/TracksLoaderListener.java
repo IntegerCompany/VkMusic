@@ -8,9 +8,7 @@ import java.util.ArrayList;
  * Created by Andriy on 9/21/2015.
  */
 public interface TracksLoaderListener {
-
-    int MY_TRACKS = 1, RECOMMENDATIONS = 2, SAVED = 3, SEARCH = 4;
-
+    int MY_TRACKS = 1, RECOMMENDATIONS = 2, SAVED = 3, SEARCH = 4, USE_PREVIOUS = 5;
     /**
      * Called when VK returned info about tracks
      * @param newPlaylist tracks
