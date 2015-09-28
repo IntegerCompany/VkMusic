@@ -184,7 +184,7 @@ public class MainFragment extends Fragment {
 
         tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(getContext(), R.color.primaryColorDark));
         tabLayout.setupWithViewPager(viewPager);
-    
+    }
     
 
     public void updateList() {
