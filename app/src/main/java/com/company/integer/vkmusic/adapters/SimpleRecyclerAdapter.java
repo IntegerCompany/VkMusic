@@ -2,6 +2,7 @@ package com.company.integer.vkmusic.adapters;
 
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +24,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     Context ctx;
     ImageView lastTrackPlayPauseButton;
 
-    public SimpleRecyclerAdapter( List<MusicTrackPOJO> tracks, Context ctx) {
+    public SimpleRecyclerAdapter(List<MusicTrackPOJO> tracks, Context ctx) {
         this.tracks = tracks;
         this.ctx = ctx;
     }
@@ -31,10 +32,8 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     @Override
     public TrackViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.recyclerlist_item, viewGroup, false);
-        TrackViewHolder viewHolder = new TrackViewHolder(view);
-        return viewHolder;
+        return new TrackViewHolder(view);
     }
-
 
 
     @Override
@@ -42,29 +41,29 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         trackViewHolder.author.setText(tracks.get(i).getArtist());
         trackViewHolder.title.setText(tracks.get(i).getTitle());
         trackViewHolder.duration.setText(getDurationString(tracks.get(i).getDuration()));
-        if(1 == i){
-            trackViewHolder.playPause.setImageDrawable(ctx.getResources().getDrawable(R.mipmap.pause_item));
-        }else{
-            trackViewHolder.playPause.setImageDrawable(ctx.getResources().getDrawable(R.mipmap.play_item));
+        if (1 == i) {
+            trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(ctx, R.mipmap.pause_item));
+        } else {
+            trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(ctx, R.mipmap.play_item));
         }
         trackViewHolder.playPause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if (trackViewHolder.playPause.getDrawable().getConstantState() == ctx.getResources().getDrawable(R.mipmap.play_item).getConstantState()) {
+                if (trackViewHolder.playPause.getDrawable().getConstantState() == ContextCompat.getDrawable(ctx, R.mipmap.play_item).getConstantState()) {
                     try {
                         musicPlayer.setCurrentTrackPosition(i);
                         musicPlayer.play();
-                        trackViewHolder.playPause.setImageDrawable(ctx.getResources().getDrawable(R.mipmap.pause_item));
+                        trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(ctx, R.mipmap.pause_item));
                     } catch (IOException e) {
-                       e.printStackTrace();
+                        e.printStackTrace();
                     }
                 } else {
                     musicPlayer.pause();
-                    trackViewHolder.playPause.setImageDrawable(ctx.getResources().getDrawable(R.mipmap.play_item));
+                    trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(ctx, R.mipmap.play_item));
                 }
-                if (lastTrackPlayPauseButton != null & !trackViewHolder.playPause.equals(lastTrackPlayPauseButton)){
-                    lastTrackPlayPauseButton.setImageDrawable(ctx.getResources().getDrawable(R.mipmap.play_item));
+                if (lastTrackPlayPauseButton != null & !trackViewHolder.playPause.equals(lastTrackPlayPauseButton)) {
+                    lastTrackPlayPauseButton.setImageDrawable(ContextCompat.getDrawable(ctx, R.mipmap.play_item));
                 }
                 lastTrackPlayPauseButton = trackViewHolder.playPause;
             }
@@ -73,14 +72,10 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
 
     @Override
     public int getItemCount() {
-            return tracks == null ? 0 : tracks.size();
+        return tracks == null ? 0 : tracks.size();
     }
 
-    public void nextTrack(){
-
-    }
-
-    class TrackViewHolder extends RecyclerView.ViewHolder{
+    class TrackViewHolder extends RecyclerView.ViewHolder {
         TextView title;
         TextView author;
         TextView duration;
@@ -96,12 +91,12 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         }
     }
 
-    private String getDurationString(int durationInSec){
-        int minutes = durationInSec/60;
-        int seconds = durationInSec-minutes*60;
-        if(seconds<10){
+    private String getDurationString(int durationInSec) {
+        int minutes = durationInSec / 60;
+        int seconds = durationInSec - minutes * 60;
+        if (seconds < 10) {
             return minutes + ":0" + seconds;
-        }else{
+        } else {
             return minutes + ":" + seconds;
         }
     }

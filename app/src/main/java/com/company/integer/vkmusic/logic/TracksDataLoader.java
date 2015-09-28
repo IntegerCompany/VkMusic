@@ -19,9 +19,7 @@ import org.json.JSONException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
-/**
- * Created by Andriy on 9/21/2015.
- */
+
 public class TracksDataLoader implements TracksLoaderInterface {
     private static final String LOG_TAG = "TracksDataLoader";
 
@@ -29,19 +27,18 @@ public class TracksDataLoader implements TracksLoaderInterface {
     Gson gson;
     String lastSearchQuery = "";
 
-    public TracksDataLoader(){
+    public TracksDataLoader() {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();
     }
 
-    public String getLastSearchQuery(){
+    public String getLastSearchQuery() {
         return lastSearchQuery;
     }
 
     @Override
     public void search(String query, int from, int count) {
         lastSearchQuery = query;
-        VKParameters params = new VKParameters();
         VKRequest requestAudio = new VKRequest("audio.search", VKParameters.from(VKApiConst.Q, query, VKApiConst.OFFSET, from, VKApiConst.COUNT, count));
         requestAudio.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
@@ -69,7 +66,6 @@ public class TracksDataLoader implements TracksLoaderInterface {
 
     @Override
     public void getTracksByUserId(String userId, int from, int count) {
-        VKParameters params = new VKParameters();
         VKRequest requestAudio = new VKRequest("audio.get", VKParameters.from(VKApiConst.OWNER_ID, userId, VKApiConst.OFFSET, from, VKApiConst.COUNT, count));
         requestAudio.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
@@ -97,7 +93,6 @@ public class TracksDataLoader implements TracksLoaderInterface {
 
     @Override
     public void getRecommendationsByUserID(String userId, int from, int count) {
-        VKParameters params = new VKParameters();
         VKRequest requestAudio = new VKRequest("audio.getRecommendations", VKParameters.from(VKApiConst.OWNER_ID, userId, VKApiConst.OFFSET, from, VKApiConst.COUNT, count));
         requestAudio.executeWithListener(new VKRequest.VKRequestListener() {
             @Override

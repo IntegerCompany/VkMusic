@@ -46,6 +46,7 @@ public class LoginActivity extends AppCompatActivity {
                 startMainActivity();
                 AppState.setLoggedUser(new UserPOJO(res.userId));
             }
+
             @Override
             public void onError(VKError error) {
                 tvSigningIn.setText(error.errorMessage);
@@ -63,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
         btnTrySignInAgain = (Button) findViewById(R.id.btn_try_signin_again);
     }
 
-    private void setListeners(){
+    private void setListeners() {
         loginStateCallback = new VKCallback<VKSdk.LoginState>() {
             @Override
             public void onResult(VKSdk.LoginState loginState) {
@@ -88,17 +89,17 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void showErrorScreen(){
+    private void showErrorScreen() {
         pbSigningIn.setVisibility(View.GONE);
         signinErrorContainer.setVisibility(View.VISIBLE);
     }
 
-    private void showLoading(){
+    private void showLoading() {
         pbSigningIn.setVisibility(View.VISIBLE);
         signinErrorContainer.setVisibility(View.GONE);
     }
 
-    private void startMainActivity(){
+    private void startMainActivity() {
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);

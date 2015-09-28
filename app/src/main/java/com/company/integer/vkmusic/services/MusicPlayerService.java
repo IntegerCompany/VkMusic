@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -18,12 +19,11 @@ import java.util.ArrayList;
 
 public class MusicPlayerService extends Service implements MusicPlayerListener {
 
-    private final String LOG_TAG = "MusicPlayerService";
-    public final static String EXTRA_PLAYLIST = "EXTRA_PLAYLIST";
     public final static String MY_TRACKS = "MY_TRACKS";
 
     private MusicPlayer musicPlayer = new MusicPlayer();
     private NotificationPanel nPanel;
+    private Handler handler = new Handler();
 
     @Override
     public void onCreate() {
@@ -37,14 +37,14 @@ public class MusicPlayerService extends Service implements MusicPlayerListener {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
 
-        if(MY_TRACKS.equals(intent.getAction())) {
+        if (MY_TRACKS.equals(intent.getAction())) {
             ArrayList<MusicTrackPOJO> arrayList = intent.getParcelableArrayListExtra(MY_TRACKS);
-            Log.i("MY_TRACKS length = ", ""+ arrayList.size());
-            musicPlayer.setPlayList(arrayList,0);
+            Log.i("MY_TRACKS length = ", "" + arrayList.size());
+            musicPlayer.setPlayList(arrayList, 0);
             musicPlayer.setCurrentTrackPosition(0);
         }
 
-        return(START_NOT_STICKY);
+        return (START_NOT_STICKY);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class MusicPlayerService extends Service implements MusicPlayerListener {
         return null;
     }
 
-    public void play(){
+    public void play() {
         try {
             musicPlayer.play();
         } catch (IOException e) {
@@ -66,34 +66,37 @@ public class MusicPlayerService extends Service implements MusicPlayerListener {
         musicPlayer.pause();
     }
 
-    public void registerMyBroadcastReceiver(){
+    public void registerMyBroadcastReceiver() {
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
 
-                if(action.equalsIgnoreCase("com.example.app.ACTION_PLAY")) {
+                if (action.equalsIgnoreCase("com.example.app.ACTION_PLAY")) {
                     play();
                     nPanel.updateToPlay(true);
-                }else if(action.equalsIgnoreCase("com.example.app.ACTION_PAUSE")) {
+                    seekBarProgressUpdater();
+                } else if (action.equalsIgnoreCase("com.example.app.ACTION_PAUSE")) {
                     pause();
                     nPanel.updateToPlay(false);
-                }else if(action.equalsIgnoreCase("com.example.app.ACTION_BACK")){
+                } else if (action.equalsIgnoreCase("com.example.app.ACTION_BACK")) {
                     try {
                         musicPlayer.previousTrack();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                }else if(action.equalsIgnoreCase("com.example.app.ACTION_NEXT")) {
+                } else if (action.equalsIgnoreCase("com.example.app.ACTION_NEXT")) {
                     Log.i("Action : ", "Close");
                     try {
                         musicPlayer.nextTrack();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                }
-                else if(action.equalsIgnoreCase("com.example.app.ACTION_UPDATE_TRACK")) {
+                } else if (action.equalsIgnoreCase("com.example.app.ACTION_UPDATE_TRACK")) {
                     onCurrentTrackChanged(musicPlayer.getCurrentTrack());
+                } else if (action.equalsIgnoreCase("com.example.app.ACTION_TIME_CHANGED")) {
+                    int time = intent.getExtras().getInt("CurrentTrackTime");
+                    musicPlayer.setCurrentTrackTime(time);
                 }
             }
         };
@@ -106,8 +109,23 @@ public class MusicPlayerService extends Service implements MusicPlayerListener {
         intentFilter.addAction("com.example.app.ACTION_BACK");
         intentFilter.addAction("com.example.app.ACTION_NEXT");
         intentFilter.addAction("com.example.app.ACTION_UPDATE_TRACK");
+        intentFilter.addAction("com.example.app.ACTION_TIME_CHANGED");
         // register the receiver
         registerReceiver(broadcastReceiver, intentFilter);
+    }
+
+    private void seekBarProgressUpdater() {
+        Intent in = new Intent("com.example.app.ACTION_TRACK_PROGRESS");
+        in.putExtra("currentTrackTime", musicPlayer.getCurrentTrackTime());
+        sendBroadcast(in);
+        if (musicPlayer.isPlaying()) {
+            Runnable notification = new Runnable() {
+                public void run() {
+                    seekBarProgressUpdater();
+                }
+            };
+            handler.postDelayed(notification, 1000);
+        }
     }
 
     @Override
@@ -117,16 +135,20 @@ public class MusicPlayerService extends Service implements MusicPlayerListener {
 
     @Override
     public void onPlayerTrackUpdating(int percent) {
-        Intent in = new Intent("com.example.app.ACTION_TRACK_PROGRESS");
-        in.putExtra("percent",percent);
+        Intent in = new Intent("com.example.app.ACTION_LOADING_PROGRESS");
+        in.putExtra("percent", percent);
         sendBroadcast(in);
+        Log.d("SeekBar", "sending" + percent);
     }
 
     @Override
     public void onCurrentTrackChanged(MusicTrackPOJO musicTrack) {
+
         Intent in = new Intent("com.example.app.ACTION_TRACK_CHANGED");
-        in.putExtra("CurrentTrackTime",musicPlayer.getCurrentTrackTime());
-        in.putExtra("musicTrack",musicTrack);
+        in.putExtra("CurrentTrackTime", musicPlayer.getCurrentTrackTime());
+        in.putExtra("musicTrack", musicTrack);
         sendBroadcast(in);
     }
+
+
 }

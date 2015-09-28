@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -108,8 +109,8 @@ public class MainActivity extends AppCompatActivity implements
         sendBroadcast(playIntent);
     }
 
-    private void playMusicUIAction(){
-        fabPlayPause.setImageDrawable(getResources().getDrawable(R.mipmap.pause));
+    private void playMusicUIAction() {
+        fabPlayPause.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.mipmap.pause));
     }
 
     public void pauseMusic() {
@@ -118,8 +119,8 @@ public class MainActivity extends AppCompatActivity implements
         sendBroadcast(pauseIntent);
     }
 
-    private void pauseMusicUIAction(){
-        fabPlayPause.setImageDrawable(getResources().getDrawable(R.mipmap.play));
+    private void pauseMusicUIAction() {
+        fabPlayPause.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.mipmap.play));
     }
 
     public void setTranslations(float k) {
@@ -149,11 +150,10 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     /**
-     *
      * TRACK DATA LOADER START
      *
      * @param query text from search field
-     * @param from from track with that number we will load new ones
+     * @param from  from track with that number we will load new ones
      * @param count how many tracks will be returned in response
      */
     @Override
@@ -173,20 +173,20 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void setTracksLoadingListener(TracksLoaderListener tracksLoaderListener) {
-       //dataLoadingCallbackForUI = tracksLoaderListener;
+        //dataLoadingCallbackForUI = tracksLoaderListener;
     }
 
     // TracksDataLoader callbacks methods-----------
     @Override
     public void tracksLoaded(ArrayList<MusicTrackPOJO> newTracks, int source) {
         //Starting service on track loaded
-        Intent i=new Intent(this, MusicPlayerService.class);
+        Intent i = new Intent(this, MusicPlayerService.class);
 
-        switch (source){
+        switch (source) {
             case TracksLoaderInterface.MY_TRACKS:
                 myTracksPlaylist.addAll(newTracks);
                 i.setAction("MY_TRACKS");
-                i.putParcelableArrayListExtra("MY_TRACKS",newTracks);
+                i.putParcelableArrayListExtra("MY_TRACKS", newTracks);
                 startService(i);
                 mainFragment.setupViewPager();
                 break;
@@ -202,7 +202,6 @@ public class MainActivity extends AppCompatActivity implements
         }
 
 
-
     }
 
     @Override
@@ -213,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void uploadMore(int source) {
-        switch (source){
+        switch (source) {
             case TracksLoaderInterface.MY_TRACKS:
                 getTracksByUserId(AppState.getLoggedUser().getUserId(), myTracksPlaylist.size(), AppState.TRACKS_PER_LOADING);
                 break;
@@ -234,23 +233,23 @@ public class MainActivity extends AppCompatActivity implements
         return null;
     }
 
-    public void registerMyBroadcastReceiver(){
+    public void registerMyBroadcastReceiver() {
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
 
-                if(action.equalsIgnoreCase("com.example.app.ACTION_PLAY")) {
+                if (action.equalsIgnoreCase("com.example.app.ACTION_PLAY")) {
                     isPlaying = true;
                     playMusicUIAction();
-                }else if(action.equalsIgnoreCase("com.example.app.ACTION_PAUSE")) {
+                } else if (action.equalsIgnoreCase("com.example.app.ACTION_PAUSE")) {
                     isPlaying = false;
                     pauseMusicUIAction();
-                }else if(action.equalsIgnoreCase("com.example.app.ACTION_BACK")){
+                } else if (action.equalsIgnoreCase("com.example.app.ACTION_BACK")) {
 
-                }else if(action.equalsIgnoreCase("com.example.app.ACTION_NEXT")) {
+                } else if (action.equalsIgnoreCase("com.example.app.ACTION_NEXT")) {
 
-                }else if(action.equalsIgnoreCase("com.example.app.ACTION_TRACK_CHANGED")) {
+                } else if (action.equalsIgnoreCase("com.example.app.ACTION_TRACK_CHANGED")) {
                     MusicTrackPOJO musicTrack = intent.getParcelableExtra("musicTrack");
                     int time = intent.getExtras().getInt("CurrentTrackTime");
                     mainFragment.setCurrentTrack(musicTrack);
@@ -258,9 +257,13 @@ public class MainActivity extends AppCompatActivity implements
                     mainFragment.getSeekBar().setProgress((int) (((float) time / mainFragment.getMediaFileLengthInMilliseconds()) * 100)); // This math construction give a percentage of "was playing"/"song length"
                     if (time == 0)
                         mainFragment.getSeekBar().setProgress(0);
-                }else if(action.equalsIgnoreCase("com.example.app.ACTION_TRACK_PROGRESS")) {
+                } else if (action.equalsIgnoreCase("com.example.app.ACTION_LOADING_PROGRESS")) {
                     int percent = intent.getExtras().getInt("percent");
                     mainFragment.getSeekBar().setSecondaryProgress(percent);
+                    Log.d("SeekBar", "receiving" + percent);
+                } else if (action.equalsIgnoreCase("com.example.app.ACTION_TRACK_PROGRESS")) {
+                    int trackTime = intent.getExtras().getInt("currentTrackTime");
+                    mainFragment.updateSeekBarAndTextViews(trackTime);
                 }
             }
         };
@@ -273,6 +276,7 @@ public class MainActivity extends AppCompatActivity implements
         intentFilter.addAction("com.example.app.ACTION_BACK");
         intentFilter.addAction("com.example.app.ACTION_NEXT");
         intentFilter.addAction("com.example.app.ACTION_TRACK_CHANGED");
+        intentFilter.addAction("com.example.app.ACTION_LOADING_PROGRESS");
         intentFilter.addAction("com.example.app.ACTION_TRACK_PROGRESS");
 
         // register the receiver

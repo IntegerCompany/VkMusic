@@ -9,9 +9,6 @@ import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKAccessTokenTracker;
 import com.vk.sdk.VKSdk;
 
-/**
- * Created by Andriy on 9/17/2015.
- */
 public class VkMusicApplication extends Application {
 
     private VKAccessTokenTracker vkAccessTokenTracker = new VKAccessTokenTracker() {
@@ -32,7 +29,7 @@ public class VkMusicApplication extends Application {
         AppState.setupAppState(this);
     }
 
-    private void startMainActivity(){
+    private void startMainActivity() {
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);

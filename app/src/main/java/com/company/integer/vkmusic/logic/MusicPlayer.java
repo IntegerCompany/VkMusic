@@ -1,6 +1,5 @@
 package com.company.integer.vkmusic.logic;
 
-import android.content.Intent;
 import android.media.MediaPlayer;
 import android.util.Log;
 
@@ -11,9 +10,6 @@ import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
 import java.io.IOException;
 import java.util.ArrayList;
 
-/**
- * Created by Andriy on 9/18/2015.
- */
 public class MusicPlayer implements MusicPlayerInterface {
     private final String LOG_TAG = "Music Player";
 
@@ -25,12 +21,12 @@ public class MusicPlayer implements MusicPlayerInterface {
     private int currentTrackPosition = 0;
     private int currentTrackTime = 0;
 
-    public MusicPlayer(){
+    public MusicPlayer() {
         player = new MediaPlayer();
         player.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
             @Override
             public void onBufferingUpdate(MediaPlayer mp, int percent) {
-
+                musicPlayerListener.onPlayerTrackUpdating(percent);
             }
         });
 
@@ -143,6 +139,7 @@ public class MusicPlayer implements MusicPlayerInterface {
     }
 
     private MusicTrackPOJO cachedMusicTrack = new MusicTrackPOJO();
+
     private void playCurrentTrack() throws IOException {
         if (!cachedMusicTrack.equals(currentTrack)) {
             player.reset();

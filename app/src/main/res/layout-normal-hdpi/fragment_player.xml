@@ -9,7 +9,8 @@
     android:clickable="true"
     android:paddingRight="0dp"
     android:paddingLeft="0dp"
-    android:paddingTop="0dp">
+    android:paddingTop="0dp"
+    >
 
     <include
         layout="@layout/player_line"
@@ -41,13 +42,15 @@
         android:layout_height="wrap_content"
         android:id="@+id/seekBar"
         android:layout_alignParentBottom="false"
-        android:layout_above="@+id/tv_current_time" />
+        android:layout_above="@+id/tv_current_time_player"
+        android:max="99"
+        android:indeterminate="false" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="0:35"
-        android:id="@+id/tv_current_time"
+        android:text="0:00"
+        android:id="@+id/tv_current_time_player"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="16dp"

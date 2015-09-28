@@ -3,9 +3,6 @@ package com.company.integer.vkmusic.pojo;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-/**
- * Created by Andriy on 9/17/2015.
- */
 public class MusicTrackPOJO implements Parcelable {
 
     private String id;

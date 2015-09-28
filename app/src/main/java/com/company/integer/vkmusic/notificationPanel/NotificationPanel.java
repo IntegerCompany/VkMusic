@@ -10,9 +10,6 @@ import android.widget.RemoteViews;
 
 import com.company.integer.vkmusic.R;
 
-/**
- * Created by maxvitruk on 25.09.15.
- */
 public class NotificationPanel {
 
     private Context parent;
@@ -21,7 +18,7 @@ public class NotificationPanel {
     private RemoteViews remoteViewPlay;
     private RemoteViews remoteViewPause;
 
-    private boolean isPlaing = false;
+    private boolean isPlaying = false;
 
     public NotificationPanel(Context parent) {
         // TODO Auto-generated constructor stub
@@ -39,12 +36,12 @@ public class NotificationPanel {
         nBuilder.setContent(remoteViewPlay);
     }
 
-    public Notification getNotification(boolean play){
-        if(play){
+    public Notification getNotification(boolean play) {
+        if (play) {
             nBuilder.setContent(remoteViewPause);
             setListeners(remoteViewPause);
             return nBuilder.build();
-        }else {
+        } else {
             nBuilder.setContent(remoteViewPlay);
             setListeners(remoteViewPlay);
             return nBuilder.build();
@@ -52,7 +49,7 @@ public class NotificationPanel {
 
     }
 
-    public void setListeners(RemoteViews view){
+    public void setListeners(RemoteViews view) {
         //listener 1
         Intent playIntent = new Intent("com.example.app.ACTION_PLAY");
         PendingIntent pendingPlayIntent = PendingIntent.getBroadcast(parent, 100, playIntent, 0);
@@ -73,17 +70,17 @@ public class NotificationPanel {
 
     }
 
-    public void updateToPlay(boolean play){
+    public void updateToPlay(boolean play) {
         if (!play) {
             Notification mNotify = getNotification(false);
             mNotify.flags |= Notification.FLAG_ONGOING_EVENT;
-            nManager.notify(1337,mNotify);
-        }else {
+            nManager.notify(1337, mNotify);
+        } else {
             Notification mNotify = getNotification(true);
             mNotify.flags |= Notification.FLAG_ONGOING_EVENT;
-            nManager.notify(1337,mNotify);
+            nManager.notify(1337, mNotify);
         }
-        isPlaing = play;
+        isPlaying = play;
     }
 
     public void notificationCancel() {
