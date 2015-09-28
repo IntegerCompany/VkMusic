@@ -123,6 +123,12 @@ public class MainActivity extends AppCompatActivity implements
         fabPlayPause.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.mipmap.play));
     }
 
+    public void setPlayingTrack(int position){
+        Intent changePlayingTrackIntent = new Intent("com.example.app.ACTION_SET_TRACK");
+        changePlayingTrackIntent.putExtra("newTrackPosition", position);
+        sendBroadcast(changePlayingTrackIntent);
+    }
+
     public void setTranslations(float k) {
         Log.d("sliding :", "" + k);
         Display display = getWindowManager().getDefaultDisplay();

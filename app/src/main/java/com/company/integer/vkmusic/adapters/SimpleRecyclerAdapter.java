@@ -10,23 +10,21 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.company.integer.vkmusic.MainActivity;
 import com.company.integer.vkmusic.R;
-import com.company.integer.vkmusic.interfaces.MusicPlayerInterface;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
 
-import java.io.IOException;
 import java.util.List;
 
 
 public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAdapter.TrackViewHolder> {
     List<MusicTrackPOJO> tracks;
-    MusicPlayerInterface musicPlayer;
-    Context ctx;
+    MainActivity activity;
     ImageView lastTrackPlayPauseButton;
 
-    public SimpleRecyclerAdapter(List<MusicTrackPOJO> tracks, Context ctx) {
+    public SimpleRecyclerAdapter(List<MusicTrackPOJO> tracks, MainActivity activity) {
         this.tracks = tracks;
-        this.ctx = ctx;
+        this.activity = activity;
     }
 
     @Override
@@ -35,35 +33,32 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         return new TrackViewHolder(view);
     }
 
-
     @Override
     public void onBindViewHolder(final TrackViewHolder trackViewHolder, final int i) {
         trackViewHolder.author.setText(tracks.get(i).getArtist());
         trackViewHolder.title.setText(tracks.get(i).getTitle());
         trackViewHolder.duration.setText(getDurationString(tracks.get(i).getDuration()));
         if (1 == i) {
-            trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(ctx, R.mipmap.pause_item));
+            trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.pause_item));
         } else {
-            trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(ctx, R.mipmap.play_item));
+            trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.play_item));
         }
         trackViewHolder.playPause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if (trackViewHolder.playPause.getDrawable().getConstantState() == ContextCompat.getDrawable(ctx, R.mipmap.play_item).getConstantState()) {
-                    try {
-                        musicPlayer.setCurrentTrackPosition(i);
-                        musicPlayer.play();
-                        trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(ctx, R.mipmap.pause_item));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                if (trackViewHolder.playPause.getDrawable().getConstantState() == ContextCompat.getDrawable(activity, R.mipmap.play_item).getConstantState()) {
+
+                    activity.setPlayingTrack(i);
+                    activity.playMusic();
+                    trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.pause_item));
+
                 } else {
-                    musicPlayer.pause();
-                    trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(ctx, R.mipmap.play_item));
+                    activity.pauseMusic();
+                    trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.play_item));
                 }
-                if (lastTrackPlayPauseButton != null & !trackViewHolder.playPause.equals(lastTrackPlayPauseButton)) {
-                    lastTrackPlayPauseButton.setImageDrawable(ContextCompat.getDrawable(ctx, R.mipmap.play_item));
+                if (lastTrackPlayPauseButton != null & !trackViewHolder.playPause.equals(lastTrackPlayPauseButton)){
+                    lastTrackPlayPauseButton.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.play_item));
                 }
                 lastTrackPlayPauseButton = trackViewHolder.playPause;
             }

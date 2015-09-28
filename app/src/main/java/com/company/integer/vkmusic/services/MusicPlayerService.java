@@ -97,6 +97,8 @@ public class MusicPlayerService extends Service implements MusicPlayerListener {
                 } else if (action.equalsIgnoreCase("com.example.app.ACTION_TIME_CHANGED")) {
                     int time = intent.getExtras().getInt("CurrentTrackTime");
                     musicPlayer.setCurrentTrackTime(time);
+                }else if(action.equalsIgnoreCase("com.example.app.ACTION_SET_TRACK")){
+                    musicPlayer.setCurrentTrackPosition(intent.getIntExtra("newTrackPosition", 0));
                 }
             }
         };
@@ -110,6 +112,7 @@ public class MusicPlayerService extends Service implements MusicPlayerListener {
         intentFilter.addAction("com.example.app.ACTION_NEXT");
         intentFilter.addAction("com.example.app.ACTION_UPDATE_TRACK");
         intentFilter.addAction("com.example.app.ACTION_TIME_CHANGED");
+        intentFilter.addAction("com.example.app.ACTION_SET_TRACK");
         // register the receiver
         registerReceiver(broadcastReceiver, intentFilter);
     }
@@ -143,12 +146,9 @@ public class MusicPlayerService extends Service implements MusicPlayerListener {
 
     @Override
     public void onCurrentTrackChanged(MusicTrackPOJO musicTrack) {
-
         Intent in = new Intent("com.example.app.ACTION_TRACK_CHANGED");
         in.putExtra("CurrentTrackTime", musicPlayer.getCurrentTrackTime());
         in.putExtra("musicTrack", musicTrack);
         sendBroadcast(in);
     }
-
-
 }
