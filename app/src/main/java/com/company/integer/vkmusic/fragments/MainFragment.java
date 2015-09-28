@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -44,10 +45,12 @@ public class MainFragment extends Fragment {
     private ImageView ivClosePanel;
     private ImageView ivAlbumPhoto;
     private SeekBar seekBar;
+    private TextView tvNowPlaying;
     private ViewPager viewPager;
     private TabLayout tabLayout;
     private int mediaFileLengthInMilliseconds;
 
+    TabFragment myMusicFragment, recommendedFragment, savedFragment;
 
     public MainFragment() {
         // Required empty public constructor
@@ -60,6 +63,9 @@ public class MainFragment extends Fragment {
         // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_main, container, false);
+        myMusicFragment = new TabFragment();
+        recommendedFragment = new TabFragment();
+        savedFragment = new TabFragment();
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.app_bar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
@@ -154,37 +160,53 @@ public class MainFragment extends Fragment {
                                            }
 
         );
+        seekBar.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                SeekBar sb = (SeekBar) v;
+                int playPositionInMilliseconds = (mediaFileLengthInMilliseconds / 100) * sb.getProgress();
+                ((MainActivity) getActivity()).setCurrentTrackTime(playPositionInMilliseconds);
+                return false;
+            }
+        });
 
         return view;
     }
 
 
     public void setupViewPager() {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager());
-        adapter.addFrag(new TabFragment(), "My music");
-        adapter.addFrag(new TabFragment(), "Recommended");
-        adapter.addFrag(new TabFragment(), "Saved");
+        ViewPagerAdapter adapter = new ViewPagerAdapter(((AppCompatActivity) getActivity()).getSupportFragmentManager());
+
+        adapter.addFrag(myMusicFragment, "My music");
+        adapter.addFrag(recommendedFragment, "Recommended");
+        adapter.addFrag(savedFragment, "Saved");
         viewPager.setAdapter(adapter);
 
         tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(getContext(), R.color.primaryColorDark));
         tabLayout.setupWithViewPager(viewPager);
-    }
+    
+    
 
-    public SeekBar getSeekBar() {
-        return seekBar;
+    public void updateList() {
+        myMusicFragment.updateList();
     }
-
     public void updateSeekBarAndTextViews(int time) {
         seekBar.setProgress((int) (((float) time / mediaFileLengthInMilliseconds) * 100));
         tvCurrentTimePlayerLine.setText(getDurationString(time / 1000));
         tvCurrentTimePlayer.setText(getDurationString(time / 1000));
     }
 
-    public void setCurrentTrack(MusicTrackPOJO musicTrack) {
+    public SeekBar getSeekBar(){
+        return seekBar;
+    }
+
+    public void setCurrentTrack(MusicTrackPOJO musicTrack, int position){
         tvNameOfSongPlayerLine.setText(musicTrack.getTitle());
         tvNameOfSongFragment.setText(musicTrack.getTitle());
         tvAuthorPlayerLine.setText(musicTrack.getArtist());
         tvAuthorFragment.setText(musicTrack.getArtist());
+        myMusicFragment.setCurrentTrackPosition(position);
+
     }
 
     public void setMediaFileLengthInMilliseconds(int mediaFileLengthInMilliseconds) {

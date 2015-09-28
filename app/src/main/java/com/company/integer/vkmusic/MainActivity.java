@@ -129,6 +129,12 @@ public class MainActivity extends AppCompatActivity implements
         sendBroadcast(changePlayingTrackIntent);
     }
 
+    public void setCurrentTrackTime(int time){
+        Intent changeTrackTimeIntent = new Intent("com.example.app.ACTION_SET_TIME");
+        changeTrackTimeIntent.putExtra("trackTime", time);
+        sendBroadcast(changeTrackTimeIntent);
+    }
+
     public void setTranslations(float k) {
         Log.d("sliding :", "" + k);
         Display display = getWindowManager().getDefaultDisplay();
@@ -247,8 +253,10 @@ public class MainActivity extends AppCompatActivity implements
 
                 if (action.equalsIgnoreCase("com.example.app.ACTION_PLAY")) {
                     isPlaying = true;
+                    mainFragment.updateList();
                     playMusicUIAction();
-                } else if (action.equalsIgnoreCase("com.example.app.ACTION_PAUSE")) {
+                }else if(action.equalsIgnoreCase("com.example.app.ACTION_PAUSE")) {
+                    mainFragment.updateList();
                     isPlaying = false;
                     pauseMusicUIAction();
                 } else if (action.equalsIgnoreCase("com.example.app.ACTION_BACK")) {
@@ -258,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements
                 } else if (action.equalsIgnoreCase("com.example.app.ACTION_TRACK_CHANGED")) {
                     MusicTrackPOJO musicTrack = intent.getParcelableExtra("musicTrack");
                     int time = intent.getExtras().getInt("CurrentTrackTime");
-                    mainFragment.setCurrentTrack(musicTrack);
+                    mainFragment.setCurrentTrack(musicTrack, intent.getIntExtra("musicTrackPosition", 0));
                     mainFragment.setMediaFileLengthInMilliseconds(musicTrack.getDuration() * 1000);
                     mainFragment.getSeekBar().setProgress((int) (((float) time / mainFragment.getMediaFileLengthInMilliseconds()) * 100)); // This math construction give a percentage of "was playing"/"song length"
                     if (time == 0)
@@ -293,5 +301,9 @@ public class MainActivity extends AppCompatActivity implements
     protected void onPause() {
         super.onPause();
         unregisterReceiver(broadcastReceiver);
+    }
+
+    public boolean isPlaying() {
+        return isPlaying;
     }
 }
