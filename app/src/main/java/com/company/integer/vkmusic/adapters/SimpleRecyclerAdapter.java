@@ -1,7 +1,6 @@
 package com.company.integer.vkmusic.adapters;
 
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,23 +8,21 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.company.integer.vkmusic.MainActivity;
 import com.company.integer.vkmusic.R;
-import com.company.integer.vkmusic.interfaces.MusicPlayerInterface;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
 
-import java.io.IOException;
 import java.util.List;
 
 
 public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAdapter.TrackViewHolder> {
     List<MusicTrackPOJO> tracks;
-    MusicPlayerInterface musicPlayer;
-    Context ctx;
+    MainActivity activity;
     ImageView lastTrackPlayPauseButton;
 
-    public SimpleRecyclerAdapter( List<MusicTrackPOJO> tracks, Context ctx) {
+    public SimpleRecyclerAdapter(List<MusicTrackPOJO> tracks, MainActivity activity) {
         this.tracks = tracks;
-        this.ctx = ctx;
+        this.activity = activity;
     }
 
     @Override
@@ -43,28 +40,26 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         trackViewHolder.title.setText(tracks.get(i).getTitle());
         trackViewHolder.duration.setText(getDurationString(tracks.get(i).getDuration()));
         if(1 == i){
-            trackViewHolder.playPause.setImageDrawable(ctx.getResources().getDrawable(R.mipmap.pause_item));
+            trackViewHolder.playPause.setImageDrawable(activity.getResources().getDrawable(R.mipmap.pause_item));
         }else{
-            trackViewHolder.playPause.setImageDrawable(ctx.getResources().getDrawable(R.mipmap.play_item));
+            trackViewHolder.playPause.setImageDrawable(activity.getResources().getDrawable(R.mipmap.play_item));
         }
         trackViewHolder.playPause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if (trackViewHolder.playPause.getDrawable().getConstantState() == ctx.getResources().getDrawable(R.mipmap.play_item).getConstantState()) {
-                    try {
-                        musicPlayer.setCurrentTrackPosition(i);
-                        musicPlayer.play();
-                        trackViewHolder.playPause.setImageDrawable(ctx.getResources().getDrawable(R.mipmap.pause_item));
-                    } catch (IOException e) {
-                       e.printStackTrace();
-                    }
+                if (trackViewHolder.playPause.getDrawable().getConstantState() == activity.getResources().getDrawable(R.mipmap.play_item).getConstantState()) {
+
+                    activity.setPlayingTrack(i);
+                    activity.playMusic();
+                    trackViewHolder.playPause.setImageDrawable(activity.getResources().getDrawable(R.mipmap.pause_item));
+
                 } else {
-                    musicPlayer.pause();
-                    trackViewHolder.playPause.setImageDrawable(ctx.getResources().getDrawable(R.mipmap.play_item));
+                    activity.pauseMusic();
+                    trackViewHolder.playPause.setImageDrawable(activity.getResources().getDrawable(R.mipmap.play_item));
                 }
                 if (lastTrackPlayPauseButton != null & !trackViewHolder.playPause.equals(lastTrackPlayPauseButton)){
-                    lastTrackPlayPauseButton.setImageDrawable(ctx.getResources().getDrawable(R.mipmap.play_item));
+                    lastTrackPlayPauseButton.setImageDrawable(activity.getResources().getDrawable(R.mipmap.play_item));
                 }
                 lastTrackPlayPauseButton = trackViewHolder.playPause;
             }

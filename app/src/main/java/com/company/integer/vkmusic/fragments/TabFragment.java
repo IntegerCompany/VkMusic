@@ -7,15 +7,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 
 import com.company.integer.vkmusic.MainActivity;
 import com.company.integer.vkmusic.R;
 import com.company.integer.vkmusic.adapters.SimpleRecyclerAdapter;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
-import com.company.integer.vkmusic.supportclasses.VersionModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TabFragment extends Fragment {
@@ -37,7 +34,7 @@ public class TabFragment extends Fragment {
 
         List<MusicTrackPOJO> list = ((MainActivity) getActivity()).getPlaylist();
 
-        adapter = new SimpleRecyclerAdapter(list,getActivity());
+        adapter = new SimpleRecyclerAdapter(list,(MainActivity) getActivity());
         recyclerView.setAdapter(adapter);
 
         return view;
