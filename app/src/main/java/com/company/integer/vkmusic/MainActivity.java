@@ -122,6 +122,12 @@ public class MainActivity extends AppCompatActivity implements
         fabPlayPause.setImageDrawable(getResources().getDrawable(R.mipmap.play));
     }
 
+    public void setPlayingTrack(int position){
+        Intent changePlayingTrackIntent = new Intent("com.example.app.ACTION_SET_TRACK");
+        changePlayingTrackIntent.putExtra("newTrackPosition", position);
+        sendBroadcast(changePlayingTrackIntent);
+    }
+
     public void setTranslations(float k) {
         Log.d("sliding :", "" + k);
         Display display = getWindowManager().getDefaultDisplay();
@@ -186,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements
             case TracksLoaderInterface.MY_TRACKS:
                 myTracksPlaylist.addAll(newTracks);
                 i.setAction("MY_TRACKS");
-                i.putParcelableArrayListExtra("MY_TRACKS",newTracks);
+                i.putParcelableArrayListExtra("MY_TRACKS", newTracks);
                 startService(i);
                 mainFragment.setupViewPager();
                 break;
