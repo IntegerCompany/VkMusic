@@ -1,6 +1,5 @@
 package com.company.integer.vkmusic.logic;
 
-import android.content.Intent;
 import android.media.MediaPlayer;
 import android.util.Log;
 
@@ -80,7 +79,7 @@ public class MusicPlayer implements MusicPlayerInterface {
         currentTrackTime = 0;
         currentTrack = playlist.get(currentTrackPosition);
         musicPlayerListener.onCurrentTrackChanged(currentTrack);
-        playCurrentTrack();
+        if (isPlaying()) playCurrentTrack();
         return true;
     }
 
@@ -92,7 +91,7 @@ public class MusicPlayer implements MusicPlayerInterface {
         currentTrackTime = 0;
         currentTrack = playlist.get(currentTrackPosition);
         musicPlayerListener.onCurrentTrackChanged(currentTrack);
-        playCurrentTrack();
+        if (isPlaying()) playCurrentTrack();
         return true;
     }
 
