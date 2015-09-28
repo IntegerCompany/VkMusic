@@ -18,6 +18,7 @@ import java.util.List;
 public class TabFragment extends Fragment {
 
     SimpleRecyclerAdapter adapter;
+    List<MusicTrackPOJO> list;
 
     public TabFragment() {
     }
@@ -32,11 +33,28 @@ public class TabFragment extends Fragment {
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
 
-        List<MusicTrackPOJO> list = ((MainActivity) getActivity()).getPlaylist();
+        list = ((MainActivity) getActivity()).getPlaylist();
 
         adapter = new SimpleRecyclerAdapter(list,(MainActivity) getActivity());
         recyclerView.setAdapter(adapter);
 
         return view;
     }
+
+    public void updateList(){
+        adapter.notifyDataSetChanged();
+    }
+
+    public void nextTrack(){
+        adapter.nextTrack();
+    }
+
+    public void previousTrack(){
+        adapter.previousTrack();
+    }
+
+    public void setCurrentTrackPosition(int position){
+        adapter.setCurrentTrackPosition(position);
+    }
+
 }
