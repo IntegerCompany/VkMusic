@@ -1,8 +1,6 @@
 package com.company.integer.vkmusic.adapters;
 
 
-import android.content.Context;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -53,10 +51,14 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
                 notifyDataSetChanged();
             }
         });
-        if (currentTrackPosition == i & activity.isPlaying()){
-            trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.pause_item));
+        if (currentTrackPosition == i){
+            if (activity.isPlaying()) {
+                trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.pause_item));
+            }
+            trackViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(activity, R.color.primaryColorDark));
         }else{
             trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.play_item));
+            trackViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(activity, R.color.listViewItemBackground));
         }
 //        if (trackViewHolder.playPause.getDrawable().getConstantState() == ContextCompat.getDrawable(activity, R.mipmap.play_item).getConstantState()) {
 //            activity.setPlayingTrack(i);
