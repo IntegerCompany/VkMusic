@@ -12,6 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.company.integer.vkmusic.fragments.MainFragment;
@@ -21,6 +23,7 @@ import com.company.integer.vkmusic.logic.TracksDataLoader;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
 import com.company.integer.vkmusic.services.MusicPlayerService;
 import com.company.integer.vkmusic.supportclasses.AppState;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
 
@@ -96,8 +99,8 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
-        if (getSupportFragmentManager().getBackStackEntryCount() != 0) {
-            getSupportFragmentManager().popBackStack();
+        if (mainFragment.getSlidingUpPanelLayoutPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
+            mainFragment.setSlidingUpPanelLayoutPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
         } else {
             super.onBackPressed();
         }
@@ -123,16 +126,10 @@ public class MainActivity extends AppCompatActivity implements
         fabPlayPause.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.mipmap.play));
     }
 
-    public void setPlayingTrack(int position){
+    public void setPlayingTrack(int position) {
         Intent changePlayingTrackIntent = new Intent("com.example.app.ACTION_SET_TRACK");
         changePlayingTrackIntent.putExtra("newTrackPosition", position);
         sendBroadcast(changePlayingTrackIntent);
-    }
-
-    public void setCurrentTrackTime(int time){
-        Intent changeTrackTimeIntent = new Intent("com.example.app.ACTION_SET_TIME");
-        changeTrackTimeIntent.putExtra("trackTime", time);
-        sendBroadcast(changeTrackTimeIntent);
     }
 
     public void setTranslations(float k) {
@@ -255,7 +252,7 @@ public class MainActivity extends AppCompatActivity implements
                     isPlaying = true;
                     mainFragment.updateList();
                     playMusicUIAction();
-                }else if(action.equalsIgnoreCase("com.example.app.ACTION_PAUSE")) {
+                } else if (action.equalsIgnoreCase("com.example.app.ACTION_PAUSE")) {
                     mainFragment.updateList();
                     isPlaying = false;
                     pauseMusicUIAction();
@@ -301,6 +298,30 @@ public class MainActivity extends AppCompatActivity implements
     protected void onPause() {
         super.onPause();
         unregisterReceiver(broadcastReceiver);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        //todo add logic to options
+        switch (item.getItemId()) {
+            case R.id.action_my_music:
+                return true;
+            case R.id.action_friends:
+                return true;
+            case R.id.action_group:
+                return true;
+            case R.id.action_settings:
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     public boolean isPlaying() {
