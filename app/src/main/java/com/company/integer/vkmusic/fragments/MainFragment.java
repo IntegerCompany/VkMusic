@@ -17,7 +17,6 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -59,6 +58,7 @@ public class MainFragment extends Fragment {
     private TabLayout tabLayout;
     private SearchView etSearchText;
     private int mediaFileLengthInMilliseconds;
+    private SlidingUpPanelLayout slidingUpPanelLayout;
     private View view;
 
     TabFragment myMusicFragment, recommendedFragment, savedFragment;
@@ -82,8 +82,11 @@ public class MainFragment extends Fragment {
         savedFragment.setupWith(((MainActivity) getActivity()).getSavedPlaylist());
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.app_bar);
+        toolbar.setTitle("");
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         etSearchText = (SearchView) toolbar.findViewById(R.id.search_text);
+        toolbar.setLogo(ContextCompat.getDrawable(getContext(), R.mipmap.ic_launcher));
+
 
         fabAdd = (FloatingActionButton) view.findViewById(R.id.fab_add);
         fabDownload = (FloatingActionButton) view.findViewById(R.id.fab_download);
@@ -186,6 +189,16 @@ public class MainFragment extends Fragment {
 
             }
 
+                                               @Override
+                                               public void onStopTrackingTouch(SeekBar seekBar) {
+                                                   int playPositionInMilliseconds = (mediaFileLengthInMilliseconds / 100) * seekBar.getProgress();
+                                                   Intent in = new Intent("com.example.app.ACTION_TIME_CHANGED");
+                                                   in.putExtra("CurrentTrackTime", playPositionInMilliseconds);
+                                                   getActivity().sendBroadcast(in);
+                                               }
+                                           }
+
+        );
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 int playPositionInMillisecconds = (mediaFileLengthInMilliseconds / 100) * seekBar.getProgress();
@@ -194,15 +207,7 @@ public class MainFragment extends Fragment {
                 getActivity().sendBroadcast(in);
             }
         });
-        seekBar.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                SeekBar sb = (SeekBar) v;
-                int playPositionInMilliseconds = (mediaFileLengthInMilliseconds / 100) * sb.getProgress();
-                ((MainActivity) getActivity()).setCurrentTrackTime(playPositionInMilliseconds);
-                return false;
-            }
-        });
+        
         etSearchText.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -238,9 +243,17 @@ public class MainFragment extends Fragment {
         return view;
     }
 
+    public SlidingUpPanelLayout.PanelState getSlidingUpPanelLayoutPanelState() {
+        return slidingUpPanelLayout.getPanelState();
+    }
+
+    public void setSlidingUpPanelLayoutPanelState(SlidingUpPanelLayout.PanelState state) {
+        slidingUpPanelLayout.setPanelState(state);
+    }
+
 
     public void setupViewPager() {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(((AppCompatActivity) getActivity()).getSupportFragmentManager());
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager());
 
         adapter.addFrag(myMusicFragment, "My music");
         adapter.addFrag(recommendedFragment, "Recommended");
@@ -255,17 +268,18 @@ public class MainFragment extends Fragment {
     public void updateList() {
         myMusicFragment.updateList();
     }
+
     public void updateSeekBarAndTextViews(int time) {
         seekBar.setProgress((int) (((float) time / mediaFileLengthInMilliseconds) * 100));
         tvCurrentTimePlayerLine.setText(getDurationString(time / 1000));
         tvCurrentTimePlayer.setText(getDurationString(time / 1000));
     }
 
-    public SeekBar getSeekBar(){
+    public SeekBar getSeekBar() {
         return seekBar;
     }
 
-    public void setCurrentTrack(MusicTrackPOJO musicTrack, int position){
+    public void setCurrentTrack(MusicTrackPOJO musicTrack, int position) {
         tvNameOfSongPlayerLine.setText(musicTrack.getTitle());
         tvNameOfSongFragment.setText(musicTrack.getTitle());
         tvAuthorPlayerLine.setText(musicTrack.getArtist());
@@ -298,4 +312,5 @@ public class MainFragment extends Fragment {
         adapter = new SimpleRecyclerAdapter(searchPlaylist,(MainActivity) getActivity());
         recyclerView.setAdapter(adapter);
     }
+
 }

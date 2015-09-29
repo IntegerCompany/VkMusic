@@ -51,10 +51,14 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
                 notifyDataSetChanged();
             }
         });
-        if (currentTrackPosition == i & activity.isPlaying()){
-            trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.pause_item));
+        if (currentTrackPosition == i){
+            if (activity.isPlaying()) {
+                trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.pause_item));
+            }
+            trackViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(activity, R.color.primaryColorDark));
         }else{
             trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.play_item));
+            trackViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(activity, R.color.listViewItemBackground));
         }
 
     }
