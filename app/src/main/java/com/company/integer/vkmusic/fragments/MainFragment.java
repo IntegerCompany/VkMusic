@@ -189,25 +189,16 @@ public class MainFragment extends Fragment {
 
             }
 
-                                               @Override
-                                               public void onStopTrackingTouch(SeekBar seekBar) {
-                                                   int playPositionInMilliseconds = (mediaFileLengthInMilliseconds / 100) * seekBar.getProgress();
-                                                   Intent in = new Intent("com.example.app.ACTION_TIME_CHANGED");
-                                                   in.putExtra("CurrentTrackTime", playPositionInMilliseconds);
-                                                   getActivity().sendBroadcast(in);
-                                               }
-                                           }
-
-        );
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                int playPositionInMillisecconds = (mediaFileLengthInMilliseconds / 100) * seekBar.getProgress();
+                int playPositionInMilliseconds = (mediaFileLengthInMilliseconds / 100) * seekBar.getProgress();
                 Intent in = new Intent("com.example.app.ACTION_TIME_CHANGED");
-                in.putExtra("CurrentTrackTime", playPositionInMillisecconds);
+                in.putExtra("CurrentTrackTime", playPositionInMilliseconds);
                 getActivity().sendBroadcast(in);
             }
+
         });
-        
+
         etSearchText.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
