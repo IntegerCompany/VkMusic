@@ -84,9 +84,7 @@ public class MainFragment extends Fragment {
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.app_bar);
         toolbar.setTitle("");
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-        etSearchText = (SearchView) toolbar.findViewById(R.id.search_text);
         toolbar.setLogo(ContextCompat.getDrawable(getContext(), R.mipmap.ic_launcher));
-
 
         fabAdd = (FloatingActionButton) view.findViewById(R.id.fab_add);
         fabDownload = (FloatingActionButton) view.findViewById(R.id.fab_download);
@@ -127,9 +125,7 @@ public class MainFragment extends Fragment {
             }
         });
 
-
-
-        SlidingUpPanelLayout slidingUpPanelLayout = (SlidingUpPanelLayout) view.findViewById(R.id.sliding_up_panel);
+        slidingUpPanelLayout = (SlidingUpPanelLayout) view.findViewById(R.id.sliding_up_panel);
         slidingUpPanelLayout.setDragView(playerLine);
         slidingUpPanelLayout.setPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
             @Override
@@ -199,36 +195,6 @@ public class MainFragment extends Fragment {
 
         });
 
-        etSearchText.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                ((MainActivity) getActivity()).getSearchPlaylist().clear();
-                updateList();
-                ((MainActivity) getActivity()).search(etSearchText.getQuery().toString(), 0, 10);
-                viewPager.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.VISIBLE);
-
-
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-        etSearchText.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                ((MainActivity) getActivity()).setCurrentPlaylist(TracksLoaderInterface.MY_TRACKS);
-                viewPager.setVisibility(View.VISIBLE);
-                recyclerView.setVisibility(View.GONE);
-                return false;
-            }
-        });
-
 
 
         return view;
@@ -259,7 +225,7 @@ public class MainFragment extends Fragment {
     public void updateList() {
         myMusicFragment.updateList();
     }
-
+    
     public void updateSeekBarAndTextViews(int time) {
         seekBar.setProgress((int) (((float) time / mediaFileLengthInMilliseconds) * 100));
         tvCurrentTimePlayerLine.setText(getDurationString(time / 1000));
@@ -276,7 +242,6 @@ public class MainFragment extends Fragment {
         tvAuthorPlayerLine.setText(musicTrack.getArtist());
         tvAuthorFragment.setText(musicTrack.getArtist());
         myMusicFragment.setCurrentTrackPosition(position);
-
     }
 
     public void setMediaFileLengthInMilliseconds(int mediaFileLengthInMilliseconds) {
@@ -297,11 +262,19 @@ public class MainFragment extends Fragment {
         }
     }
 
-
     public void searchCompleted(ArrayList<MusicTrackPOJO> searchPlaylist) {
         ((MainActivity) getActivity()).setCurrentPlaylist(TracksLoaderInterface.SEARCH);
         adapter = new SimpleRecyclerAdapter(searchPlaylist,(MainActivity) getActivity());
         recyclerView.setAdapter(adapter);
     }
 
+    public void makeSearchUIActions(boolean isSearch){
+        if(isSearch){
+            viewPager.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+        }else{
+            viewPager.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+        }
+    }
 }

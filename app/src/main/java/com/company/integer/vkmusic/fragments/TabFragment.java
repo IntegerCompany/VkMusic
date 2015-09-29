@@ -55,7 +55,9 @@ public class TabFragment extends Fragment {
     }
 
     public void setCurrentTrackPosition(int position){
-        adapter.setCurrentTrackPosition(position);
+        if(adapter!=null){
+            adapter.setCurrentTrackPosition(position);
+        }
     }
 
 }

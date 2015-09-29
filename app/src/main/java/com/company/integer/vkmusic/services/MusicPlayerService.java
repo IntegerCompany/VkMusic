@@ -24,6 +24,7 @@ public class MusicPlayerService extends Service implements MusicPlayerListener {
     private MusicPlayer musicPlayer = new MusicPlayer();
     private NotificationPanel nPanel;
     private Handler handler = new Handler();
+    private boolean isAlreadyCreated;
 
     @Override
     public void onCreate() {
@@ -31,6 +32,7 @@ public class MusicPlayerService extends Service implements MusicPlayerListener {
         registerMyBroadcastReceiver();
         nPanel = new NotificationPanel(this);
         musicPlayer.setMusicPlayerListener(this);
+        isAlreadyCreated = true;
     }
 
     @Override
@@ -40,8 +42,11 @@ public class MusicPlayerService extends Service implements MusicPlayerListener {
         if (MY_TRACKS.equals(intent.getAction())) {
             ArrayList<MusicTrackPOJO> arrayList = intent.getParcelableArrayListExtra(MY_TRACKS);
             Log.i("MY_TRACKS length = ", "" + arrayList.size());
-            musicPlayer.setPlayList(arrayList, 0);
-            musicPlayer.setCurrentTrackPosition(0);
+            int currentTrackPosition = 0;
+            if(isAlreadyCreated){
+                currentTrackPosition = musicPlayer.getCurrentTrackPosition();
+            }
+            musicPlayer.setPlayList(arrayList, currentTrackPosition);
         }
 
         return (START_NOT_STICKY);
@@ -154,6 +159,7 @@ public class MusicPlayerService extends Service implements MusicPlayerListener {
         in.putExtra("CurrentTrackTime",musicPlayer.getCurrentTrackTime());
         in.putExtra("musicTrack",musicTrack);
         in.putExtra("musicTrackPosition", musicPlayer.getCurrentTrackPosition());
+        in.putExtra("isPlaying",musicPlayer.isPlaying());
         sendBroadcast(in);
     }
 }
