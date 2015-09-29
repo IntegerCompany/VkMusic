@@ -32,13 +32,14 @@ public class TabFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity().getBaseContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
-
-        list = ((MainActivity) getActivity()).getPlaylist();
-
         adapter = new SimpleRecyclerAdapter(list,(MainActivity) getActivity());
         recyclerView.setAdapter(adapter);
 
         return view;
+    }
+
+    public void setupWith(List<MusicTrackPOJO> list){
+        this.list = list;
     }
 
     public void updateList(){

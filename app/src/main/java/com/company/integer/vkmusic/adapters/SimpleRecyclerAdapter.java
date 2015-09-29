@@ -1,8 +1,6 @@
 package com.company.integer.vkmusic.adapters;
 
 
-import android.content.Context;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,7 +20,6 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     List<MusicTrackPOJO> tracks;
     MainActivity activity;
     int currentTrackPosition = 0;
-    ImageView lastTrackPlayPauseButton;
 
     public SimpleRecyclerAdapter(List<MusicTrackPOJO> tracks, MainActivity activity) {
         this.tracks = tracks;
@@ -38,6 +35,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     @Override
     public void onBindViewHolder(final TrackViewHolder trackViewHolder, final int i) {
         trackViewHolder.author.setText(tracks.get(i).getArtist());
+
         trackViewHolder.title.setText(tracks.get(i).getTitle());
         trackViewHolder.duration.setText(getDurationString(tracks.get(i).getDuration()));
         trackViewHolder.playPause.setOnClickListener(new View.OnClickListener() {
@@ -58,19 +56,6 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         }else{
             trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.play_item));
         }
-//        if (trackViewHolder.playPause.getDrawable().getConstantState() == ContextCompat.getDrawable(activity, R.mipmap.play_item).getConstantState()) {
-//            activity.setPlayingTrack(i);
-//            activity.playMusic();
-//            trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.pause_item));
-//
-//        } else {
-//            activity.pauseMusic();
-//            trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.play_item));
-//        }
-//        if (lastTrackPlayPauseButton != null & !trackViewHolder.playPause.equals(lastTrackPlayPauseButton)){
-//            lastTrackPlayPauseButton.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.play_item));
-//        }
-//        lastTrackPlayPauseButton = trackViewHolder.playPause;
 
     }
 
