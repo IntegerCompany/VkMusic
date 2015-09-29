@@ -1,9 +1,9 @@
 package com.company.integer.vkmusic.pojo;
 
-/**
- * Created by Andriy on 9/17/2015.
- */
-public class MusicTrackPOJO {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class MusicTrackPOJO implements Parcelable {
 
     private String id;
     private String ownerId;
@@ -14,6 +14,34 @@ public class MusicTrackPOJO {
     private int genreId;
     private long date;
     private long lyricsId;
+
+    public MusicTrackPOJO(Parcel in) {
+        id = in.readString();
+        ownerId = in.readString();
+        artist = in.readString();
+        title = in.readString();
+        url = in.readString();
+        duration = in.readInt();
+        genreId = in.readInt();
+        date = in.readLong();
+        lyricsId = in.readLong();
+    }
+
+    public MusicTrackPOJO(){
+
+    }
+
+    public static final Creator<MusicTrackPOJO> CREATOR = new Creator<MusicTrackPOJO>() {
+        @Override
+        public MusicTrackPOJO createFromParcel(Parcel in) {
+            return new MusicTrackPOJO(in);
+        }
+
+        @Override
+        public MusicTrackPOJO[] newArray(int size) {
+            return new MusicTrackPOJO[size];
+        }
+    };
 
     public String getId() {
         return id;
@@ -85,5 +113,23 @@ public class MusicTrackPOJO {
 
     public void setLyricsId(long lyricsId) {
         this.lyricsId = lyricsId;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(ownerId);
+        dest.writeString(artist);
+        dest.writeString(title);
+        dest.writeString(url);
+        dest.writeInt(duration);
+        dest.writeInt(genreId);
+        dest.writeLong(date);
+        dest.writeLong(lyricsId);
     }
 }

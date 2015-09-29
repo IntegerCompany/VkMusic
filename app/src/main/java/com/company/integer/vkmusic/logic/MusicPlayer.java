@@ -10,9 +10,6 @@ import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
 import java.io.IOException;
 import java.util.ArrayList;
 
-/**
- * Created by Andriy on 9/18/2015.
- */
 public class MusicPlayer implements MusicPlayerInterface {
     private final String LOG_TAG = "Music Player";
 
@@ -24,7 +21,7 @@ public class MusicPlayer implements MusicPlayerInterface {
     private int currentTrackPosition = 0;
     private int currentTrackTime = 0;
 
-    public MusicPlayer(){
+    public MusicPlayer() {
         player = new MediaPlayer();
         player.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
             @Override
@@ -32,7 +29,6 @@ public class MusicPlayer implements MusicPlayerInterface {
                 musicPlayerListener.onPlayerTrackUpdating(percent);
             }
         });
-
     }
 
     @Override
@@ -49,12 +45,13 @@ public class MusicPlayer implements MusicPlayerInterface {
 
     @Override
     public void setPlayList(ArrayList<MusicTrackPOJO> tracks, int position) {
+        player.reset();
         playlist = tracks;
         currentTrackPosition = position;
         currentTrackTime = 0;
         currentTrack = playlist.get(currentTrackPosition);
         musicPlayerListener.onCurrentTrackChanged(currentTrack);
-        Log.d(LOG_TAG, "Set playlist");
+        Log.d(LOG_TAG, "Set playlist length :" + playlist.size());
     }
 
     @Override
@@ -79,7 +76,7 @@ public class MusicPlayer implements MusicPlayerInterface {
         currentTrackTime = 0;
         currentTrack = playlist.get(currentTrackPosition);
         musicPlayerListener.onCurrentTrackChanged(currentTrack);
-        playCurrentTrack();
+        if (isPlaying()) playCurrentTrack();
         return true;
     }
 
@@ -91,7 +88,7 @@ public class MusicPlayer implements MusicPlayerInterface {
         currentTrackTime = 0;
         currentTrack = playlist.get(currentTrackPosition);
         musicPlayerListener.onCurrentTrackChanged(currentTrack);
-        playCurrentTrack();
+        if (isPlaying()) playCurrentTrack();
         return true;
     }
 
@@ -119,7 +116,7 @@ public class MusicPlayer implements MusicPlayerInterface {
     public int getCurrentTrackTime() {
         Log.d(LOG_TAG, "Get current track time");
         currentTrackTime = player.getCurrentPosition();
-        //yea, its looks weird, but there is now way to check player
+        //yea, its looks weird, but there is no another way to check player
         if (player.getCurrentPosition() > 999999999) currentTrackTime = 0;
         return currentTrackTime;
     }
@@ -142,6 +139,7 @@ public class MusicPlayer implements MusicPlayerInterface {
     }
 
     private MusicTrackPOJO cachedMusicTrack = new MusicTrackPOJO();
+
     private void playCurrentTrack() throws IOException {
         if (!cachedMusicTrack.equals(currentTrack)) {
             player.reset();
@@ -153,7 +151,4 @@ public class MusicPlayer implements MusicPlayerInterface {
 
 
     }
-
-
-
 }

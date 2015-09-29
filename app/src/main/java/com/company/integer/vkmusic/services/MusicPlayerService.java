@@ -1,201 +1,165 @@
 package com.company.integer.vkmusic.services;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
-import android.os.Binder;
+import android.content.IntentFilter;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.company.integer.vkmusic.interfaces.MusicPlayerInterface;
 import com.company.integer.vkmusic.interfaces.MusicPlayerListener;
-import com.company.integer.vkmusic.interfaces.TracksLoaderInterface;
-import com.company.integer.vkmusic.interfaces.TracksLoaderListener;
 import com.company.integer.vkmusic.logic.MusicPlayer;
-import com.company.integer.vkmusic.logic.TracksDataLoader;
+import com.company.integer.vkmusic.notificationPanel.NotificationPanel;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
-import com.company.integer.vkmusic.supportclasses.AppState;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class MusicPlayerService extends Service implements MusicPlayerInterface, MusicPlayerListener, TracksLoaderInterface, TracksLoaderListener {
+public class MusicPlayerService extends Service implements MusicPlayerListener {
 
-    private final String LOG_TAG = "MusicPlayerService";
-
-    MyBinder binder = new MyBinder();
-
-    private TracksDataLoader tracksDataLoader = new TracksDataLoader();
-    private TracksLoaderListener dataLoadingCallbackForUI;
+    public final static String MY_TRACKS = "MY_TRACKS";
 
     private MusicPlayer musicPlayer = new MusicPlayer();
-    private MusicPlayerListener playerCallbackForUI;
-
-    private ArrayList<MusicTrackPOJO> myTracksPlaylist = new ArrayList<>();
-    private ArrayList<MusicTrackPOJO> recommendationsPlaylist = new ArrayList<>();
-    private ArrayList<MusicTrackPOJO> savedPlaylist = new ArrayList<>();
+    private NotificationPanel nPanel;
+    private Handler handler = new Handler();
+    private boolean isAlreadyCreated;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        tracksDataLoader.setTracksLoadingListener(this);
+        registerMyBroadcastReceiver();
+        nPanel = new NotificationPanel(this);
         musicPlayer.setMusicPlayerListener(this);
+        isAlreadyCreated = true;
+    }
 
-        tracksDataLoader.getTracksByUserId(AppState.getLoggedUser().getUserId(), 1, 10);
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
+
+        if (MY_TRACKS.equals(intent.getAction())) {
+            ArrayList<MusicTrackPOJO> arrayList = intent.getParcelableArrayListExtra(MY_TRACKS);
+            Log.i("MY_TRACKS length = ", "" + arrayList.size());
+            int currentTrackPosition = 0;
+            if(isAlreadyCreated){
+                currentTrackPosition = musicPlayer.getCurrentTrackPosition();
+            }
+            musicPlayer.setPlayList(arrayList, currentTrackPosition);
+        }
+
+        return (START_NOT_STICKY);
     }
 
     @Override
     public IBinder onBind(Intent arg0) {
-        Log.d(LOG_TAG, "MusicPlayerService onBind");
-        return binder;
+        return null;
+    }
+
+    public void play() {
+        try {
+            musicPlayer.play();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        startForeground(1337, nPanel.getNotification(true));
     }
 
 
-
-    // MusicPlayer interface methods-----------
-    @Override
-    public void play() throws IOException {
-        musicPlayer.play();
-    }
-
-    @Override
     public void pause() {
         musicPlayer.pause();
     }
 
-    @Override
-    public void setPlayList(ArrayList<MusicTrackPOJO> tracks, int position) {
-        musicPlayer.setPlayList(tracks, position);
+    public void registerMyBroadcastReceiver() {
+        BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+
+                if (action.equalsIgnoreCase("com.example.app.ACTION_PLAY")) {
+                    play();
+                    nPanel.updateToPlay(true);
+                    seekBarProgressUpdater();
+                } else if (action.equalsIgnoreCase("com.example.app.ACTION_PAUSE")) {
+                    pause();
+                    nPanel.updateToPlay(false);
+                } else if (action.equalsIgnoreCase("com.example.app.ACTION_BACK")) {
+                    try {
+                        musicPlayer.previousTrack();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else if (action.equalsIgnoreCase("com.example.app.ACTION_NEXT")) {
+                    Log.i("Action : ", "Close");
+                    try {
+                        musicPlayer.nextTrack();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else if (action.equalsIgnoreCase("com.example.app.ACTION_UPDATE_TRACK")) {
+                    onCurrentTrackChanged(musicPlayer.getCurrentTrack());
+                } else if (action.equalsIgnoreCase("com.example.app.ACTION_TIME_CHANGED")) {
+                    int time = intent.getExtras().getInt("CurrentTrackTime");
+                    musicPlayer.setCurrentTrackTime(time);
+                }else if(action.equalsIgnoreCase("com.example.app.ACTION_SET_TRACK")){
+                    musicPlayer.setCurrentTrackPosition(intent.getIntExtra("newTrackPosition", 0));
+                    onCurrentTrackChanged(musicPlayer.getCurrentTrack());
+                }else if(action.equalsIgnoreCase("com.example.app.ACTION_CHANGE_PLAYLIST")){
+                    musicPlayer.setPlayList((ArrayList<MusicTrackPOJO>) intent.getSerializableExtra("playlist"), 0);
+                }
+            }
+        };
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        // set the custom action
+        intentFilter.addAction("com.example.app.ACTION_PLAY");
+        intentFilter.addAction("com.example.app.ACTION_PAUSE");
+        intentFilter.addAction("com.example.app.ACTION_BACK");
+        intentFilter.addAction("com.example.app.ACTION_NEXT");
+        intentFilter.addAction("com.example.app.ACTION_UPDATE_TRACK");
+        intentFilter.addAction("com.example.app.ACTION_TIME_CHANGED");
+        intentFilter.addAction("com.example.app.ACTION_SET_TRACK");
+        intentFilter.addAction("com.example.app.ACTION_CHANGE_PLAYLIST");
+        // register the receiver
+        registerReceiver(broadcastReceiver, intentFilter);
     }
 
-    @Override
-    public void addTracksToCurrentPlaylist(ArrayList<MusicTrackPOJO> tracksToAdd) {
-        musicPlayer.addTracksToCurrentPlaylist(tracksToAdd);
+    private void seekBarProgressUpdater() {
+        Intent in = new Intent("com.example.app.ACTION_TRACK_PROGRESS");
+        in.putExtra("currentTrackTime", musicPlayer.getCurrentTrackTime());
+        sendBroadcast(in);
+        if (musicPlayer.isPlaying()) {
+            Runnable notification = new Runnable() {
+                public void run() {
+                    seekBarProgressUpdater();
+                }
+            };
+            handler.postDelayed(notification, 1000);
+        }
     }
 
-    @Override
-    public ArrayList<MusicTrackPOJO> getPlaylist() {
-        return musicPlayer.getPlaylist();
-    }
-
-    @Override
-    public boolean nextTrack() throws IOException {
-        return musicPlayer.nextTrack();
-    }
-
-    @Override
-    public boolean previousTrack() throws IOException {
-        return musicPlayer.previousTrack();
-    }
-
-    @Override
-    public void setCurrentTrackTime(int time) {
-        musicPlayer.setCurrentTrackTime(time);
-    }
-
-    @Override
-    public int getCurrentTrackPosition() {
-        return musicPlayer.getCurrentTrackPosition();
-    }
-
-    @Override
-    public void setCurrentTrackPosition(int position) {
-        musicPlayer.setCurrentTrackPosition(position);
-    }
-
-    @Override
-    public int getCurrentTrackTime() {
-        return musicPlayer.getCurrentTrackTime();
-    }
-
-    @Override
-    public MusicTrackPOJO getCurrentTrack() {
-        return musicPlayer.getCurrentTrack();
-    }
-
-    @Override
-    public void setMusicPlayerListener(MusicPlayerListener musicPlayerListener) {
-        playerCallbackForUI = musicPlayerListener;
-    }
-
-    @Override
-    public boolean isPlaying() {
-        return musicPlayer.isPlaying();
-    }
-    // MusicPlayer interface methods end--------
-
-    // MusicPlayer callbacks-------
     @Override
     public void endOfPlaylist() {
 
-        playerCallbackForUI.endOfPlaylist();
     }
 
     @Override
     public void onPlayerTrackUpdating(int percent) {
-        playerCallbackForUI.onPlayerTrackUpdating(percent);
+        Intent in = new Intent("com.example.app.ACTION_LOADING_PROGRESS");
+        in.putExtra("percent", percent);
+        sendBroadcast(in);
+        Log.d("SeekBar", "sending" + percent);
     }
 
     @Override
     public void onCurrentTrackChanged(MusicTrackPOJO musicTrack) {
-        playerCallbackForUI.onCurrentTrackChanged(musicTrack);
+        Intent in = new Intent("com.example.app.ACTION_TRACK_CHANGED");
+        in.putExtra("CurrentTrackTime",musicPlayer.getCurrentTrackTime());
+        in.putExtra("musicTrack",musicTrack);
+        in.putExtra("musicTrackPosition", musicPlayer.getCurrentTrackPosition());
+        in.putExtra("isPlaying",musicPlayer.isPlaying());
+        sendBroadcast(in);
     }
-    // MusicPlayer callbacks end-------
-
-    // TracksDataLoader interface methods-----------
-    @Override
-    public void search(String query, int from, int count) {
-        tracksDataLoader.search(query, from, count);
-    }
-
-    @Override
-    public void getTracksByUserId(String userId, int from, int count) {
-        tracksDataLoader.getTracksByUserId(userId, from, count);
-    }
-
-    @Override
-    public void setTracksLoadingListener(TracksLoaderListener tracksLoaderListener) {
-        dataLoadingCallbackForUI = tracksLoaderListener;
-    }
-
-    @Override
-    public void uploadMore(int source) {
-        switch (source){
-            case MY_TRACKS:
-                getTracksByUserId(AppState.getLoggedUser().getUserId(), myTracksPlaylist.size(), AppState.TRACKS_PER_LOADING);
-                break;
-        }
-
-    }
-    // TracksDataLoader interface methods end-----------
-
-    // TracksDataLoader callbacks methods-----------
-    @Override
-    public void tracksLoaded(ArrayList<MusicTrackPOJO> newTracks, int source) {
-        switch (source){
-            case MY_TRACKS:
-                myTracksPlaylist.addAll(newTracks);
-                dataLoadingCallbackForUI.tracksLoaded(myTracksPlaylist, source);
-                break;
-            case RECOMMENDATIONS:
-                break;
-        }
-
-
-
-    }
-
-    @Override
-    public void tracksLoadingError(String errorMessage) {
-        dataLoadingCallbackForUI.tracksLoadingError(errorMessage);
-    }
-    // TracksDataLoader callbacks methods end-----------
-
-
-    public class MyBinder extends Binder {
-        public MusicPlayerService getService() {
-            return MusicPlayerService.this;
-        }
-    }
-
-
 }

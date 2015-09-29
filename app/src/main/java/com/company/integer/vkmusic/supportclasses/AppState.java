@@ -6,9 +6,6 @@ import android.content.SharedPreferences;
 import com.company.integer.vkmusic.pojo.UserPOJO;
 import com.google.gson.Gson;
 
-/**
- * Created by Andriy on 9/17/2015.
- */
 public class AppState {
 
     public static final int TRACKS_PER_LOADING = 10;
