@@ -9,12 +9,14 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import com.company.integer.vkmusic.fragments.MainFragment;
 import com.company.integer.vkmusic.interfaces.TracksLoaderInterface;
@@ -312,6 +314,34 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        final SearchView etSearchText = (SearchView) menu.findItem(R.id.action_search)
+                .getActionView();
+
+        etSearchText.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getWindow().getDecorView().getRootView().getWindowToken(), 0);
+                getSearchPlaylist().clear();
+                mainFragment.updateList();
+                search(etSearchText.getQuery().toString(), 0, 10);
+                mainFragment.makeSearchUIActions(true);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+        etSearchText.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                setCurrentPlaylist(TracksLoaderInterface.MY_TRACKS);
+                mainFragment.makeSearchUIActions(false);
+                return false;
+            }
+        });
         return true;
     }
 
