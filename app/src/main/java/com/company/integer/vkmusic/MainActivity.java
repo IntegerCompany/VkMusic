@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements
     private ArrayList<MusicTrackPOJO> searchPlaylist = new ArrayList<>();
 
     private boolean isPlaying = false;
+    private int currentPlaylist = TracksLoaderInterface.MY_TRACKS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,6 +208,7 @@ public class MainActivity extends AppCompatActivity implements
                 break;
             case TracksLoaderInterface.SEARCH:
                 searchPlaylist.addAll(newTracks);
+                mainFragment.searchCompleted(searchPlaylist);
                 break;
         }
 
@@ -326,5 +328,39 @@ public class MainActivity extends AppCompatActivity implements
 
     public boolean isPlaying() {
         return isPlaying;
+    }
+
+    public int getCurrentPlaylist() {
+        return currentPlaylist;
+    }
+
+    public void setCurrentPlaylist(int currentPlaylist) {
+        this.currentPlaylist = currentPlaylist;
+        Intent changePlaylist = new Intent("com.example.app.ACTION_CHANGE_PLAYLIST");
+        switch (currentPlaylist){
+            case TracksLoaderInterface.MY_TRACKS:
+                changePlaylist.putExtra("playlist", myTracksPlaylist);
+                break;
+            case TracksLoaderInterface.SEARCH:
+                changePlaylist.putExtra("playlist", searchPlaylist);
+                break;
+        }
+        sendBroadcast(changePlaylist);
+    }
+
+    public ArrayList<MusicTrackPOJO> getSavedPlaylist() {
+        return savedPlaylist;
+    }
+
+    public ArrayList<MusicTrackPOJO> getSearchPlaylist() {
+        return searchPlaylist;
+    }
+
+    public ArrayList<MusicTrackPOJO> getRecommendationsPlaylist() {
+        return recommendationsPlaylist;
+    }
+
+    public ArrayList<MusicTrackPOJO> getMyTracksPlaylist() {
+        return myTracksPlaylist;
     }
 }

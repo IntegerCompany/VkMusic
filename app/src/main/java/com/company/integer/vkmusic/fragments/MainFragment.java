@@ -2,6 +2,7 @@ package com.company.integer.vkmusic.fragments;
 
 
 import android.animation.ArgbEvaluator;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -10,20 +11,28 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.company.integer.vkmusic.MainActivity;
 import com.company.integer.vkmusic.R;
+import com.company.integer.vkmusic.adapters.SimpleRecyclerAdapter;
 import com.company.integer.vkmusic.adapters.ViewPagerAdapter;
+import com.company.integer.vkmusic.interfaces.TracksLoaderInterface;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -44,13 +53,16 @@ public class MainFragment extends Fragment {
     private ImageView ivClosePanel;
     private ImageView ivAlbumPhoto;
     private SeekBar seekBar;
+    private RecyclerView recyclerView;
     private ViewPager viewPager;
     private TabLayout tabLayout;
+    private SearchView etSearchText;
     private int mediaFileLengthInMilliseconds;
     private SlidingUpPanelLayout slidingUpPanelLayout;
+    private View view;
 
     TabFragment myMusicFragment, recommendedFragment, savedFragment;
-
+    SimpleRecyclerAdapter adapter;
     public MainFragment() {
         // Required empty public constructor
     }
@@ -61,14 +73,18 @@ public class MainFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        View view = inflater.inflate(R.layout.fragment_main, container, false);
+        view = inflater.inflate(R.layout.fragment_main, container, false);
         myMusicFragment = new TabFragment();
         recommendedFragment = new TabFragment();
         savedFragment = new TabFragment();
+        myMusicFragment.setupWith(((MainActivity) getActivity()).getMyTracksPlaylist());
+        recommendedFragment.setupWith(((MainActivity) getActivity()).getRecommendationsPlaylist());
+        savedFragment.setupWith(((MainActivity) getActivity()).getSavedPlaylist());
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.app_bar);
         toolbar.setTitle("");
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        etSearchText = (SearchView) toolbar.findViewById(R.id.search_text);
         toolbar.setLogo(ContextCompat.getDrawable(getContext(), R.mipmap.ic_launcher));
 
 
@@ -90,9 +106,30 @@ public class MainFragment extends Fragment {
         tabLayout = (TabLayout) view.findViewById(R.id.tl_main);
 
         evaluator = new ArgbEvaluator();
+        recyclerView = (RecyclerView) view.findViewById(R.id.searchList);
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity().getBaseContext());
+        recyclerView.setLayoutManager(linearLayoutManager);
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (((MainActivity) getActivity()).getSearchPlaylist().size() != 0){
+                    LinearLayoutManager lm = (LinearLayoutManager) recyclerView.getLayoutManager();
+                    Log.d("MainFragment", "lm.findViewByPosition(lm.findLastVisibleItemPosition()).getBottom() = " + lm.findViewByPosition(lm.findLastVisibleItemPosition()).getBottom());
+                    Log.d("MainFragment", "recyclerView.getY() = " + recyclerView.getY());
+                    Log.d("MainFragment", "lm.findLastVisibleItemPosition() = " + lm.findLastVisibleItemPosition());
+                    if (lm.findLastVisibleItemPosition() > ((MainActivity) getActivity()).getSearchPlaylist().size() - 2) {
+                        ((MainActivity) getActivity()).uploadMore(TracksLoaderInterface.SEARCH);
+                    }
+                }
+            }
+        });
 
 
-        slidingUpPanelLayout = (SlidingUpPanelLayout) view.findViewById(R.id.sliding_up_panel);
+
+        SlidingUpPanelLayout slidingUpPanelLayout = (SlidingUpPanelLayout) view.findViewById(R.id.sliding_up_panel);
         slidingUpPanelLayout.setDragView(playerLine);
         slidingUpPanelLayout.setPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
             @Override
@@ -142,26 +179,57 @@ public class MainFragment extends Fragment {
 
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                                               @Override
-                                               public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-                                               }
+            }
 
-                                               @Override
-                                               public void onStartTrackingTouch(SeekBar seekBar) {
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
 
-                                               }
+            }
 
-                                               @Override
-                                               public void onStopTrackingTouch(SeekBar seekBar) {
-                                                   int playPositionInMilliseconds = (mediaFileLengthInMilliseconds / 100) * seekBar.getProgress();
-                                                   Intent in = new Intent("com.example.app.ACTION_TIME_CHANGED");
-                                                   in.putExtra("CurrentTrackTime", playPositionInMilliseconds);
-                                                   getActivity().sendBroadcast(in);
-                                               }
-                                           }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                int playPositionInMilliseconds = (mediaFileLengthInMilliseconds / 100) * seekBar.getProgress();
+                Intent in = new Intent("com.example.app.ACTION_TIME_CHANGED");
+                in.putExtra("CurrentTrackTime", playPositionInMilliseconds);
+                getActivity().sendBroadcast(in);
+            }
 
-        );
+        });
+
+        etSearchText.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                ((MainActivity) getActivity()).getSearchPlaylist().clear();
+                updateList();
+                ((MainActivity) getActivity()).search(etSearchText.getQuery().toString(), 0, 10);
+                viewPager.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
+
+
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+        etSearchText.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                ((MainActivity) getActivity()).setCurrentPlaylist(TracksLoaderInterface.MY_TRACKS);
+                viewPager.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
+                return false;
+            }
+        });
+
+
 
         return view;
     }
@@ -186,7 +254,7 @@ public class MainFragment extends Fragment {
         tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(getContext(), R.color.primaryColorDark));
         tabLayout.setupWithViewPager(viewPager);
     }
-
+    
 
     public void updateList() {
         myMusicFragment.updateList();
@@ -227,6 +295,13 @@ public class MainFragment extends Fragment {
         } else {
             return minutes + ":" + seconds;
         }
+    }
+
+
+    public void searchCompleted(ArrayList<MusicTrackPOJO> searchPlaylist) {
+        ((MainActivity) getActivity()).setCurrentPlaylist(TracksLoaderInterface.SEARCH);
+        adapter = new SimpleRecyclerAdapter(searchPlaylist,(MainActivity) getActivity());
+        recyclerView.setAdapter(adapter);
     }
 
 }
