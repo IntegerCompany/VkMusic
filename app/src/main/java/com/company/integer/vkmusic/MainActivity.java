@@ -341,6 +341,12 @@ public class MainActivity extends AppCompatActivity implements
             case TracksLoaderInterface.MY_TRACKS:
                 changePlaylist.putExtra("playlist", myTracksPlaylist);
                 break;
+            case TracksLoaderInterface.RECOMMENDATIONS:
+                changePlaylist.putExtra("playlist", recommendationsPlaylist);
+                break;
+            case TracksLoaderInterface.SAVED:
+                changePlaylist.putExtra("playlist", savedPlaylist);
+                break;
             case TracksLoaderInterface.SEARCH:
                 changePlaylist.putExtra("playlist", searchPlaylist);
                 break;
@@ -361,6 +367,19 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public ArrayList<MusicTrackPOJO> getMyTracksPlaylist() {
+        return myTracksPlaylist;
+    }
+    public ArrayList<MusicTrackPOJO> getPlaylistByName(int source) {
+        switch (source){
+            case TracksLoaderInterface.MY_TRACKS:
+                return myTracksPlaylist;
+            case TracksLoaderInterface.RECOMMENDATIONS:
+                return recommendationsPlaylist;
+            case TracksLoaderInterface.SAVED:
+                return savedPlaylist;
+            case TracksLoaderInterface.SEARCH:
+                return searchPlaylist;
+        }
         return myTracksPlaylist;
     }
 }

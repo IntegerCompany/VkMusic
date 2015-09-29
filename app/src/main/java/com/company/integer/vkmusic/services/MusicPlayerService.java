@@ -36,14 +36,11 @@ public class MusicPlayerService extends Service implements MusicPlayerListener {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-
         if (MY_TRACKS.equals(intent.getAction())) {
             ArrayList<MusicTrackPOJO> arrayList = intent.getParcelableArrayListExtra(MY_TRACKS);
             Log.i("MY_TRACKS length = ", "" + arrayList.size());
             musicPlayer.setPlayList(arrayList, 0);
-            musicPlayer.setCurrentTrackPosition(0);
         }
-
         return (START_NOT_STICKY);
     }
 
