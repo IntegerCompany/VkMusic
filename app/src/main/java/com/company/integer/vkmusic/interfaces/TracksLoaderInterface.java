@@ -53,4 +53,6 @@ public interface TracksLoaderInterface {
      */
     ArrayList<MusicTrackPOJO> getTracksFromSource(int source);
 
+    void downloadTrack(MusicTrackPOJO trackToDownload);
+
 }

@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import com.company.integer.vkmusic.fragments.MainFragment;
 import com.company.integer.vkmusic.interfaces.TracksLoaderInterface;
@@ -33,10 +34,10 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements
         TracksLoaderInterface, TracksLoaderListener {
 
+    private static final String LOG_TAG = "MainActivity";
     FloatingActionButton fabPrevious;
     FloatingActionButton fabPlayPause;
     FloatingActionButton fabNext;
-    private static final String LOG_TAG = "MainActivity";
     MainFragment mainFragment;
 
     private TracksDataLoader tracksDataLoader;
@@ -56,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        tracksDataLoader = new TracksDataLoader();
+        tracksDataLoader = new TracksDataLoader(this);
         tracksDataLoader.setTracksLoadingListener(this);
         tracksDataLoader.getTracksByUserId(AppState.getLoggedUser().getUserId(), 1, 10);
 
@@ -223,8 +224,30 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void tracksLoadingError(String errorMessage) {
-        tracksLoadingError(errorMessage);
+    public void tracksLoadingError(final String errorMessage) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public void trackDownloadingProgress(MusicTrackPOJO track, int percent) {
+        Log.d(LOG_TAG, "Downloading: " + track.getTitle() + " | " + percent + "%");
+    }
+
+    @Override
+    public void trackDownloadFinished(final MusicTrackPOJO track) {
+        Log.d(LOG_TAG, "Download complete: " + track.getTitle());
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(MainActivity.this, "Downloaded: " + track.getTitle(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
     // TracksDataLoader callbacks methods end-----------
 
@@ -249,6 +272,11 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public ArrayList<MusicTrackPOJO> getTracksFromSource(int source) {
         return null;
+    }
+
+    @Override
+    public void downloadTrack(MusicTrackPOJO trackToDownload) {
+        tracksDataLoader.downloadTrack(trackToDownload);
     }
 
     public void registerMyBroadcastReceiver() {
