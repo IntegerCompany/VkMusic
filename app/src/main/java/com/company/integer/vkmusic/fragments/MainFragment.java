@@ -56,7 +56,6 @@ public class MainFragment extends Fragment {
     private RecyclerView recyclerView;
     private ViewPager viewPager;
     private TabLayout tabLayout;
-    private SearchView searchView;
     private int mediaFileLengthInMilliseconds;
     private SlidingUpPanelLayout slidingUpPanelLayout;
     private View view;
@@ -86,7 +85,6 @@ public class MainFragment extends Fragment {
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.app_bar);
         toolbar.setTitle("");
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-        searchView = (SearchView) toolbar.findViewById(R.id.search_text);
         toolbar.setLogo(ContextCompat.getDrawable(getContext(), R.mipmap.ic_launcher));
 
         fabAdd = (FloatingActionButton) view.findViewById(R.id.fab_add);
@@ -198,38 +196,6 @@ public class MainFragment extends Fragment {
             }
 
         });
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                ((MainActivity) getActivity()).getSearchPlaylist().clear();
-                updateList();
-                ((MainActivity) getActivity()).search(searchView.getQuery().toString(), 0, 10);
-                viewPager.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.VISIBLE);
-
-
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                ((MainActivity) getActivity()).setCurrentPlaylist(TracksLoaderInterface.MY_TRACKS);
-                viewPager.setVisibility(View.VISIBLE);
-                recyclerView.setVisibility(View.GONE);
-                return false;
-            }
-        });
-
-
 
         return view;
     }
