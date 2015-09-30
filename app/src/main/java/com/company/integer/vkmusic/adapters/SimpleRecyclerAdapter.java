@@ -61,6 +61,12 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
             trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.play_item));
             trackViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(activity, R.color.listViewItemBackground));
         }
+        trackViewHolder.downloadImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                activity.downloadTrack(tracks.get(i));
+            }
+        });
 
     }
 
@@ -84,23 +90,6 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         notifyDataSetChanged();
     }
 
-
-    class TrackViewHolder extends RecyclerView.ViewHolder{
-        TextView title;
-        TextView author;
-        TextView duration;
-        ImageView playPause;
-
-        public TrackViewHolder(View itemView) {
-            super(itemView);
-
-            author = (TextView) itemView.findViewById(R.id.tv_author_name_item);
-            title = (TextView) itemView.findViewById(R.id.tv_song_name_item);
-            duration = (TextView) itemView.findViewById(R.id.tv_duration_item);
-            playPause = (ImageView) itemView.findViewById(R.id.btn_play_pause_item);
-        }
-    }
-
     private String getDurationString(int durationInSec) {
         int minutes = durationInSec / 60;
         int seconds = durationInSec - minutes * 60;
@@ -113,6 +102,24 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
 
     public void updateTracks(ArrayList<MusicTrackPOJO> tracks){
         this.tracks = tracks;
+    }
+
+    class TrackViewHolder extends RecyclerView.ViewHolder {
+        TextView title;
+        TextView author;
+        TextView duration;
+        ImageView playPause;
+        ImageView downloadImage;
+
+        public TrackViewHolder(View itemView) {
+            super(itemView);
+
+            author = (TextView) itemView.findViewById(R.id.tv_author_name_item);
+            title = (TextView) itemView.findViewById(R.id.tv_song_name_item);
+            duration = (TextView) itemView.findViewById(R.id.tv_duration_item);
+            playPause = (ImageView) itemView.findViewById(R.id.btn_play_pause_item);
+            downloadImage = (ImageView) itemView.findViewById(R.id.btn_download_item);
+        }
     }
 
 }
