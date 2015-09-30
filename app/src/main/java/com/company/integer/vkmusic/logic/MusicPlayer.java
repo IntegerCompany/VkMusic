@@ -45,7 +45,6 @@ public class MusicPlayer implements MusicPlayerInterface {
 
     @Override
     public void setPlayList(ArrayList<MusicTrackPOJO> tracks, int position) {
-        player.reset();
         playlist = tracks;
         currentTrackPosition = position;
         currentTrackTime = 0;
