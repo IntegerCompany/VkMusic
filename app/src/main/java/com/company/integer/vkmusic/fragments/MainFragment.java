@@ -89,7 +89,6 @@ public class MainFragment extends Fragment {
         searchView = (SearchView) toolbar.findViewById(R.id.search_text);
         toolbar.setLogo(ContextCompat.getDrawable(getContext(), R.mipmap.ic_launcher));
 
-
         fabAdd = (FloatingActionButton) view.findViewById(R.id.fab_add);
         fabDownload = (FloatingActionButton) view.findViewById(R.id.fab_download);
         tvNameOfSongPlayerLine = (TextView) view.findViewById(R.id.tv_name_of_song_player);
@@ -129,8 +128,6 @@ public class MainFragment extends Fragment {
                 }
             }
         });
-
-
 
         slidingUpPanelLayout = (SlidingUpPanelLayout) view.findViewById(R.id.sliding_up_panel);
         slidingUpPanelLayout.setDragView(playerLine);
@@ -265,7 +262,7 @@ public class MainFragment extends Fragment {
         savedFragment.updateList();
         if (adapter != null) adapter.notifyDataSetChanged();
     }
-
+    
     public void updateSeekBarAndTextViews(int time) {
         seekBar.setProgress((int) (((float) time / mediaFileLengthInMilliseconds) * 100));
         tvCurrentTimePlayerLine.setText(getDurationString(time / 1000));
@@ -317,11 +314,19 @@ public class MainFragment extends Fragment {
         }
     }
 
-
     public void searchCompleted(ArrayList<MusicTrackPOJO> searchPlaylist) {
         ((MainActivity) getActivity()).setCurrentPlaylist(TracksLoaderInterface.SEARCH);
         adapter.updateTracks(searchPlaylist);
         adapter.notifyDataSetChanged();
     }
 
+    public void makeSearchUIActions(boolean isSearch){
+        if(isSearch){
+            viewPager.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+        }else{
+            viewPager.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+        }
+    }
 }

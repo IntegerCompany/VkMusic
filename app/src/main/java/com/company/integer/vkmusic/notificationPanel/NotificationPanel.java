@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.widget.RemoteViews;
 
+import com.company.integer.vkmusic.LoginActivity;
+import com.company.integer.vkmusic.MainActivity;
 import com.company.integer.vkmusic.R;
 
 public class NotificationPanel {
@@ -21,12 +23,13 @@ public class NotificationPanel {
     private boolean isPlaying = false;
 
     public NotificationPanel(Context parent) {
-        // TODO Auto-generated constructor stub
+
         this.parent = parent;
         nBuilder = new NotificationCompat.Builder(parent)
                 .setContentTitle("Parking Meter")
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setAutoCancel(false);
+                .setAutoCancel(true)
+                ;
         nManager = (NotificationManager) parent.getSystemService(Context.NOTIFICATION_SERVICE);
         remoteViewPlay = new RemoteViews(parent.getPackageName(), R.layout.notificationview);
         remoteViewPause = new RemoteViews(parent.getPackageName(), R.layout.notificationview_pause);
@@ -50,7 +53,6 @@ public class NotificationPanel {
     }
 
     public void setListeners(RemoteViews view) {
-        //listener 1
         Intent playIntent = new Intent("com.example.app.ACTION_PLAY");
         PendingIntent pendingPlayIntent = PendingIntent.getBroadcast(parent, 100, playIntent, 0);
         view.setOnClickPendingIntent(R.id.play, pendingPlayIntent);
@@ -59,7 +61,6 @@ public class NotificationPanel {
         PendingIntent pendingPauseIntent = PendingIntent.getBroadcast(parent, 100, pauseIntent, 0);
         view.setOnClickPendingIntent(R.id.pause, pendingPauseIntent);
 
-        //listener 2
         Intent backIntent = new Intent("com.example.app.ACTION_BACK");
         PendingIntent pendingBackIntent = PendingIntent.getBroadcast(parent, 100, backIntent, 0);
         view.setOnClickPendingIntent(R.id.previous, pendingBackIntent);
@@ -67,6 +68,11 @@ public class NotificationPanel {
         Intent nextIntent = new Intent("com.example.app.ACTION_NEXT");
         PendingIntent pendingNextIntent = PendingIntent.getBroadcast(parent, 100, nextIntent, 0);
         view.setOnClickPendingIntent(R.id.next, pendingNextIntent);
+
+        Intent openActivity = new Intent(parent, MainActivity.class);
+        openActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent pendingOpenActivityIntent = PendingIntent.getActivity(parent, 0, openActivity, 0);
+        view.setOnClickPendingIntent(R.id.song_image, pendingOpenActivityIntent);
 
     }
 
