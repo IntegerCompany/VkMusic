@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import com.company.integer.vkmusic.MainActivity;
 import com.company.integer.vkmusic.R;
 import com.company.integer.vkmusic.adapters.SimpleRecyclerAdapter;
+import com.company.integer.vkmusic.interfaces.TracksLoaderInterface;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
 
 import java.util.List;
@@ -18,10 +19,10 @@ import java.util.List;
 public class TabFragment extends Fragment {
 
     SimpleRecyclerAdapter adapter;
+    LinearLayoutManager lm;
     List<MusicTrackPOJO> list;
-
-    public TabFragment() {
-    }
+    int tracksSource = TracksLoaderInterface.MY_TRACKS;
+    boolean scrollDownLock;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -34,16 +35,31 @@ public class TabFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         adapter = new SimpleRecyclerAdapter(list,(MainActivity) getActivity());
         recyclerView.setAdapter(adapter);
+        lm = (LinearLayoutManager) recyclerView.getLayoutManager();
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (((MainActivity) getActivity()).getPlaylistByName(tracksSource).size() != 0) {
+                    if (lm.findLastVisibleItemPosition() > ((MainActivity) getActivity()).getPlaylistByName(tracksSource).size() -2) {
+                        if (!scrollDownLock) ((MainActivity) getActivity()).uploadMore(tracksSource);
+                        scrollDownLock = true;
+                    }else{
+                        scrollDownLock = false;
+                    }
+                }
+            }
+        });
 
         return view;
     }
 
-    public void setupWith(List<MusicTrackPOJO> list){
+    public void setupWith(List<MusicTrackPOJO> list, int source){
         this.list = list;
     }
 
     public void updateList(){
-        adapter.notifyDataSetChanged();
+        if (adapter != null) adapter.notifyDataSetChanged();
     }
 
     public void nextTrack(){
@@ -55,7 +71,7 @@ public class TabFragment extends Fragment {
     }
 
     public void setCurrentTrackPosition(int position){
-        if(adapter!=null){
+        if (adapter != null) {
             adapter.setCurrentTrackPosition(position);
         }
     }

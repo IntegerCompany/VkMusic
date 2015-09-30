@@ -13,6 +13,7 @@ import com.company.integer.vkmusic.MainActivity;
 import com.company.integer.vkmusic.R;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -108,6 +109,10 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         } else {
             return minutes + ":" + seconds;
         }
+    }
+
+    public void updateTracks(ArrayList<MusicTrackPOJO> tracks){
+        this.tracks = tracks;
     }
 
 }

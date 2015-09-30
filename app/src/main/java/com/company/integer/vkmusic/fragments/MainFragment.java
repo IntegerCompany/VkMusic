@@ -56,13 +56,14 @@ public class MainFragment extends Fragment {
     private RecyclerView recyclerView;
     private ViewPager viewPager;
     private TabLayout tabLayout;
-    private SearchView etSearchText;
     private int mediaFileLengthInMilliseconds;
     private SlidingUpPanelLayout slidingUpPanelLayout;
     private View view;
+    LinearLayoutManager lm;
 
     TabFragment myMusicFragment, recommendedFragment, savedFragment;
     SimpleRecyclerAdapter adapter;
+    boolean scrollDownLock = false;
     public MainFragment() {
         // Required empty public constructor
     }
@@ -77,9 +78,9 @@ public class MainFragment extends Fragment {
         myMusicFragment = new TabFragment();
         recommendedFragment = new TabFragment();
         savedFragment = new TabFragment();
-        myMusicFragment.setupWith(((MainActivity) getActivity()).getMyTracksPlaylist());
-        recommendedFragment.setupWith(((MainActivity) getActivity()).getRecommendationsPlaylist());
-        savedFragment.setupWith(((MainActivity) getActivity()).getSavedPlaylist());
+        myMusicFragment.setupWith(((MainActivity) getActivity()).getMyTracksPlaylist(), TracksLoaderInterface.MY_TRACKS);
+        recommendedFragment.setupWith(((MainActivity) getActivity()).getRecommendationsPlaylist(), TracksLoaderInterface.RECOMMENDATIONS);
+        savedFragment.setupWith(((MainActivity) getActivity()).getSavedPlaylist(), TracksLoaderInterface.SAVED);
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.app_bar);
         toolbar.setTitle("");
@@ -105,21 +106,22 @@ public class MainFragment extends Fragment {
 
         evaluator = new ArgbEvaluator();
         recyclerView = (RecyclerView) view.findViewById(R.id.searchList);
+        adapter = new SimpleRecyclerAdapter(new ArrayList<MusicTrackPOJO>(),(MainActivity) getActivity());
+        recyclerView.setAdapter(adapter);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity().getBaseContext());
         recyclerView.setLayoutManager(linearLayoutManager);
-
+        lm = (LinearLayoutManager) recyclerView.getLayoutManager();
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if (((MainActivity) getActivity()).getSearchPlaylist().size() != 0){
-                    LinearLayoutManager lm = (LinearLayoutManager) recyclerView.getLayoutManager();
-                    Log.d("MainFragment", "lm.findViewByPosition(lm.findLastVisibleItemPosition()).getBottom() = " + lm.findViewByPosition(lm.findLastVisibleItemPosition()).getBottom());
-                    Log.d("MainFragment", "recyclerView.getY() = " + recyclerView.getY());
-                    Log.d("MainFragment", "lm.findLastVisibleItemPosition() = " + lm.findLastVisibleItemPosition());
-                    if (lm.findLastVisibleItemPosition() > ((MainActivity) getActivity()).getSearchPlaylist().size() - 2) {
-                        ((MainActivity) getActivity()).uploadMore(TracksLoaderInterface.SEARCH);
+                if (((MainActivity) getActivity()).getSearchPlaylist().size() != 0) {
+                    if (lm.findLastVisibleItemPosition() > ((MainActivity) getActivity()).getSearchPlaylist().size() -2) {
+                        if (!scrollDownLock) ((MainActivity) getActivity()).uploadMore(TracksLoaderInterface.SEARCH);
+                        scrollDownLock = true;
+                    }else{
+                        scrollDownLock = false;
                     }
                 }
             }
@@ -195,8 +197,6 @@ public class MainFragment extends Fragment {
 
         });
 
-
-
         return view;
     }
 
@@ -224,6 +224,9 @@ public class MainFragment extends Fragment {
 
     public void updateList() {
         myMusicFragment.updateList();
+        recommendedFragment.updateList();
+        savedFragment.updateList();
+        if (adapter != null) adapter.notifyDataSetChanged();
     }
     
     public void updateSeekBarAndTextViews(int time) {
@@ -241,7 +244,22 @@ public class MainFragment extends Fragment {
         tvNameOfSongFragment.setText(musicTrack.getTitle());
         tvAuthorPlayerLine.setText(musicTrack.getArtist());
         tvAuthorFragment.setText(musicTrack.getArtist());
-        myMusicFragment.setCurrentTrackPosition(position);
+        switch (((MainActivity) getActivity()).getCurrentPlaylist()){
+            case TracksLoaderInterface.MY_TRACKS:
+                myMusicFragment.setCurrentTrackPosition(position);
+                break;
+            case TracksLoaderInterface.RECOMMENDATIONS:
+                recommendedFragment.setCurrentTrackPosition(position);
+                break;
+            case TracksLoaderInterface.SAVED:
+                savedFragment.setCurrentTrackPosition(position);
+                break;
+            case TracksLoaderInterface.SEARCH:
+                adapter.setCurrentTrackPosition(position);
+                break;
+        }
+
+
     }
 
     public void setMediaFileLengthInMilliseconds(int mediaFileLengthInMilliseconds) {
@@ -264,8 +282,8 @@ public class MainFragment extends Fragment {
 
     public void searchCompleted(ArrayList<MusicTrackPOJO> searchPlaylist) {
         ((MainActivity) getActivity()).setCurrentPlaylist(TracksLoaderInterface.SEARCH);
-        adapter = new SimpleRecyclerAdapter(searchPlaylist,(MainActivity) getActivity());
-        recyclerView.setAdapter(adapter);
+        adapter.updateTracks(searchPlaylist);
+        adapter.notifyDataSetChanged();
     }
 
     public void makeSearchUIActions(boolean isSearch){
