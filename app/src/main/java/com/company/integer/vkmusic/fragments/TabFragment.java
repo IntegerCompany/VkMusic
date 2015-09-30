@@ -42,7 +42,7 @@ public class TabFragment extends Fragment {
                 super.onScrolled(recyclerView, dx, dy);
                 if (((MainActivity) getActivity()).getPlaylistByName(tracksSource).size() != 0) {
                     if (lm.findLastVisibleItemPosition() > ((MainActivity) getActivity()).getPlaylistByName(tracksSource).size() -2) {
-                        if (!scrollDownLock) ((MainActivity) getActivity()).uploadMore(TracksLoaderInterface.SEARCH);
+                        if (!scrollDownLock) ((MainActivity) getActivity()).uploadMore(tracksSource);
                         scrollDownLock = true;
                     }else{
                         scrollDownLock = false;
@@ -71,7 +71,9 @@ public class TabFragment extends Fragment {
     }
 
     public void setCurrentTrackPosition(int position){
-        adapter.setCurrentTrackPosition(position);
+        if (adapter != null) {
+            adapter.setCurrentTrackPosition(position);
+        }
     }
 
 }

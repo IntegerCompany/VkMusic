@@ -56,7 +56,7 @@ public class MainFragment extends Fragment {
     private RecyclerView recyclerView;
     private ViewPager viewPager;
     private TabLayout tabLayout;
-    private SearchView etSearchText;
+    private SearchView searchView;
     private int mediaFileLengthInMilliseconds;
     private SlidingUpPanelLayout slidingUpPanelLayout;
     private View view;
@@ -86,7 +86,7 @@ public class MainFragment extends Fragment {
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.app_bar);
         toolbar.setTitle("");
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-        etSearchText = (SearchView) toolbar.findViewById(R.id.search_text);
+        searchView = (SearchView) toolbar.findViewById(R.id.search_text);
         toolbar.setLogo(ContextCompat.getDrawable(getContext(), R.mipmap.ic_launcher));
 
 
@@ -202,14 +202,14 @@ public class MainFragment extends Fragment {
 
         });
 
-        etSearchText.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 ((MainActivity) getActivity()).getSearchPlaylist().clear();
                 updateList();
-                ((MainActivity) getActivity()).search(etSearchText.getQuery().toString(), 0, 10);
+                ((MainActivity) getActivity()).search(searchView.getQuery().toString(), 0, 10);
                 viewPager.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.VISIBLE);
 
@@ -222,7 +222,7 @@ public class MainFragment extends Fragment {
                 return false;
             }
         });
-        etSearchText.setOnCloseListener(new SearchView.OnCloseListener() {
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
                 ((MainActivity) getActivity()).setCurrentPlaylist(TracksLoaderInterface.MY_TRACKS);
