@@ -31,6 +31,8 @@ import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.company.integer.vkmusic.supportclasses.AppState;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
@@ -291,6 +293,8 @@ public class MainFragment extends Fragment {
         adapter.notifyDataSetChanged();
         adapter = new SimpleRecyclerAdapter(searchPlaylist, (MainActivity) getActivity());
         recyclerView.setAdapter(adapter);
+        adapter.updateTracks(searchPlaylist);
+        adapter.notifyDataSetChanged();
     }
 
     public void makeSearchUIActions(boolean isSearch) {
