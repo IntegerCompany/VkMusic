@@ -1,133 +1,145 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.company.integer.vkmusic.fragments.PlayerFragment"
     android:background="#424352"
-    android:paddingBottom="48dp"
     android:clickable="true"
-    android:paddingRight="0dp"
+    android:paddingBottom="0dp"
     android:paddingLeft="0dp"
+    android:paddingRight="0dp"
     android:paddingTop="0dp"
-    >
+    tools:context="com.company.integer.vkmusic.fragments.PlayerFragment">
 
     <include
+        android:id="@+id/player_line"
         layout="@layout/player_line"
-        android:layout_height="56dp"
         android:layout_width="match_parent"
-        android:layout_alignParentBottom="false"
-        android:id="@+id/player_line" />
+        android:layout_height="56dp"
+        android:layout_alignParentBottom="false" />
 
 
     <ImageView
 
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:background="#727394"
-        android:id="@+id/container"
-        android:layout_below="@+id/player_line">
+        android:layout_below="@+id/player_line"
+        android:background="#727394">
 
     </ImageView>
 
     <ImageView
+        android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="30dp"
-        android:id="@+id/imageView"
-        android:background="#56576E"
-        android:layout_below="@+id/container" />
+        android:layout_below="@+id/container"
+        android:background="#56576E" />
 
     <SeekBar
+        android:id="@+id/seekBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/seekBar"
-        android:layout_alignParentBottom="false"
         android:layout_above="@+id/tv_current_time_player"
-        android:max="99"
-        android:indeterminate="false" />
+        android:layout_alignParentBottom="false"
+        android:indeterminate="false"
+        android:max="99" />
 
     <TextView
+        android:id="@+id/tv_current_time_player"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="0:00"
-        android:id="@+id/tv_current_time_player"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/player_advert"
+        android:layout_alignParentBottom="false"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="16dp"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="16dp"
+        android:text="0:00" />
 
     <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/iv_album_photo"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:id="@+id/iv_album_photo"
-        android:layout_centerHorizontal="true"
         android:layout_below="@+id/player_line"
-        android:src="@drawable/ic_guitar"
-        android:layout_marginTop="100dp" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="100dp"
+        android:src="@drawable/ic_guitar" />
 
     <ImageView
+        android:id="@+id/imageView2"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:id="@+id/imageView2"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/player_advert"
+        android:layout_alignParentBottom="false"
         android:layout_alignParentLeft="false"
         android:layout_toLeftOf="@+id/imageView3"
-        android:src="@mipmap/random"
-        android:padding="12dp" />
+        android:padding="12dp"
+        android:src="@mipmap/random" />
 
     <ImageView
+        android:id="@+id/imageView3"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:id="@+id/imageView3"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/player_advert"
+        android:layout_alignParentBottom="false"
         android:layout_alignParentRight="true"
-        android:src="@mipmap/replay"
-        android:padding="12dp" />
+        android:padding="12dp"
+        android:src="@mipmap/replay" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_add"
-        app:fabSize="mini"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        app:backgroundTint="@color/primaryColorDark"
-        android:src="@mipmap/add"
-        android:alpha="1"
+        android:layout_marginLeft="16dp"
         android:layout_marginTop="247dp"
-        android:layout_marginLeft="16dp" />
+        android:alpha="1"
+        android:src="@mipmap/add"
+        app:backgroundTint="@color/primaryColorDark"
+        app:fabSize="mini" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_download"
-        app:fabSize="mini"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        app:backgroundTint="@color/primaryColorDark"
-        android:src="@mipmap/download"
-        android:alpha="1"
-        android:layout_marginTop="247dp"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="16dp" />
+        android:layout_gravity="bottom"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="247dp"
+        android:alpha="1"
+        android:src="@mipmap/download"
+        app:backgroundTint="@color/primaryColorDark"
+        app:fabSize="mini" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Name of the song"
         android:id="@+id/tv_name_of_song_fragment"
-        android:textSize="20sp"
-        android:layout_alignTop="@+id/container"
-        android:layout_alignRight="@+id/iv_album_photo"
-        android:layout_alignEnd="@+id/iv_album_photo"
-        android:layout_marginTop="20dp"
-        android:layout_centerHorizontal="true" />
-
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Author"
+        android:layout_alignEnd="@+id/iv_album_photo"
+        android:layout_alignRight="@+id/iv_album_photo"
+        android:layout_alignTop="@+id/container"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="Name of the song"
+        android:textSize="20sp" />
+
+    <TextView
         android:id="@+id/tv_author_name_fragment"
-        android:textSize="16sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/tv_name_of_song_fragment"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:text="Author"
+        android:textSize="16sp" />
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/player_advert"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentStart="false"
+        app:adSize="BANNER"
+        app:adUnitId="@string/player_advert_id" />
 
 </RelativeLayout>

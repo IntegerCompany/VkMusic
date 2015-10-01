@@ -27,6 +27,8 @@ import com.company.integer.vkmusic.adapters.SimpleRecyclerAdapter;
 import com.company.integer.vkmusic.adapters.ViewPagerAdapter;
 import com.company.integer.vkmusic.interfaces.TracksLoaderInterface;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
@@ -60,6 +62,7 @@ public class MainFragment extends Fragment {
     private int mediaFileLengthInMilliseconds;
     private SlidingUpPanelLayout slidingUpPanelLayout;
     private View view;
+    private AdView playerAdvert;
     public MainFragment() {
         // Required empty public constructor
     }
@@ -192,6 +195,7 @@ public class MainFragment extends Fragment {
             }
 
         });
+        initAdverts();
 
         return view;
     }
@@ -305,5 +309,11 @@ public class MainFragment extends Fragment {
                 break;
 
         }
+    }
+
+    private void initAdverts() {
+        AdView mAdView = (AdView) view.findViewById(R.id.player_advert);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
 }
