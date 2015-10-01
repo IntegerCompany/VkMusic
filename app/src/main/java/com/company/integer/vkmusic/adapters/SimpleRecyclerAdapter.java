@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.company.integer.vkmusic.MainActivity;
 import com.company.integer.vkmusic.R;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
+import com.company.integer.vkmusic.supportclasses.AppState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +57,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
             if (activity.isPlaying()) {
                 trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.pause_item));
             }
-            trackViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(activity, R.color.primaryColorDark));
+            trackViewHolder.itemView.setBackgroundColor(AppState.getColors().getColorAccentID());
         }else{
             trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.play_item));
             trackViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(activity, R.color.listViewItemBackground));

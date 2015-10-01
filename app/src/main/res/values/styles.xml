@@ -11,7 +11,44 @@
         <item name="colorAccent">@color/accentColor</item>
     </style>
 
-    <style name="Base.Widget.Design.TabLayout" parent="android:Widget">
+    <style name="AppTheme.Base.Green.Blue" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/styleGreenPrimary</item>
+        <item name="colorPrimaryDark">@color/styleGreenPrimaryDark</item>
+        <item name="colorAccent">@color/styleBlue</item>
+    </style>
+
+    <style name="AppTheme.Base.DeepPurple.Pink" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/styleDeepPurplePrimary</item>
+        <item name="colorPrimaryDark">@color/styleDeepPurplePrimaryDark</item>
+        <item name="colorAccent">@color/stylePink</item>
+    </style>
+
+    <style name="AppTheme.Base.DeepOrange.Orange" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/styleDeepOrangePrimary</item>
+        <item name="colorPrimaryDark">@color/styleDeepOrangePrimaryDark</item>
+        <item name="colorAccent">@color/styleOrange</item>
+    </style>
+
+    <style name="AppTheme.Base.Amber.Purple" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/styleAmberPrimary</item>
+        <item name="colorPrimaryDark">@color/styleAmberPrimaryDark</item>
+        <item name="colorAccent">@color/stylePurple</item>
+    </style>
+
+    <style name="AppTheme.Base.BlueGrey.Pink" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/styleBlueGreyPrimary</item>
+        <item name="colorPrimaryDark">@color/styleBlueGreyPrimaryDark</item>
+        <item name="colorAccent">@color/stylePink</item>
+    </style>
+
+    <style name="AppTheme.Base.Cyan.Lime" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/styleCyanPrimary</item>
+        <item name="colorPrimaryDark">@color/styleCyanPrimaryDark</item>
+        <item name="colorAccent">@color/styleLime</item>
+    </style>
+
+
+    <style name="My.Base.Widget.Design.TabLayout" parent="android:Widget">
         <item name="tabIndicatorColor">?attr/colorAccent</item>
         <item name="tabIndicatorHeight">2dp</item>
         <item name="tabPaddingStart">12dp</item>

@@ -10,7 +10,7 @@
         android:title="Search"/>
 
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_overflow"
         android:orderInCategory="100"
         android:title="@string/action_settings"
         android:icon="@mipmap/options"
@@ -28,6 +28,11 @@
                 android:id="@+id/action_group"
                 app:showAsAction="never"
                 android:title="Group`s music" />
+
+            <item
+                android:id="@+id/action_settings"
+                app:showAsAction="never"
+                android:title="Styles" />
         </menu>
     </item>
 

@@ -149,7 +149,5 @@ public class MusicPlayer implements MusicPlayerInterface {
             cachedMusicTrack = currentTrack;
         }
         player.start();
-
-
     }
 }

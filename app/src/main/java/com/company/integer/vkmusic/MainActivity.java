@@ -5,7 +5,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.ColorStateList;
 import android.graphics.Point;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
@@ -57,9 +59,14 @@ public class MainActivity extends AppCompatActivity implements
     private boolean isPlaying = false;
     private int currentPlaylist = TracksLoaderInterface.MY_TRACKS;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTheme(AppState.getTheme());
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(AppState.getColors().getColorAccentID());
+        }
         setContentView(R.layout.activity_main);
 
         tracksDataLoader = new TracksDataLoader(this);
@@ -70,6 +77,10 @@ public class MainActivity extends AppCompatActivity implements
         fabPrevious = (FloatingActionButton) findViewById(R.id.fab_previous);
         fabPlayPause = (FloatingActionButton) findViewById(R.id.fab_play_pause);
         fabNext = (FloatingActionButton) findViewById(R.id.fab_next);
+
+        fabPlayPause.setBackgroundTintList(ColorStateList.valueOf(AppState.getColors().getColorPrimaryID()));
+        fabPrevious.setBackgroundTintList(ColorStateList.valueOf(AppState.getColors().getColorAccentID()));
+        fabNext.setBackgroundTintList(ColorStateList.valueOf(AppState.getColors().getColorAccentID()));
 
         fabPlayPause.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -309,8 +320,8 @@ public class MainActivity extends AppCompatActivity implements
                     mainFragment.updateList();
                     playMusicUIAction();
                 } else if (action.equalsIgnoreCase("com.example.app.ACTION_PAUSE")) {
-                    mainFragment.updateList();
                     isPlaying = false;
+                    mainFragment.updateList();
                     pauseMusicUIAction();
                 } else if (action.equalsIgnoreCase("com.example.app.ACTION_BACK")) {
 
@@ -322,12 +333,12 @@ public class MainActivity extends AppCompatActivity implements
                     mainFragment.setCurrentTrack(musicTrack, intent.getIntExtra("musicTrackPosition", 0));
                     mainFragment.setMediaFileLengthInMilliseconds(musicTrack.getDuration() * 1000);
                     mainFragment.getSeekBar().setProgress((int) (((float) time / mainFragment.getMediaFileLengthInMilliseconds()) * 100)); // This math construction give a percentage of "was playing"/"song length"
-                    if (time == 0){
+                    if (time == 0) {
                         mainFragment.getSeekBar().setProgress(0);
                     }
-                    if(intent.getExtras().getBoolean("isPlaying")){
+                    if (intent.getExtras().getBoolean("isPlaying")) {
                         playMusicUIAction();
-                        isPlaying=true;
+                        isPlaying = true;
                     }
                 } else if (action.equalsIgnoreCase("com.example.app.ACTION_LOADING_PROGRESS")) {
                     int percent = intent.getExtras().getInt("percent");
@@ -408,6 +419,9 @@ public class MainActivity extends AppCompatActivity implements
             case R.id.action_group:
                 return true;
             case R.id.action_settings:
+                Intent in = new Intent(this, SettingsActivity.class);
+                startActivity(in);
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -425,7 +439,7 @@ public class MainActivity extends AppCompatActivity implements
     public void setCurrentPlaylist(int currentPlaylist) {
         this.currentPlaylist = currentPlaylist;
         Intent changePlaylist = new Intent("com.example.app.ACTION_CHANGE_PLAYLIST");
-        switch (currentPlaylist){
+        switch (currentPlaylist) {
             case TracksLoaderInterface.MY_TRACKS:
                 changePlaylist.putExtra("playlist", myTracksPlaylist);
                 break;

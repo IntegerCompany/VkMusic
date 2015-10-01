@@ -3,6 +3,7 @@ package com.company.integer.vkmusic.fragments;
 
 import android.animation.ArgbEvaluator;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -27,6 +28,9 @@ import com.company.integer.vkmusic.adapters.SimpleRecyclerAdapter;
 import com.company.integer.vkmusic.adapters.ViewPagerAdapter;
 import com.company.integer.vkmusic.interfaces.TracksLoaderInterface;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.company.integer.vkmusic.supportclasses.AppState;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
@@ -88,6 +92,8 @@ public class MainFragment extends Fragment {
 
         fabAdd = (FloatingActionButton) view.findViewById(R.id.fab_add);
         fabDownload = (FloatingActionButton) view.findViewById(R.id.fab_download);
+        fabAdd.setBackgroundTintList(ColorStateList.valueOf(AppState.getColors().getColorAccentID()));
+        fabDownload.setBackgroundTintList(ColorStateList.valueOf(AppState.getColors().getColorAccentID()));
         tvNameOfSongPlayerLine = (TextView) view.findViewById(R.id.tv_name_of_song_player);
         tvAuthorPlayerLine = (TextView) view.findViewById(R.id.tv_author_name_player);
         tvCurrentTimePlayer = (TextView) view.findViewById(R.id.tv_current_time_player);
@@ -98,6 +104,8 @@ public class MainFragment extends Fragment {
         ivClosePanel = (ImageView) view.findViewById(R.id.iv_close_panel);
         ivDivider = (ImageView) view.findViewById(R.id.iv_divider);
         ivAlbumPhoto = (ImageView) view.findViewById(R.id.iv_album_photo);
+        ivAlbumPhoto.setImageDrawable(ContextCompat.getDrawable(getContext(), AppState.getColors().getImageDrawableID()));
+
         seekBar = (SeekBar) view.findViewById(R.id.seekBar);
         seekBar.setSecondaryProgress(0);
         seekBar.setProgress(0);
@@ -144,7 +152,7 @@ public class MainFragment extends Fragment {
                 tvAuthorPlayerLine.setAlpha(1 - v);
                 tvCurrentTimePlayerLine.setAlpha(1 - v);
                 playerLine.setBackgroundColor((Integer) evaluator.evaluate(v, ContextCompat.getColor(getContext(), R.color.listViewItemBackground),
-                        ContextCompat.getColor(getContext(), R.color.accentColor)));
+                        AppState.getColors().getColorPrimaryID()));
                 tvNameOfSongFragment.setAlpha(v);
                 tvAuthorFragment.setAlpha(v);
                 ivDivider.setAlpha(1 - v);
@@ -220,7 +228,6 @@ public class MainFragment extends Fragment {
         tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(getContext(), R.color.primaryColorDark));
         tabLayout.setupWithViewPager(viewPager);
     }
-    
 
     public void updateList() {
         myMusicFragment.updateList();
@@ -284,13 +291,17 @@ public class MainFragment extends Fragment {
         ((MainActivity) getActivity()).setCurrentPlaylist(TracksLoaderInterface.SEARCH);
         adapter.updateTracks(searchPlaylist);
         adapter.notifyDataSetChanged();
+        adapter = new SimpleRecyclerAdapter(searchPlaylist, (MainActivity) getActivity());
+        recyclerView.setAdapter(adapter);
+        adapter.updateTracks(searchPlaylist);
+        adapter.notifyDataSetChanged();
     }
 
-    public void makeSearchUIActions(boolean isSearch){
-        if(isSearch){
+    public void makeSearchUIActions(boolean isSearch) {
+        if (isSearch) {
             viewPager.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             viewPager.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.GONE);
         }
