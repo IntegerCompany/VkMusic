@@ -54,8 +54,6 @@ public class MainActivity extends AppCompatActivity implements
     private ArrayList<MusicTrackPOJO> savedPlaylist = new ArrayList<>();
     private ArrayList<MusicTrackPOJO> searchPlaylist = new ArrayList<>();
 
-    private Intent launchingIntent;
-
     private boolean isPlaying = false;
     private int currentPlaylist = TracksLoaderInterface.MY_TRACKS;
 
@@ -71,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements
 
         tracksDataLoader = new TracksDataLoader(this);
         tracksDataLoader.setTracksLoadingListener(this);
-        tracksDataLoader.getTracksByUserId(AppState.getLoggedUser().getUserId(), 1, 10);
+        tracksDataLoader.getTracksByUserId(AppState.getLoggedUser().getUserId(), 0, 10);
 
         mainFragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         fabPrevious = (FloatingActionButton) findViewById(R.id.fab_previous);
@@ -85,10 +83,12 @@ public class MainActivity extends AppCompatActivity implements
         fabPlayPause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!isPlaying) {
-                    playMusic();
-                } else {
-                    pauseMusic();
+                if(!isPlayListEmpty()){
+                    if (!isPlaying) {
+                        playMusic();
+                    } else {
+                        pauseMusic();
+                    }
                 }
             }
         });
@@ -96,17 +96,21 @@ public class MainActivity extends AppCompatActivity implements
         fabNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent nextIntent = new Intent("com.example.app.ACTION_NEXT");
-                sendBroadcast(nextIntent);
-                mainFragment.updateSeekBarAndTextViews(0);
+                if(!isPlayListEmpty()){
+                    Intent nextIntent = new Intent("com.example.app.ACTION_NEXT");
+                    sendBroadcast(nextIntent);
+                    mainFragment.updateSeekBarAndTextViews(0);
+                }
             }
         });
 
         fabPrevious.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent pauseIntent = new Intent("com.example.app.ACTION_BACK");
-                sendBroadcast(pauseIntent);
+                if(!isPlayListEmpty()){
+                    Intent pauseIntent = new Intent("com.example.app.ACTION_BACK");
+                    sendBroadcast(pauseIntent);
+                }
             }
         });
         if (!Environment.getExternalStorageDirectory().canWrite()) {
@@ -188,11 +192,6 @@ public class MainActivity extends AppCompatActivity implements
         return (int) ((dp * displayMetrics.density) + 0.5);
     }
 
-    public ArrayList<MusicTrackPOJO> getPlaylist() {
-        Log.d(LOG_TAG, "Get playlist");
-        return myTracksPlaylist;
-    }
-
     /**
      * TRACK DATA LOADER START
      *
@@ -246,7 +245,7 @@ public class MainActivity extends AppCompatActivity implements
                 break;
 
         }
-        if (currentPlaylist == source){
+        if (currentPlaylist == source) {
             setCurrentPlaylist(source);
         }
 
@@ -330,15 +329,17 @@ public class MainActivity extends AppCompatActivity implements
                 } else if (action.equalsIgnoreCase("com.example.app.ACTION_TRACK_CHANGED")) {
                     MusicTrackPOJO musicTrack = intent.getParcelableExtra("musicTrack");
                     int time = intent.getExtras().getInt("CurrentTrackTime");
-                    mainFragment.setCurrentTrack(musicTrack, intent.getIntExtra("musicTrackPosition", 0));
-                    mainFragment.setMediaFileLengthInMilliseconds(musicTrack.getDuration() * 1000);
-                    mainFragment.getSeekBar().setProgress((int) (((float) time / mainFragment.getMediaFileLengthInMilliseconds()) * 100)); // This math construction give a percentage of "was playing"/"song length"
-                    if (time == 0) {
-                        mainFragment.getSeekBar().setProgress(0);
-                    }
-                    if (intent.getExtras().getBoolean("isPlaying")) {
-                        playMusicUIAction();
-                        isPlaying = true;
+                    if (musicTrack != null) {
+                        mainFragment.setCurrentTrack(musicTrack, intent.getIntExtra("musicTrackPosition", 0));
+                        mainFragment.setMediaFileLengthInMilliseconds(musicTrack.getDuration() * 1000);
+                        mainFragment.getSeekBar().setProgress((int) (((float) time / mainFragment.getMediaFileLengthInMilliseconds()) * 100)); // This math construction give a percentage of "was playing"/"song length"
+                        if (time == 0) {
+                            mainFragment.getSeekBar().setProgress(0);
+                        }
+                        if (intent.getExtras().getBoolean("isPlaying")) {
+                            playMusicUIAction();
+                            isPlaying = true;
+                        }
                     }
                 } else if (action.equalsIgnoreCase("com.example.app.ACTION_LOADING_PROGRESS")) {
                     int percent = intent.getExtras().getInt("percent");
@@ -361,7 +362,6 @@ public class MainActivity extends AppCompatActivity implements
         intentFilter.addAction("com.example.app.ACTION_TRACK_CHANGED");
         intentFilter.addAction("com.example.app.ACTION_LOADING_PROGRESS");
         intentFilter.addAction("com.example.app.ACTION_TRACK_PROGRESS");
-
         // register the receiver
         registerReceiver(broadcastReceiver, intentFilter);
     }
@@ -471,8 +471,9 @@ public class MainActivity extends AppCompatActivity implements
     public ArrayList<MusicTrackPOJO> getMyTracksPlaylist() {
         return myTracksPlaylist;
     }
+
     public ArrayList<MusicTrackPOJO> getPlaylistByName(int source) {
-        switch (source){
+        switch (source) {
             case TracksLoaderInterface.MY_TRACKS:
                 return myTracksPlaylist;
             case TracksLoaderInterface.RECOMMENDATIONS:
@@ -483,5 +484,36 @@ public class MainActivity extends AppCompatActivity implements
                 return searchPlaylist;
         }
         return myTracksPlaylist;
+    }
+
+    private boolean isPlayListEmpty() {
+        boolean isPlayListEmpty = false;
+        if (mainFragment.isSearchEnabled()) {
+            if (searchPlaylist.isEmpty()) {
+                isPlayListEmpty = true;
+            }
+        } else {
+            switch (mainFragment.getCurrentTab()) {
+                case 0:
+                    Log.d("TAB","1");
+                    if (myTracksPlaylist.isEmpty()) {
+                        isPlayListEmpty = true;
+                    }
+                    break;
+                case 1:
+                    Log.d("TAB","2");
+                    if (recommendationsPlaylist.isEmpty()) {
+                        isPlayListEmpty = true;
+                    }
+                    break;
+                case 2:
+                    Log.d("TAB","3");
+                    if (savedPlaylist.isEmpty()) {
+                        isPlayListEmpty = true;
+                    }
+                    break;
+            }
+        }
+        return isPlayListEmpty;
     }
 }
