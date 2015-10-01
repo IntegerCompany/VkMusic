@@ -5,4 +5,42 @@
         <item name="android:colorPrimaryDark">@color/primaryColorDark</item>
         <item name="android:colorAccent">@color/accentColor</item>
     </style>
+
+    <style name="AppTheme.Green.Blue" parent="AppTheme.Base.Green.Blue">
+        <item name="android:colorPrimary">@color/styleGreenPrimary</item>
+        <item name="android:colorPrimaryDark">@color/styleGreenPrimaryDark</item>
+        <item name="android:colorAccent">@color/styleBlue</item>
+    </style>
+
+    <style name="AppTheme.DeepPurple.Pink" parent="AppTheme.Base.DeepPurple.Pink">
+        <item name="android:colorPrimary">@color/styleDeepPurplePrimary</item>
+        <item name="android:colorPrimaryDark">@color/styleDeepPurplePrimaryDark</item>
+        <item name="android:colorAccent">@color/stylePink</item>
+    </style>
+
+    <style name="AppTheme.DeepOrange.Orange" parent="AppTheme.Base.DeepOrange.Orange">
+        <item name="android:colorPrimary">@color/styleDeepOrangePrimary</item>
+        <item name="android:colorPrimaryDark">@color/styleDeepOrangePrimaryDark</item>
+        <item name="android:colorAccent">@color/styleOrange</item>
+    </style>
+
+    <style name="AppTheme.Amber.Purple" parent="AppTheme.Base.Amber.Purple">
+        <item name="android:colorPrimary">@color/styleAmberPrimary</item>
+        <item name="android:colorPrimaryDark">@color/styleAmberPrimaryDark</item>
+        <item name="android:colorAccent">@color/stylePurple</item>
+    </style>
+
+    <style name="AppTheme.BlueGrey.Pink" parent="AppTheme.Base.BlueGrey.Pink">
+        <item name="android:colorPrimary">@color/styleBlueGreyPrimary</item>
+        <item name="android:colorPrimaryDark">@color/styleBlueGreyPrimaryDark</item>
+        <item name="android:colorAccent">@color/stylePink</item>
+    </style>
+
+    <style name="AppTheme.Cyan.Lime" parent="AppTheme.Base.Cyan.Lime">
+        <item name="android:colorPrimary">@color/styleCyanPrimary</item>
+        <item name="android:colorPrimaryDark">@color/styleCyanPrimaryDark</item>
+        <item name="android:colorAccent">@color/styleLime</item>
+    </style>
+
+
 </resources>

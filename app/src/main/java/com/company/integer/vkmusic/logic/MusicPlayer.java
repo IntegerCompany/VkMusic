@@ -45,13 +45,14 @@ public class MusicPlayer implements MusicPlayerInterface {
 
     @Override
     public void setPlayList(ArrayList<MusicTrackPOJO> tracks, int position) {
-        player.reset();
-        playlist = tracks;
-        currentTrackPosition = position;
-        currentTrackTime = 0;
-        currentTrack = playlist.get(currentTrackPosition);
-        musicPlayerListener.onCurrentTrackChanged(currentTrack);
-        Log.d(LOG_TAG, "Set playlist length :" + playlist.size());
+        if (tracks.size() != 0) {
+            playlist = tracks;
+            currentTrackPosition = position;
+            currentTrackTime = 0;
+            currentTrack = playlist.get(currentTrackPosition);
+            musicPlayerListener.onCurrentTrackChanged(currentTrack);
+            Log.d(LOG_TAG, "Set playlist length :" + playlist.size());
+        }
     }
 
     @Override
@@ -148,7 +149,5 @@ public class MusicPlayer implements MusicPlayerInterface {
             cachedMusicTrack = currentTrack;
         }
         player.start();
-
-
     }
 }

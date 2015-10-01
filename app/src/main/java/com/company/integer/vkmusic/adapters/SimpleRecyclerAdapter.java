@@ -12,7 +12,9 @@ import android.widget.TextView;
 import com.company.integer.vkmusic.MainActivity;
 import com.company.integer.vkmusic.R;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
+import com.company.integer.vkmusic.supportclasses.AppState;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -55,11 +57,17 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
             if (activity.isPlaying()) {
                 trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.pause_item));
             }
-            trackViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(activity, R.color.primaryColorDark));
+            trackViewHolder.itemView.setBackgroundColor(AppState.getColors().getColorAccentID());
         }else{
             trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.play_item));
             trackViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(activity, R.color.listViewItemBackground));
         }
+        trackViewHolder.downloadImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                activity.downloadTrack(tracks.get(i));
+            }
+        });
 
     }
 
@@ -83,12 +91,26 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         notifyDataSetChanged();
     }
 
+    private String getDurationString(int durationInSec) {
+        int minutes = durationInSec / 60;
+        int seconds = durationInSec - minutes * 60;
+        if (seconds < 10) {
+            return minutes + ":0" + seconds;
+        } else {
+            return minutes + ":" + seconds;
+        }
+    }
 
-    class TrackViewHolder extends RecyclerView.ViewHolder{
+    public void updateTracks(ArrayList<MusicTrackPOJO> tracks){
+        this.tracks = tracks;
+    }
+
+    class TrackViewHolder extends RecyclerView.ViewHolder {
         TextView title;
         TextView author;
         TextView duration;
         ImageView playPause;
+        ImageView downloadImage;
 
         public TrackViewHolder(View itemView) {
             super(itemView);
@@ -97,16 +119,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
             title = (TextView) itemView.findViewById(R.id.tv_song_name_item);
             duration = (TextView) itemView.findViewById(R.id.tv_duration_item);
             playPause = (ImageView) itemView.findViewById(R.id.btn_play_pause_item);
-        }
-    }
-
-    private String getDurationString(int durationInSec) {
-        int minutes = durationInSec / 60;
-        int seconds = durationInSec - minutes * 60;
-        if (seconds < 10) {
-            return minutes + ":0" + seconds;
-        } else {
-            return minutes + ":" + seconds;
+            downloadImage = (ImageView) itemView.findViewById(R.id.btn_download_item);
         }
     }
 

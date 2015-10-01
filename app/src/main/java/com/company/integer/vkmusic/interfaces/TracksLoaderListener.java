@@ -21,4 +21,8 @@ public interface TracksLoaderListener {
      * @param errorMessage
      */
     void tracksLoadingError(String errorMessage);
+
+    void trackDownloadingProgress(MusicTrackPOJO track, int percent);
+
+    void trackDownloadFinished(MusicTrackPOJO track);
 }

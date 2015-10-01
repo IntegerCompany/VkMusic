@@ -1,8 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primaryColor">#EB2C52</color>
-    <color name="primaryColorDark">#0097A7</color>
-    <color name="accentColor">#EB2C52</color>
     <color name="listViewItemBackground">#424352</color>
     <color name="secondaryTextColor">#9E9E9E</color>
+    <color name="colorWhite">#ffffff</color>
+    <color name="colorBlack">#000000</color>
+
+    <color name="primaryColor">#EB2C52</color>
+    <color name="primaryColorDark">#0097A7</color>
+    <color name="accentColor">#0097A7</color>
+
+    <color name="styleGreenPrimary">#4CAF50</color>
+    <color name="styleGreenPrimaryDark">#388E3C</color>
+    <color name="styleBlue">#448AFF</color>
+
+    <color name="styleDeepPurplePrimary">#673AB7</color>
+    <color name="styleDeepPurplePrimaryDark">#512DA8</color>
+    <color name="stylePink">#FF4081</color>
+
+    <color name="styleDeepOrangePrimary">#FF5722</color>
+    <color name="styleDeepOrangePrimaryDark">#E64A19</color>
+    <color name="styleOrange">#FF9800</color>
+
+    <color name="styleAmberPrimary">#FFC107</color>
+    <color name="styleAmberPrimaryDark">#FFA000</color>
+    <color name="stylePurple">#E040FB</color>
+
+    <color name="styleBlueGreyPrimary">#607D8B</color>
+    <color name="styleBlueGreyPrimaryDark">#455A64</color>
+
+    <color name="styleCyanPrimary">#00BCD4</color>
+    <color name="styleCyanPrimaryDark">#0097A7</color>
+    <color name="styleLime">#CDDC39</color>
+
 </resources>

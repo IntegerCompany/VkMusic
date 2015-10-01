@@ -5,6 +5,7 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_login">VkMusic</string>
     <integer name="com_vk_sdk_AppId">5073026</integer>
+    <string name="player_advert_id">ca-app-pub-7672991449155931/2422373206</string>
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

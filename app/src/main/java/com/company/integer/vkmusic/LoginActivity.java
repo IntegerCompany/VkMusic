@@ -2,6 +2,7 @@ package com.company.integer.vkmusic;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -9,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.company.integer.vkmusic.pojo.StylePOJO;
 import com.company.integer.vkmusic.pojo.UserPOJO;
 import com.company.integer.vkmusic.supportclasses.AppState;
 import com.vk.sdk.VKAccessToken;
@@ -24,10 +26,12 @@ public class LoginActivity extends AppCompatActivity {
     TextView tvSigningIn;
     Button btnTrySignInAgain;
     VKCallback<VKSdk.LoginState> loginStateCallback;
+    Intent launchingIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setDefaultStyle();
         setContentView(R.layout.activity_login);
         initViewsById();
         setListeners();
@@ -36,6 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         if (!VKSdk.isLoggedIn()) {
             VKSdk.login(this, VKScope.AUDIO);
         }
+        launchingIntent = getIntent();
     }
 
     @Override
@@ -101,9 +106,21 @@ public class LoginActivity extends AppCompatActivity {
 
     private void startMainActivity() {
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        AppState.setTab(launchingIntent.getIntExtra("tab", 1));
         startActivity(intent);
         finish();
+    }
+
+    private void setDefaultStyle(){
+        if(AppState.getTheme()==0){
+            StylePOJO stylePOJO = new StylePOJO();
+            stylePOJO.setColorAccentID(ContextCompat.getColor(this,R.color.accentColor));
+            stylePOJO.setColorPrimaryID(ContextCompat.getColor(this, R.color.primaryColor));
+            stylePOJO.setColorPrimaryDarkID(ContextCompat.getColor(this, R.color.primaryColorDark));
+            stylePOJO.setTabDividerColorID(ContextCompat.getColor(this, R.color.primaryColorDark));
+            stylePOJO.setImageDrawableID(R.drawable.ic_guitar);
+            AppState.setTheme(R.style.AppTheme,stylePOJO);
+        }
     }
 
 

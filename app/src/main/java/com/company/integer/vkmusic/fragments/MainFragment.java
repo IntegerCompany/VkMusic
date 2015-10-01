@@ -2,8 +2,8 @@ package com.company.integer.vkmusic.fragments;
 
 
 import android.animation.ArgbEvaluator;
-import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -13,13 +13,11 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -30,6 +28,9 @@ import com.company.integer.vkmusic.adapters.SimpleRecyclerAdapter;
 import com.company.integer.vkmusic.adapters.ViewPagerAdapter;
 import com.company.integer.vkmusic.interfaces.TracksLoaderInterface;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.company.integer.vkmusic.supportclasses.AppState;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
@@ -39,6 +40,10 @@ import java.util.ArrayList;
  */
 public class MainFragment extends Fragment {
 
+    LinearLayoutManager lm;
+    TabFragment myMusicFragment, recommendedFragment, savedFragment;
+    SimpleRecyclerAdapter adapter;
+    boolean scrollDownLock = false;
     private FloatingActionButton fabAdd;
     private FloatingActionButton fabDownload;
     private TextView tvNameOfSongPlayerLine;
@@ -56,13 +61,10 @@ public class MainFragment extends Fragment {
     private RecyclerView recyclerView;
     private ViewPager viewPager;
     private TabLayout tabLayout;
-    private SearchView etSearchText;
     private int mediaFileLengthInMilliseconds;
     private SlidingUpPanelLayout slidingUpPanelLayout;
     private View view;
-
-    TabFragment myMusicFragment, recommendedFragment, savedFragment;
-    SimpleRecyclerAdapter adapter;
+    private AdView playerAdvert;
     public MainFragment() {
         // Required empty public constructor
     }
@@ -77,9 +79,9 @@ public class MainFragment extends Fragment {
         myMusicFragment = new TabFragment();
         recommendedFragment = new TabFragment();
         savedFragment = new TabFragment();
-        myMusicFragment.setupWith(((MainActivity) getActivity()).getMyTracksPlaylist());
-        recommendedFragment.setupWith(((MainActivity) getActivity()).getRecommendationsPlaylist());
-        savedFragment.setupWith(((MainActivity) getActivity()).getSavedPlaylist());
+        myMusicFragment.setupWith(((MainActivity) getActivity()).getMyTracksPlaylist(), TracksLoaderInterface.MY_TRACKS);
+        recommendedFragment.setupWith(((MainActivity) getActivity()).getRecommendationsPlaylist(), TracksLoaderInterface.RECOMMENDATIONS);
+        savedFragment.setupWith(((MainActivity) getActivity()).getSavedPlaylist(), TracksLoaderInterface.SAVED);
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.app_bar);
         toolbar.setTitle("");
@@ -88,6 +90,8 @@ public class MainFragment extends Fragment {
 
         fabAdd = (FloatingActionButton) view.findViewById(R.id.fab_add);
         fabDownload = (FloatingActionButton) view.findViewById(R.id.fab_download);
+        fabAdd.setBackgroundTintList(ColorStateList.valueOf(AppState.getColors().getColorAccentID()));
+        fabDownload.setBackgroundTintList(ColorStateList.valueOf(AppState.getColors().getColorAccentID()));
         tvNameOfSongPlayerLine = (TextView) view.findViewById(R.id.tv_name_of_song_player);
         tvAuthorPlayerLine = (TextView) view.findViewById(R.id.tv_author_name_player);
         tvCurrentTimePlayer = (TextView) view.findViewById(R.id.tv_current_time_player);
@@ -98,6 +102,8 @@ public class MainFragment extends Fragment {
         ivClosePanel = (ImageView) view.findViewById(R.id.iv_close_panel);
         ivDivider = (ImageView) view.findViewById(R.id.iv_divider);
         ivAlbumPhoto = (ImageView) view.findViewById(R.id.iv_album_photo);
+        ivAlbumPhoto.setImageDrawable(ContextCompat.getDrawable(getContext(), AppState.getColors().getImageDrawableID()));
+
         seekBar = (SeekBar) view.findViewById(R.id.seekBar);
         seekBar.setSecondaryProgress(0);
         seekBar.setProgress(0);
@@ -105,21 +111,22 @@ public class MainFragment extends Fragment {
 
         evaluator = new ArgbEvaluator();
         recyclerView = (RecyclerView) view.findViewById(R.id.searchList);
+        adapter = new SimpleRecyclerAdapter(new ArrayList<MusicTrackPOJO>(),(MainActivity) getActivity());
+        recyclerView.setAdapter(adapter);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity().getBaseContext());
         recyclerView.setLayoutManager(linearLayoutManager);
-
+        lm = (LinearLayoutManager) recyclerView.getLayoutManager();
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if (((MainActivity) getActivity()).getSearchPlaylist().size() != 0){
-                    LinearLayoutManager lm = (LinearLayoutManager) recyclerView.getLayoutManager();
-                    Log.d("MainFragment", "lm.findViewByPosition(lm.findLastVisibleItemPosition()).getBottom() = " + lm.findViewByPosition(lm.findLastVisibleItemPosition()).getBottom());
-                    Log.d("MainFragment", "recyclerView.getY() = " + recyclerView.getY());
-                    Log.d("MainFragment", "lm.findLastVisibleItemPosition() = " + lm.findLastVisibleItemPosition());
-                    if (lm.findLastVisibleItemPosition() > ((MainActivity) getActivity()).getSearchPlaylist().size() - 2) {
-                        ((MainActivity) getActivity()).uploadMore(TracksLoaderInterface.SEARCH);
+                if (((MainActivity) getActivity()).getSearchPlaylist().size() != 0) {
+                    if (lm.findLastVisibleItemPosition() > ((MainActivity) getActivity()).getSearchPlaylist().size() -2) {
+                        if (!scrollDownLock) ((MainActivity) getActivity()).uploadMore(TracksLoaderInterface.SEARCH);
+                        scrollDownLock = true;
+                    }else{
+                        scrollDownLock = false;
                     }
                 }
             }
@@ -143,7 +150,7 @@ public class MainFragment extends Fragment {
                 tvAuthorPlayerLine.setAlpha(1 - v);
                 tvCurrentTimePlayerLine.setAlpha(1 - v);
                 playerLine.setBackgroundColor((Integer) evaluator.evaluate(v, ContextCompat.getColor(getContext(), R.color.listViewItemBackground),
-                        ContextCompat.getColor(getContext(), R.color.accentColor)));
+                        AppState.getColors().getColorPrimaryID()));
                 tvNameOfSongFragment.setAlpha(v);
                 tvAuthorFragment.setAlpha(v);
                 ivDivider.setAlpha(1 - v);
@@ -194,8 +201,7 @@ public class MainFragment extends Fragment {
             }
 
         });
-
-
+        initAdverts();
 
         return view;
     }
@@ -220,10 +226,12 @@ public class MainFragment extends Fragment {
         tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(getContext(), R.color.primaryColorDark));
         tabLayout.setupWithViewPager(viewPager);
     }
-    
 
     public void updateList() {
         myMusicFragment.updateList();
+        recommendedFragment.updateList();
+        savedFragment.updateList();
+        if (adapter != null) adapter.notifyDataSetChanged();
     }
     
     public void updateSeekBarAndTextViews(int time) {
@@ -241,15 +249,30 @@ public class MainFragment extends Fragment {
         tvNameOfSongFragment.setText(musicTrack.getTitle());
         tvAuthorPlayerLine.setText(musicTrack.getArtist());
         tvAuthorFragment.setText(musicTrack.getArtist());
-        myMusicFragment.setCurrentTrackPosition(position);
-    }
+        switch (((MainActivity) getActivity()).getCurrentPlaylist()){
+            case TracksLoaderInterface.MY_TRACKS:
+                myMusicFragment.setCurrentTrackPosition(position);
+                break;
+            case TracksLoaderInterface.RECOMMENDATIONS:
+                recommendedFragment.setCurrentTrackPosition(position);
+                break;
+            case TracksLoaderInterface.SAVED:
+                savedFragment.setCurrentTrackPosition(position);
+                break;
+            case TracksLoaderInterface.SEARCH:
+                adapter.setCurrentTrackPosition(position);
+                break;
+        }
 
-    public void setMediaFileLengthInMilliseconds(int mediaFileLengthInMilliseconds) {
-        this.mediaFileLengthInMilliseconds = mediaFileLengthInMilliseconds;
+
     }
 
     public int getMediaFileLengthInMilliseconds() {
         return mediaFileLengthInMilliseconds;
+    }
+
+    public void setMediaFileLengthInMilliseconds(int mediaFileLengthInMilliseconds) {
+        this.mediaFileLengthInMilliseconds = mediaFileLengthInMilliseconds;
     }
 
     private String getDurationString(int durationInSec) {
@@ -264,17 +287,40 @@ public class MainFragment extends Fragment {
 
     public void searchCompleted(ArrayList<MusicTrackPOJO> searchPlaylist) {
         ((MainActivity) getActivity()).setCurrentPlaylist(TracksLoaderInterface.SEARCH);
-        adapter = new SimpleRecyclerAdapter(searchPlaylist,(MainActivity) getActivity());
+        adapter.updateTracks(searchPlaylist);
+        adapter.notifyDataSetChanged();
+        adapter = new SimpleRecyclerAdapter(searchPlaylist, (MainActivity) getActivity());
         recyclerView.setAdapter(adapter);
     }
 
-    public void makeSearchUIActions(boolean isSearch){
-        if(isSearch){
+    public void makeSearchUIActions(boolean isSearch) {
+        if (isSearch) {
             viewPager.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             viewPager.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.GONE);
         }
+    }
+
+    public void switchToTab(int tab) {
+        switch (tab) {
+            case TracksLoaderInterface.MY_TRACKS:
+                viewPager.setCurrentItem(1, false);
+                break;
+            case TracksLoaderInterface.RECOMMENDATIONS:
+                viewPager.setCurrentItem(2, false);
+                break;
+            case TracksLoaderInterface.SAVED:
+                viewPager.setCurrentItem(3, false);
+                break;
+
+        }
+    }
+
+    private void initAdverts() {
+        AdView mAdView = (AdView) view.findViewById(R.id.player_advert);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
 }
