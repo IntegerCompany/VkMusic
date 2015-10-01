@@ -14,6 +14,7 @@ public class AppState {
     private static Context context;
     private static SharedPreferences sharedPreferences;
     private static Gson gson;
+    private static int tab;
 
     public static void setupAppState(Context ctx){
         context = ctx;
@@ -28,5 +29,13 @@ public class AppState {
     public static void setLoggedUser(UserPOJO loggedUser) {
         AppState.loggedUser = loggedUser;
         sharedPreferences.edit().putString("loggedUser", gson.toJson(loggedUser)).apply();
+    }
+
+    public static int getTab() {
+        return tab;
+    }
+
+    public static void setTab(int tab) {
+        AppState.tab = tab;
     }
 }

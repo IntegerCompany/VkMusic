@@ -1,11 +1,15 @@
 package com.company.integer.vkmusic.logic;
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Environment;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
+import com.company.integer.vkmusic.LoginActivity;
 import com.company.integer.vkmusic.R;
 import com.company.integer.vkmusic.interfaces.TracksLoaderInterface;
 import com.company.integer.vkmusic.interfaces.TracksLoaderListener;
@@ -160,6 +164,16 @@ public class TracksDataLoader implements TracksLoaderInterface {
         mBuilder.setContentTitle("Downloading track")
                 .setContentText(trackToDownload.getTitle())
                 .setSmallIcon(R.mipmap.ic_launcher);
+        Intent resultIntent = new Intent(context, LoginActivity.class);
+        resultIntent.putExtra("tab", 3);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
 // Start a lengthy operation in a background thread
         new Thread(
                 new Runnable() {
@@ -170,6 +184,7 @@ public class TracksDataLoader implements TracksLoaderInterface {
                             File vkMusicDirectory = new File(Environment
                                     .getExternalStorageDirectory().toString()
                                     + "/VkMusic/");
+
                             vkMusicDirectory.mkdir();
                             File path = new File(vkMusicDirectory + "/" + trackToDownload.getArtist() + "-" + trackToDownload.getTitle() + ".mp3");
                             if (path.exists()) {
@@ -198,6 +213,7 @@ public class TracksDataLoader implements TracksLoaderInterface {
                                 output.write(data, 0, count);
                                 // publishing the progress....
                                 if (lastPercentage != (int) (total * 100) / lengthOfFile) {
+                                    mBuilder.setContentText(trackToDownload.getArtist() + " - " + trackToDownload.getTitle());
                                     mBuilder.setProgress(100, (int) ((total * 100) / lengthOfFile), false);
                                     mNotifyManager.notify(id, mBuilder.build());
                                     tracksLoaderListener.trackDownloadingProgress(trackToDownload, (int) ((total * 100) / lengthOfFile));

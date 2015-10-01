@@ -1,12 +1,15 @@
 package com.company.integer.vkmusic;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -48,6 +51,8 @@ public class MainActivity extends AppCompatActivity implements
     private ArrayList<MusicTrackPOJO> recommendationsPlaylist = new ArrayList<>();
     private ArrayList<MusicTrackPOJO> savedPlaylist = new ArrayList<>();
     private ArrayList<MusicTrackPOJO> searchPlaylist = new ArrayList<>();
+
+    private Intent launchingIntent;
 
     private boolean isPlaying = false;
     private int currentPlaylist = TracksLoaderInterface.MY_TRACKS;
@@ -93,6 +98,13 @@ public class MainActivity extends AppCompatActivity implements
                 sendBroadcast(pauseIntent);
             }
         });
+        if (!Environment.getExternalStorageDirectory().canWrite()) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    0);
+        }
+
+
     }
 
     @Override
@@ -100,6 +112,13 @@ public class MainActivity extends AppCompatActivity implements
         super.onStart();
         registerMyBroadcastReceiver();
         sendBroadcast(new Intent("com.example.app.ACTION_UPDATE_TRACK"));
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mainFragment.switchToTab(AppState.getTab());
     }
 
     @Override
@@ -336,9 +355,10 @@ public class MainActivity extends AppCompatActivity implements
         registerReceiver(broadcastReceiver, intentFilter);
     }
 
+
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
         unregisterReceiver(broadcastReceiver);
     }
 
