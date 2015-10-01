@@ -2,7 +2,6 @@ package com.company.integer.vkmusic.fragments;
 
 
 import android.animation.ArgbEvaluator;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -13,13 +12,11 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -39,6 +36,10 @@ import java.util.ArrayList;
  */
 public class MainFragment extends Fragment {
 
+    LinearLayoutManager lm;
+    TabFragment myMusicFragment, recommendedFragment, savedFragment;
+    SimpleRecyclerAdapter adapter;
+    boolean scrollDownLock = false;
     private FloatingActionButton fabAdd;
     private FloatingActionButton fabDownload;
     private TextView tvNameOfSongPlayerLine;
@@ -59,11 +60,6 @@ public class MainFragment extends Fragment {
     private int mediaFileLengthInMilliseconds;
     private SlidingUpPanelLayout slidingUpPanelLayout;
     private View view;
-    LinearLayoutManager lm;
-
-    TabFragment myMusicFragment, recommendedFragment, savedFragment;
-    SimpleRecyclerAdapter adapter;
-    boolean scrollDownLock = false;
     public MainFragment() {
         // Required empty public constructor
     }
@@ -262,12 +258,12 @@ public class MainFragment extends Fragment {
 
     }
 
-    public void setMediaFileLengthInMilliseconds(int mediaFileLengthInMilliseconds) {
-        this.mediaFileLengthInMilliseconds = mediaFileLengthInMilliseconds;
-    }
-
     public int getMediaFileLengthInMilliseconds() {
         return mediaFileLengthInMilliseconds;
+    }
+
+    public void setMediaFileLengthInMilliseconds(int mediaFileLengthInMilliseconds) {
+        this.mediaFileLengthInMilliseconds = mediaFileLengthInMilliseconds;
     }
 
     private String getDurationString(int durationInSec) {
@@ -293,6 +289,21 @@ public class MainFragment extends Fragment {
         }else{
             viewPager.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.GONE);
+        }
+    }
+
+    public void switchToTab(int tab) {
+        switch (tab) {
+            case TracksLoaderInterface.MY_TRACKS:
+                viewPager.setCurrentItem(1, false);
+                break;
+            case TracksLoaderInterface.RECOMMENDATIONS:
+                viewPager.setCurrentItem(2, false);
+                break;
+            case TracksLoaderInterface.SAVED:
+                viewPager.setCurrentItem(3, false);
+                break;
+
         }
     }
 }

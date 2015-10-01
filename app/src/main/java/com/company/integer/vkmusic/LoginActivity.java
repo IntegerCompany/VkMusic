@@ -24,6 +24,7 @@ public class LoginActivity extends AppCompatActivity {
     TextView tvSigningIn;
     Button btnTrySignInAgain;
     VKCallback<VKSdk.LoginState> loginStateCallback;
+    Intent launchingIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +37,7 @@ public class LoginActivity extends AppCompatActivity {
         if (!VKSdk.isLoggedIn()) {
             VKSdk.login(this, VKScope.AUDIO);
         }
+        launchingIntent = getIntent();
     }
 
     @Override
@@ -101,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void startMainActivity() {
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        AppState.setTab(launchingIntent.getIntExtra("tab", 1));
         startActivity(intent);
         finish();
     }
