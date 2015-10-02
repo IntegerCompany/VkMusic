@@ -83,12 +83,13 @@ public class MainActivity extends AppCompatActivity implements
         fabPlayPause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!isPlayListEmpty()){
-                    if (!isPlaying) {
+
+                if (!isPlaying) {
+                    if (!isPlayListEmpty()) {
                         playMusic();
-                    } else {
-                        pauseMusic();
                     }
+                } else {
+                    pauseMusic();
                 }
             }
         });
@@ -96,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements
         fabNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!isPlayListEmpty()){
+                if (!isPlayListEmpty()) {
                     Intent nextIntent = new Intent("com.example.app.ACTION_NEXT");
                     sendBroadcast(nextIntent);
                     mainFragment.updateSeekBarAndTextViews(0);
@@ -107,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements
         fabPrevious.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!isPlayListEmpty()){
+                if (!isPlayListEmpty()) {
                     Intent pauseIntent = new Intent("com.example.app.ACTION_BACK");
                     sendBroadcast(pauseIntent);
                 }
@@ -370,7 +371,11 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onStop() {
         super.onStop();
+        Log.d("Panel","Sending intent");
+        Intent stopService = new Intent("com.example.app.ACTION_DESTROY");
+        sendBroadcast(stopService);
         unregisterReceiver(broadcastReceiver);
+        finish();
     }
 
     @Override
@@ -495,19 +500,19 @@ public class MainActivity extends AppCompatActivity implements
         } else {
             switch (mainFragment.getCurrentTab()) {
                 case 0:
-                    Log.d("TAB","1");
+                    Log.d("TAB", "1");
                     if (myTracksPlaylist.isEmpty()) {
                         isPlayListEmpty = true;
                     }
                     break;
                 case 1:
-                    Log.d("TAB","2");
+                    Log.d("TAB", "2");
                     if (recommendationsPlaylist.isEmpty()) {
                         isPlayListEmpty = true;
                     }
                     break;
                 case 2:
-                    Log.d("TAB","3");
+                    Log.d("TAB", "3");
                     if (savedPlaylist.isEmpty()) {
                         isPlayListEmpty = true;
                     }
@@ -516,4 +521,6 @@ public class MainActivity extends AppCompatActivity implements
         }
         return isPlayListEmpty;
     }
+
+
 }
