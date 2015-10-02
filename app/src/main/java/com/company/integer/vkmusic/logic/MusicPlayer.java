@@ -49,9 +49,11 @@ public class MusicPlayer implements MusicPlayerInterface {
             playlist = tracks;
             currentTrackPosition = position;
             currentTrackTime = 0;
-            currentTrack = playlist.get(currentTrackPosition);
-            musicPlayerListener.onCurrentTrackChanged(currentTrack);
-            Log.d(LOG_TAG, "Set playlist length :" + playlist.size());
+            if(currentTrackPosition<playlist.size()){
+                currentTrack = playlist.get(currentTrackPosition);
+                musicPlayerListener.onCurrentTrackChanged(currentTrack);
+                Log.d(LOG_TAG, "Set playlist length :" + playlist.size());
+            }
         }
     }
 
