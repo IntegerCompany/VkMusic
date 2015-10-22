@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private boolean isPlaying = false;
     private int currentPlaylist = TracksLoaderInterface.MY_TRACKS;
+    private int currentTrack = 0;
 
 
     @Override
@@ -330,7 +331,8 @@ public class MainActivity extends AppCompatActivity implements
                 } else if (action.equalsIgnoreCase("com.example.app.ACTION_TRACK_CHANGED")) {
                     MusicTrackPOJO musicTrack = intent.getParcelableExtra("musicTrack");
                     int time = intent.getExtras().getInt("CurrentTrackTime");
-                    mainFragment.setCurrentTrack(musicTrack, intent.getIntExtra("musicTrackPosition", 0));
+                    currentTrack = intent.getIntExtra("musicTrackPosition", 0);
+                    mainFragment.setCurrentTrack(musicTrack, currentTrack);
                     mainFragment.setMediaFileLengthInMilliseconds(musicTrack.getDuration() * 1000);
                     mainFragment.getSeekBar().setProgress((int) (((float) time / mainFragment.getMediaFileLengthInMilliseconds()) * 100)); // This math construction give a percentage of "was playing"/"song length"
                     if (time == 0) {
@@ -442,6 +444,7 @@ public class MainActivity extends AppCompatActivity implements
         switch (currentPlaylist) {
             case TracksLoaderInterface.MY_TRACKS:
                 changePlaylist.putExtra("playlist", myTracksPlaylist);
+                changePlaylist.putExtra("track", currentTrack);
                 break;
             case TracksLoaderInterface.RECOMMENDATIONS:
                 changePlaylist.putExtra("playlist", recommendationsPlaylist);

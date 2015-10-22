@@ -295,6 +295,7 @@ public class MainFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         adapter.updateTracks(searchPlaylist);
         adapter.notifyDataSetChanged();
+
     }
 
     public void makeSearchUIActions(boolean isSearch) {
