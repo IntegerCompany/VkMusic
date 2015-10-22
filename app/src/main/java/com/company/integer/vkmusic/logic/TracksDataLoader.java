@@ -107,7 +107,6 @@ public class TracksDataLoader implements TracksLoaderInterface {
             @Override
             public void onError(VKError error) {
                 super.onError(error);
-                Log.e(LOG_TAG, error.errorMessage);
                 tracksLoaderListener.tracksLoadingError(error.errorMessage);
             }
         });
