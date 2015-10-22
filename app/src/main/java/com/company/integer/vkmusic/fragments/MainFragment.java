@@ -247,26 +247,26 @@ public class MainFragment extends Fragment {
     }
 
     public void setCurrentTrack(MusicTrackPOJO musicTrack, int position) {
-        tvNameOfSongPlayerLine.setText(musicTrack.getTitle());
-        tvNameOfSongFragment.setText(musicTrack.getTitle());
-        tvAuthorPlayerLine.setText(musicTrack.getArtist());
-        tvAuthorFragment.setText(musicTrack.getArtist());
-        switch (((MainActivity) getActivity()).getCurrentPlaylist()){
-            case TracksLoaderInterface.MY_TRACKS:
-                myMusicFragment.setCurrentTrackPosition(position);
-                break;
-            case TracksLoaderInterface.RECOMMENDATIONS:
-                recommendedFragment.setCurrentTrackPosition(position);
-                break;
-            case TracksLoaderInterface.SAVED:
-                savedFragment.setCurrentTrackPosition(position);
-                break;
-            case TracksLoaderInterface.SEARCH:
-                adapter.setCurrentTrackPosition(position);
-                break;
+        if(musicTrack!=null){
+            tvNameOfSongPlayerLine.setText(musicTrack.getTitle());
+            tvNameOfSongFragment.setText(musicTrack.getTitle());
+            tvAuthorPlayerLine.setText(musicTrack.getArtist());
+            tvAuthorFragment.setText(musicTrack.getArtist());
+            switch (((MainActivity) getActivity()).getCurrentPlaylist()){
+                case TracksLoaderInterface.MY_TRACKS:
+                    myMusicFragment.setCurrentTrackPosition(position);
+                    break;
+                case TracksLoaderInterface.RECOMMENDATIONS:
+                    recommendedFragment.setCurrentTrackPosition(position);
+                    break;
+                case TracksLoaderInterface.SAVED:
+                    savedFragment.setCurrentTrackPosition(position);
+                    break;
+                case TracksLoaderInterface.SEARCH:
+                    adapter.setCurrentTrackPosition(position);
+                    break;
+            }
         }
-
-
     }
 
     public int getMediaFileLengthInMilliseconds() {
@@ -327,5 +327,13 @@ public class MainFragment extends Fragment {
         AdView mAdView = (AdView) view.findViewById(R.id.player_advert);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
+    }
+
+    public boolean isSearchEnabled(){
+        return viewPager.getVisibility()==View.GONE;
+    }
+
+    public int getCurrentTab(){
+       return viewPager.getCurrentItem();
     }
 }

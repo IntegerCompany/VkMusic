@@ -106,7 +106,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void startMainActivity() {
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        AppState.setTab(launchingIntent.getIntExtra("tab", 1));
+        AppState.setTab(launchingIntent.getIntExtra("tab", 0));
         startActivity(intent);
         finish();
     }
