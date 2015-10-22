@@ -40,7 +40,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
 
         trackViewHolder.title.setText(tracks.get(i).getTitle());
         trackViewHolder.duration.setText(getDurationString(tracks.get(i).getDuration()));
-        trackViewHolder.playPause.setOnClickListener(new View.OnClickListener() {
+        trackViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (currentTrackPosition == i & activity.isPlaying()){
