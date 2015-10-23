@@ -181,6 +181,32 @@ public class MainFragment extends Fragment {
         });
 
         viewPager = (ViewPager) view.findViewById(R.id.vp_main);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                switch (position){
+                    case 0:
+                        ((MainActivity) getActivity()).setCurrentPlaylist(TracksLoaderInterface.MY_TRACKS);
+                        break;
+                    case 1:
+                        ((MainActivity) getActivity()).setCurrentPlaylist(TracksLoaderInterface.RECOMMENDATIONS);
+                        break;
+                    case 2:
+                        break;
+
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -323,6 +349,8 @@ public class MainFragment extends Fragment {
         }
     }
 
+
+
     private void initAdverts() {
         AdView mAdView = (AdView) view.findViewById(R.id.player_advert);
         AdRequest adRequest = new AdRequest.Builder().build();
@@ -335,5 +363,10 @@ public class MainFragment extends Fragment {
 
     public int getCurrentTab(){
        return viewPager.getCurrentItem();
+    }
+
+    public void setLoading(){
+        tvCurrentTimePlayerLine.setText("Loading...");
+        tvCurrentTimePlayer.setText("Loading...");
     }
 }

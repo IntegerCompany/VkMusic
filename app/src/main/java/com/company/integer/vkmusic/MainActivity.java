@@ -56,6 +56,9 @@ public class MainActivity extends AppCompatActivity implements
 
     private boolean isPlaying = false;
     private int currentPlaylist = TracksLoaderInterface.MY_TRACKS;
+    private int myTracksCurrent = 0;
+    private int recommendationsCurrent = 0;
+    private int searchCurrent = 0;
     private int currentTrack = 0;
 
 
@@ -71,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements
         tracksDataLoader = new TracksDataLoader(this);
         tracksDataLoader.setTracksLoadingListener(this);
         tracksDataLoader.getTracksByUserId(AppState.getLoggedUser().getUserId(), 0, 10);
+        tracksDataLoader.getRecommendationsByUserID(AppState.getLoggedUser().getUserId(), 0, 10);
 
         mainFragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         fabPrevious = (FloatingActionButton) findViewById(R.id.fab_previous);
@@ -102,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements
                     Intent nextIntent = new Intent("com.example.app.ACTION_NEXT");
                     sendBroadcast(nextIntent);
                     mainFragment.updateSeekBarAndTextViews(0);
+                    mainFragment.setLoading();
                 }
             }
         });
@@ -112,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements
                 if (!isPlayListEmpty()) {
                     Intent pauseIntent = new Intent("com.example.app.ACTION_BACK");
                     sendBroadcast(pauseIntent);
+                    mainFragment.setLoading();
                 }
             }
         });
@@ -151,6 +157,7 @@ public class MainActivity extends AppCompatActivity implements
         isPlaying = true;
         Intent playIntent = new Intent("com.example.app.ACTION_PLAY");
         sendBroadcast(playIntent);
+        mainFragment.setLoading();
     }
 
     private void playMusicUIAction() {
@@ -348,7 +355,6 @@ public class MainActivity extends AppCompatActivity implements
                 } else if (action.equalsIgnoreCase("com.example.app.ACTION_LOADING_PROGRESS")) {
                     int percent = intent.getExtras().getInt("percent");
                     mainFragment.getSeekBar().setSecondaryProgress(percent);
-                    Log.d("SeekBar", "receiving" + percent);
                 } else if (action.equalsIgnoreCase("com.example.app.ACTION_TRACK_PROGRESS")) {
                     int trackTime = intent.getExtras().getInt("currentTrackTime");
                     mainFragment.updateSeekBarAndTextViews(trackTime);
