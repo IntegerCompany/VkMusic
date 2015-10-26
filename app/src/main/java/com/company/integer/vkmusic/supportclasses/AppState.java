@@ -2,14 +2,19 @@ package com.company.integer.vkmusic.supportclasses;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Environment;
 
 import com.company.integer.vkmusic.pojo.StylePOJO;
 import com.company.integer.vkmusic.pojo.UserPOJO;
 import com.google.gson.Gson;
 
+import java.io.File;
+
 public class AppState {
 
     public static final int TRACKS_PER_LOADING = 10;
+    public static final String FOLDER = "/VkMusic/";
+
 
     private static UserPOJO loggedUser;
     private static Context context;
