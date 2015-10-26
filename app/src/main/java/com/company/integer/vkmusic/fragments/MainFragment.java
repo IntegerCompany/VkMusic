@@ -78,11 +78,9 @@ public class MainFragment extends Fragment {
         // Inflate the layout for this fragment
 
         view = inflater.inflate(R.layout.fragment_main, container, false);
+        savedFragment = new TabFragment();
         myMusicFragment = new TabFragment();
         recommendedFragment = new TabFragment();
-        savedFragment = new TabFragment();
-        myMusicFragment.setupWith(((MainActivity) getActivity()).getMyTracksPlaylist(), TracksLoaderInterface.MY_TRACKS);
-        recommendedFragment.setupWith(((MainActivity) getActivity()).getRecommendationsPlaylist(), TracksLoaderInterface.RECOMMENDATIONS);
         savedFragment.setupWith(((MainActivity) getActivity()).getSavedPlaylist(), TracksLoaderInterface.SAVED);
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.app_bar);
@@ -116,23 +114,7 @@ public class MainFragment extends Fragment {
         adapter = new SimpleRecyclerAdapter(new ArrayList<MusicTrackPOJO>(),(MainActivity) getActivity());
         recyclerView.setAdapter(adapter);
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity().getBaseContext());
-        recyclerView.setLayoutManager(linearLayoutManager);
-        lm = (LinearLayoutManager) recyclerView.getLayoutManager();
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                if (((MainActivity) getActivity()).getSearchPlaylist().size() != 0) {
-                    if (lm.findLastVisibleItemPosition() > ((MainActivity) getActivity()).getSearchPlaylist().size() -2) {
-                        if (!scrollDownLock) ((MainActivity) getActivity()).uploadMore(TracksLoaderInterface.SEARCH);
-                        scrollDownLock = true;
-                    }else{
-                        scrollDownLock = false;
-                    }
-                }
-            }
-        });
+
 
         slidingUpPanelLayout = (SlidingUpPanelLayout) view.findViewById(R.id.sliding_up_panel);
         slidingUpPanelLayout.setDragView(playerLine);
@@ -230,6 +212,15 @@ public class MainFragment extends Fragment {
 
         });
         initAdverts();
+        
+        ViewPagerAdapter tabsAdapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager());
+        tabsAdapter.addFrag(myMusicFragment, "My music");
+        tabsAdapter.addFrag(recommendedFragment, "Recommended");
+        tabsAdapter.addFrag(savedFragment, "Saved");
+        viewPager.setAdapter(tabsAdapter);
+
+        tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(getContext(), R.color.primaryColorDark));
+        tabLayout.setupWithViewPager(viewPager);
 
         return view;
     }
@@ -371,5 +362,30 @@ public class MainFragment extends Fragment {
     public void setLoading(){
         tvCurrentTimePlayerLine.setText("Loading...");
         tvCurrentTimePlayer.setText("Loading...");
+    }
+
+    public void setup(){
+
+
+        myMusicFragment.setupWith(((MainActivity) getActivity()).getMyTracksPlaylist(), TracksLoaderInterface.MY_TRACKS);
+        recommendedFragment.setupWith(((MainActivity) getActivity()).getRecommendationsPlaylist(), TracksLoaderInterface.RECOMMENDATIONS);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity().getBaseContext());
+        recyclerView.setLayoutManager(linearLayoutManager);
+        lm = (LinearLayoutManager) recyclerView.getLayoutManager();
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (((MainActivity) getActivity()).getSearchPlaylist().size() != 0) {
+                    if (lm.findLastVisibleItemPosition() > ((MainActivity) getActivity()).getSearchPlaylist().size() - 2) {
+                        if (!scrollDownLock)
+                            ((MainActivity) getActivity()).uploadMore(TracksLoaderInterface.SEARCH);
+                        scrollDownLock = true;
+                    } else {
+                        scrollDownLock = false;
+                    }
+                }
+            }
+        });
     }
 }

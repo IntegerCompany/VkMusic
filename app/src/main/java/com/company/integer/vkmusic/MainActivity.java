@@ -29,9 +29,16 @@ import com.company.integer.vkmusic.interfaces.TracksLoaderInterface;
 import com.company.integer.vkmusic.interfaces.TracksLoaderListener;
 import com.company.integer.vkmusic.logic.TracksDataLoader;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
+import com.company.integer.vkmusic.pojo.StylePOJO;
+import com.company.integer.vkmusic.pojo.UserPOJO;
 import com.company.integer.vkmusic.services.MusicPlayerService;
 import com.company.integer.vkmusic.supportclasses.AppState;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+import com.vk.sdk.VKAccessToken;
+import com.vk.sdk.VKCallback;
+import com.vk.sdk.VKScope;
+import com.vk.sdk.VKSdk;
+import com.vk.sdk.api.VKError;
 
 import java.util.ArrayList;
 
@@ -58,16 +65,24 @@ public class MainActivity extends AppCompatActivity implements
     private int currentPlaylist = TracksLoaderInterface.MY_TRACKS;
     private int currentTrack = 0;
 
+    VKCallback<VKSdk.LoginState> loginStateCallback;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setDefaultStyle();
         setTheme(AppState.getTheme());
+        VKSdk.wakeUpSession(this, loginStateCallback);
+        if (!VKSdk.isLoggedIn()) {
+            VKSdk.login(this, VKScope.AUDIO);
+        }
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(AppState.getColors().getColorAccentID());
         }
         setContentView(R.layout.activity_main);
-
+        setListeners();
         tracksDataLoader = new TracksDataLoader(this);
         tracksDataLoader.setTracksLoadingListener(this);
         tracksDataLoader.getTracksByUserId(AppState.getLoggedUser().getUserId(), 0, 10);
@@ -150,6 +165,23 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (!VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>() {
+            @Override
+            public void onResult(VKAccessToken res) {
+                AppState.setLoggedUser(new UserPOJO(res.userId));
+            }
+
+            @Override
+            public void onError(VKError error) {
+
+            }
+        })) {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
     public void playMusic() {
         isPlaying = true;
         Intent playIntent = new Intent("com.example.app.ACTION_PLAY");
@@ -228,7 +260,7 @@ public class MainActivity extends AppCompatActivity implements
     // TracksDataLoader callbacks methods-----------
     @Override
     public void tracksLoaded(ArrayList<MusicTrackPOJO> newTracks, int source) {
-        //Starting service on track loaded
+        mainFragment.setup();
         Intent i = new Intent(this, MusicPlayerService.class);
 
         switch (source) {
@@ -377,7 +409,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d("Panel","Sending intent");
+        Log.d("Panel", "Sending intent");
         Intent stopService = new Intent("com.example.app.ACTION_DESTROY");
         sendBroadcast(stopService);
         unregisterReceiver(broadcastReceiver);
@@ -529,5 +561,36 @@ public class MainActivity extends AppCompatActivity implements
         return isPlayListEmpty;
     }
 
+
+    private void setDefaultStyle(){
+        if(AppState.getTheme()==0){
+            StylePOJO stylePOJO = new StylePOJO();
+            stylePOJO.setColorAccentID(ContextCompat.getColor(this,R.color.accentColor));
+            stylePOJO.setColorPrimaryID(ContextCompat.getColor(this, R.color.primaryColor));
+            stylePOJO.setColorPrimaryDarkID(ContextCompat.getColor(this, R.color.primaryColorDark));
+            stylePOJO.setTabDividerColorID(ContextCompat.getColor(this, R.color.primaryColorDark));
+            stylePOJO.setImageDrawableID(R.drawable.ic_guitar);
+            AppState.setTheme(R.style.AppTheme,stylePOJO);
+        }
+    }
+
+    private void setListeners() {
+        loginStateCallback = new VKCallback<VKSdk.LoginState>() {
+            @Override
+            public void onResult(VKSdk.LoginState loginState) {
+                if (loginState == VKSdk.LoginState.LoggedIn) {
+
+                }else{
+
+                }
+            }
+
+            @Override
+            public void onError(VKError vkError) {
+
+            }
+        };
+
+    }
 
 }

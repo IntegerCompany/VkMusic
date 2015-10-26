@@ -85,7 +85,7 @@ public class SettingsActivity extends AppCompatActivity {
     public void onBackPressed() {
         themeArray.recycle();
         albumPhotos.recycle();
-        Intent in = new Intent(this,LoginActivity.class);
+        Intent in = new Intent(this,MainActivity.class);
         startActivity(in);
         finish();
     }

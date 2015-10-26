@@ -9,7 +9,7 @@ import android.os.Environment;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
-import com.company.integer.vkmusic.LoginActivity;
+import com.company.integer.vkmusic.MainActivity;
 import com.company.integer.vkmusic.R;
 import com.company.integer.vkmusic.interfaces.TracksLoaderInterface;
 import com.company.integer.vkmusic.interfaces.TracksLoaderListener;
@@ -164,7 +164,7 @@ public class TracksDataLoader implements TracksLoaderInterface {
         mBuilder.setContentTitle("Downloading track")
                 .setContentText(trackToDownload.getTitle())
                 .setSmallIcon(R.mipmap.ic_launcher);
-        Intent resultIntent = new Intent(context, LoginActivity.class);
+        Intent resultIntent = new Intent(context, MainActivity.class);
         resultIntent.putExtra("tab", 3);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addNextIntent(resultIntent);
