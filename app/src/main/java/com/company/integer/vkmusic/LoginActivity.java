@@ -75,6 +75,9 @@ public class LoginActivity extends AppCompatActivity {
             public void onResult(VKSdk.LoginState loginState) {
                 if (loginState == VKSdk.LoginState.LoggedIn) {
                     startMainActivity();
+                }else{
+                    tvSigningIn.setText("Check your internet connection!");
+                    showErrorScreen();
                 }
             }
 
