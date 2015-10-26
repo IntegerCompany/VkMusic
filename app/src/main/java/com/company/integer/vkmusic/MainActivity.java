@@ -32,6 +32,7 @@ import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
 import com.company.integer.vkmusic.services.MusicPlayerService;
 import com.company.integer.vkmusic.supportclasses.AppState;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+import com.vk.sdk.VKSdk;
 
 import java.util.ArrayList;
 
@@ -433,6 +434,9 @@ public class MainActivity extends AppCompatActivity implements
                 Intent in = new Intent(this, SettingsActivity.class);
                 startActivity(in);
                 finish();
+                return true;
+            case R.id.action_log_out:
+                VKSdk.logout();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

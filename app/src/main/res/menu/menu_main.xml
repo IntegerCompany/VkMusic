@@ -33,6 +33,10 @@
                 android:id="@+id/action_settings"
                 app:showAsAction="never"
                 android:title="Styles" />
+            <item
+                android:id="@+id/action_log_out"
+                app:showAsAction="never"
+                android:title="Log out"/>
         </menu>
     </item>
 
