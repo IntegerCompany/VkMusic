@@ -25,6 +25,10 @@ public class TabFragment extends Fragment {
     boolean scrollDownLock;
     int position = 0;
 
+    public TabFragment(){
+        System.out.print("");
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dummy_fragment, container, false);
@@ -36,6 +40,7 @@ public class TabFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         adapter = new SimpleRecyclerAdapter(list,(MainActivity) getActivity());
         adapter.setCurrentTrackPosition(position);
+        adapter.setCurrentSource(tracksSource);
         recyclerView.setAdapter(adapter);
         lm = (LinearLayoutManager) recyclerView.getLayoutManager();
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -43,10 +48,11 @@ public class TabFragment extends Fragment {
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 if (((MainActivity) getActivity()).getPlaylistByName(tracksSource).size() != 0) {
-                    if (lm.findLastVisibleItemPosition() > ((MainActivity) getActivity()).getPlaylistByName(tracksSource).size() -2) {
-                        if (!scrollDownLock) ((MainActivity) getActivity()).uploadMore(tracksSource);
+                    if (lm.findLastVisibleItemPosition() > ((MainActivity) getActivity()).getPlaylistByName(tracksSource).size() - 2) {
+                        if (!scrollDownLock)
+                            ((MainActivity) getActivity()).uploadMore(tracksSource);
                         scrollDownLock = true;
-                    }else{
+                    } else {
                         scrollDownLock = false;
                     }
                 }
@@ -74,8 +80,8 @@ public class TabFragment extends Fragment {
     }
 
     public void setCurrentTrackPosition(int position){
+        this.position = position;
         if (adapter != null) {
-            this.position = position;
             adapter.setCurrentTrackPosition(position);
         }
     }

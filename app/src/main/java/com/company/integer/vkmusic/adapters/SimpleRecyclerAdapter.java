@@ -1,6 +1,9 @@
 package com.company.integer.vkmusic.adapters;
 
 
+import android.Manifest;
+import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,9 +14,12 @@ import android.widget.TextView;
 
 import com.company.integer.vkmusic.MainActivity;
 import com.company.integer.vkmusic.R;
+import com.company.integer.vkmusic.interfaces.TracksLoaderInterface;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
 import com.company.integer.vkmusic.supportclasses.AppState;
+import com.vk.sdk.VKSdk;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +28,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     List<MusicTrackPOJO> tracks;
     MainActivity activity;
     int currentTrackPosition = 0;
+    int currentSource = TracksLoaderInterface.MY_TRACKS;
 
     public SimpleRecyclerAdapter(List<MusicTrackPOJO> tracks, MainActivity activity) {
         this.tracks = tracks;
@@ -63,10 +70,27 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
             trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.play_item));
             trackViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(activity, R.color.listViewItemBackground));
         }
+//        if (!Environment.getExternalStorageDirectory().canWrite()) {
+//            ActivityCompat.requestPermissions(activity,
+//                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+//                    0);
+//        }
+        File vkMusicDirectory = new File(Environment
+                .getExternalStorageDirectory().toString()
+                + AppState.FOLDER);
+        File path = new File(vkMusicDirectory + "/" + tracks.get(i).getArtist() + "-" + tracks.get(i).getTitle() + ".mp3");
+
+        if (!path.exists()) {
+            trackViewHolder.downloadImage.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.download));
+        }else{
+            trackViewHolder.downloadImage.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ok));
+        }
         trackViewHolder.downloadImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 activity.downloadTrack(tracks.get(i));
+                trackViewHolder.downloadImage.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ok));
+                
             }
         });
 
@@ -81,6 +105,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         this.currentTrackPosition = currentTrackPosition;
         notifyDataSetChanged();
     }
+
 
     public void nextTrack(){
         currentTrackPosition++;
@@ -124,4 +149,8 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         }
     }
 
+
+    public void setCurrentSource(int currentSource) {
+        this.currentSource = currentSource;
+    }
 }

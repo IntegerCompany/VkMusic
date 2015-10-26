@@ -14,6 +14,7 @@ import com.company.integer.vkmusic.R;
 import com.company.integer.vkmusic.interfaces.TracksLoaderInterface;
 import com.company.integer.vkmusic.interfaces.TracksLoaderListener;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
+import com.company.integer.vkmusic.supportclasses.AppState;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -182,7 +183,7 @@ public class TracksDataLoader implements TracksLoaderInterface {
                         try {
                             File vkMusicDirectory = new File(Environment
                                     .getExternalStorageDirectory().toString()
-                                    + "/VkMusic/");
+                                    + AppState.FOLDER);
 
                             vkMusicDirectory.mkdir();
                             File path = new File(vkMusicDirectory + "/" + trackToDownload.getArtist() + "-" + trackToDownload.getTitle() + ".mp3");
