@@ -259,7 +259,7 @@ public class MainFragment extends Fragment {
         myMusicFragment.updateList();
         recommendedFragment.updateList();
         savedFragment.updateList();
-        if (adapter != null) adapter.notifyDataSetChanged();
+     //   if (adapter != null) adapter.notifyDataSetChanged();
     }
     
     public void updateSeekBarAndTextViews(int time) {
@@ -307,6 +307,7 @@ public class MainFragment extends Fragment {
         int minutes = durationInSec / 60;
         int seconds = durationInSec - minutes * 60;
         if (seconds < 10) {
+            if (seconds == 0) return "Loading...";
             return minutes + ":0" + seconds;
         } else {
             return minutes + ":" + seconds;
@@ -323,6 +324,8 @@ public class MainFragment extends Fragment {
         adapter.notifyDataSetChanged();
 
     }
+
+
 
     public void makeSearchUIActions(boolean isSearch) {
         if (isSearch) {

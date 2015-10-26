@@ -45,13 +45,13 @@ public class MusicPlayer implements MusicPlayerInterface {
 
     @Override
     public void setPlayList(ArrayList<MusicTrackPOJO> tracks, int position) {
-        if (tracks.size() != 0 & tracks.size() > currentTrackPosition) {
+        if (tracks.size() != 0 & tracks.size() > position) {
             playlist = tracks;
             currentTrackPosition = position;
             currentTrackTime = 0;
 
             currentTrack = playlist.get(currentTrackPosition);
-            musicPlayerListener.onCurrentTrackChanged(currentTrack);
+           // musicPlayerListener.onCurrentTrackChanged(currentTrack);
             Log.d(LOG_TAG, "Set playlist length :" + playlist.size());
         }
     }
@@ -108,10 +108,12 @@ public class MusicPlayer implements MusicPlayerInterface {
 
     @Override
     public void setCurrentTrackPosition(int position) {
-        currentTrackPosition = position;
-        currentTrackTime = 0;
-        currentTrack = playlist.get(currentTrackPosition);
-        musicPlayerListener.onCurrentTrackChanged(currentTrack);
+        if (playlist.size() != 0 & playlist.size() > position) {
+            currentTrackPosition = position;
+            currentTrackTime = 0;
+            currentTrack = playlist.get(currentTrackPosition);
+            musicPlayerListener.onCurrentTrackChanged(currentTrack);
+        }
     }
 
     @Override

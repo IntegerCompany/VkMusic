@@ -56,9 +56,6 @@ public class MainActivity extends AppCompatActivity implements
 
     private boolean isPlaying = false;
     private int currentPlaylist = TracksLoaderInterface.MY_TRACKS;
-    private int myTracksCurrent = 0;
-    private int recommendationsCurrent = 0;
-    private int searchCurrent = 0;
     private int currentTrack = 0;
 
 
@@ -244,6 +241,7 @@ public class MainActivity extends AppCompatActivity implements
                 break;
             case TracksLoaderInterface.RECOMMENDATIONS:
                 recommendationsPlaylist.addAll(newTracks);
+                mainFragment.updateList();
                 break;
             case TracksLoaderInterface.SAVED:
                 savedPlaylist.addAll(newTracks);
@@ -296,7 +294,7 @@ public class MainActivity extends AppCompatActivity implements
                 getTracksByUserId(AppState.getLoggedUser().getUserId(), myTracksPlaylist.size() + 1, AppState.TRACKS_PER_LOADING);
                 break;
             case TracksLoaderInterface.RECOMMENDATIONS:
-                getRecommendationsByUserID(tracksDataLoader.getLastSearchQuery(), recommendationsPlaylist.size() + 1, AppState.TRACKS_PER_LOADING);
+                getRecommendationsByUserID(AppState.getLoggedUser().getUserId(), recommendationsPlaylist.size() + 1, AppState.TRACKS_PER_LOADING);
                 break;
             case TracksLoaderInterface.SEARCH:
                 search(tracksDataLoader.getLastSearchQuery(), searchPlaylist.size() + 1, AppState.TRACKS_PER_LOADING);
@@ -340,7 +338,6 @@ public class MainActivity extends AppCompatActivity implements
                     int time = intent.getExtras().getInt("CurrentTrackTime");
                     if (musicTrack != null) {
                         currentTrack = intent.getIntExtra("musicTrackPosition", 0);
-
                         mainFragment.setCurrentTrack(musicTrack, intent.getIntExtra("musicTrackPosition", 0));
                         mainFragment.setMediaFileLengthInMilliseconds(musicTrack.getDuration() * 1000);
                         mainFragment.getSeekBar().setProgress((int) (((float) time / mainFragment.getMediaFileLengthInMilliseconds()) * 100)); // This math construction give a percentage of "was playing"/"song length"
