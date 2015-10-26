@@ -74,10 +74,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setDefaultStyle();
         setTheme(AppState.getTheme());
-        VKSdk.wakeUpSession(this, loginStateCallback);
-        if (!VKSdk.isLoggedIn()) {
-            VKSdk.login(this, VKScope.AUDIO);
-        }
+        attemptLogin();
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(AppState.getColors().getColorAccentID());
         }
@@ -142,6 +139,13 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
+    public void attemptLogin() {
+        VKSdk.wakeUpSession(this, loginStateCallback);
+        if (!VKSdk.isLoggedIn()) {
+            VKSdk.login(this, VKScope.AUDIO);
+        }
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -171,11 +175,12 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onResult(VKAccessToken res) {
                 AppState.setLoggedUser(new UserPOJO(res.userId));
+                mainFragment.showTracks();
             }
 
             @Override
             public void onError(VKError error) {
-
+                mainFragment.showError(error.errorMessage);
             }
         })) {
             super.onActivityResult(requestCode, resultCode, data);
@@ -270,10 +275,12 @@ public class MainActivity extends AppCompatActivity implements
                 i.putParcelableArrayListExtra("MY_TRACKS", newTracks);
                 startService(i);
                 mainFragment.setupViewPager();
+                mainFragment.showTracks();
                 break;
             case TracksLoaderInterface.RECOMMENDATIONS:
                 recommendationsPlaylist.addAll(newTracks);
                 mainFragment.updateList();
+                mainFragment.showTracks();
                 break;
             case TracksLoaderInterface.SAVED:
                 savedPlaylist.addAll(newTracks);
@@ -281,6 +288,7 @@ public class MainActivity extends AppCompatActivity implements
             case TracksLoaderInterface.SEARCH:
                 searchPlaylist.addAll(newTracks);
                 mainFragment.searchCompleted(searchPlaylist);
+                mainFragment.showTracks();
                 break;
 
         }
@@ -297,6 +305,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void run() {
                 Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                mainFragment.showError(errorMessage);
             }
         });
     }
@@ -579,15 +588,15 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onResult(VKSdk.LoginState loginState) {
                 if (loginState == VKSdk.LoginState.LoggedIn) {
-
+                    mainFragment.showTracks();
                 }else{
-
+                    mainFragment.showError("Check your internet connection");
                 }
             }
 
             @Override
             public void onError(VKError vkError) {
-
+                mainFragment.showError(vkError.errorMessage);
             }
         };
 

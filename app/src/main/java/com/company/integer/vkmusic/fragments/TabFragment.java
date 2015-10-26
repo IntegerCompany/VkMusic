@@ -7,12 +7,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.company.integer.vkmusic.MainActivity;
 import com.company.integer.vkmusic.R;
 import com.company.integer.vkmusic.adapters.SimpleRecyclerAdapter;
 import com.company.integer.vkmusic.interfaces.TracksLoaderInterface;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
+import com.company.integer.vkmusic.supportclasses.AppState;
 
 import java.util.List;
 
@@ -24,6 +29,13 @@ public class TabFragment extends Fragment {
     int tracksSource = TracksLoaderInterface.MY_TRACKS;
     boolean scrollDownLock;
     int position = 0;
+    String errorText = "";
+
+    LinearLayout errorContainer;
+    ProgressBar progressBar;
+    TextView errorMessage;
+    RecyclerView recyclerView;
+    Button btnTrySignInAgain;
 
     public TabFragment(){
         System.out.print("");
@@ -33,7 +45,11 @@ public class TabFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dummy_fragment, container, false);
 
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.dummyfrag_scrollableview);
+        recyclerView = (RecyclerView) view.findViewById(R.id.dummyfrag_scrollableview);
+        errorContainer = (LinearLayout) view.findViewById(R.id.signin_error_container);
+        progressBar = (ProgressBar) view.findViewById(R.id.pb_signing_in);
+        errorMessage = (TextView) view.findViewById(R.id.tv_signin_error);
+        btnTrySignInAgain = (Button) view.findViewById(R.id.btn_try_signin_again);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity().getBaseContext());
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -58,6 +74,17 @@ public class TabFragment extends Fragment {
                 }
             }
         });
+        if (AppState.getLoggedUser() != null & errorText.equals("")){
+            showTracks();
+        }else{
+            showError("You are not logged in");
+        }
+        btnTrySignInAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity)getActivity()).attemptLogin();
+            }
+        });
 
         return view;
     }
@@ -68,7 +95,10 @@ public class TabFragment extends Fragment {
     }
 
     public void updateList(){
-        if (adapter != null) adapter.notifyDataSetChanged();
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
+
     }
 
     public void nextTrack(){
@@ -83,6 +113,34 @@ public class TabFragment extends Fragment {
         this.position = position;
         if (adapter != null) {
             adapter.setCurrentTrackPosition(position);
+        }
+    }
+
+    public void showError(String message){
+        errorText = message;
+        if (recyclerView != null) {
+
+            recyclerView.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
+            errorContainer.setVisibility(View.VISIBLE);
+            errorMessage.setText(message);
+        }
+    }
+
+    public void showLoading(){
+        recyclerView.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+        errorContainer.setVisibility(View.GONE);
+        errorMessage.setText("");
+    }
+
+    public void showTracks(){
+        errorText = "";
+        if (recyclerView != null) {
+            recyclerView.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.GONE);
+            errorContainer.setVisibility(View.GONE);
+            errorMessage.setText("");
         }
     }
 

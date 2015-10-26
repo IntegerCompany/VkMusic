@@ -83,6 +83,7 @@ public class MainFragment extends Fragment {
         recommendedFragment = new TabFragment();
         savedFragment.setupWith(((MainActivity) getActivity()).getSavedPlaylist(), TracksLoaderInterface.SAVED);
 
+
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.app_bar);
         toolbar.setTitle("");
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
@@ -212,7 +213,7 @@ public class MainFragment extends Fragment {
 
         });
         initAdverts();
-        
+
         ViewPagerAdapter tabsAdapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager());
         tabsAdapter.addFrag(myMusicFragment, "My music");
         tabsAdapter.addFrag(recommendedFragment, "Recommended");
@@ -387,5 +388,16 @@ public class MainFragment extends Fragment {
                 }
             }
         });
+    }
+
+    public void showError(String message){
+        myMusicFragment.showError(message);
+        recommendedFragment.showError(message);
+    }
+
+
+    public void showTracks(){
+        myMusicFragment.showTracks();
+        recommendedFragment.showTracks();
     }
 }
