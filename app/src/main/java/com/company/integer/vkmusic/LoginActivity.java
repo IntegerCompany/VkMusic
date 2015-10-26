@@ -54,7 +54,11 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onError(VKError error) {
-                tvSigningIn.setText(error.errorMessage);
+                if(error.errorMessage == null){
+                    tvSigningIn.setText("Check your internet connection!");
+                }else {
+                    tvSigningIn.setText(error.errorMessage);
+                }
                 showErrorScreen();
             }
         })) {
@@ -75,12 +79,19 @@ public class LoginActivity extends AppCompatActivity {
             public void onResult(VKSdk.LoginState loginState) {
                 if (loginState == VKSdk.LoginState.LoggedIn) {
                     startMainActivity();
+                }else{
+                    tvSigningIn.setText("Check your internet connection!");
+                    showErrorScreen();
                 }
             }
 
             @Override
             public void onError(VKError vkError) {
-                tvSigningIn.setText(vkError.errorMessage);
+                if(vkError.errorMessage.equals("")){
+                    tvSigningIn.setText("Check your internet connection!");
+                }else {
+                    tvSigningIn.setText(vkError.errorMessage);
+                }
                 showErrorScreen();
             }
         };

@@ -25,13 +25,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_margin="20dp"
             android:text="Some Error"
+            android:textColor="@color/colorBlack"
             android:id="@+id/tv_signin_error" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Try sign in again"
+            android:padding="8dp"
             android:id="@+id/btn_try_signin_again"
             android:layout_gravity="center_horizontal" />
     </LinearLayout>
