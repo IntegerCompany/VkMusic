@@ -23,6 +23,7 @@ public class TabFragment extends Fragment {
     List<MusicTrackPOJO> list;
     int tracksSource = TracksLoaderInterface.MY_TRACKS;
     boolean scrollDownLock;
+    int position = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -34,6 +35,7 @@ public class TabFragment extends Fragment {
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
         adapter = new SimpleRecyclerAdapter(list,(MainActivity) getActivity());
+        adapter.setCurrentTrackPosition(position);
         recyclerView.setAdapter(adapter);
         lm = (LinearLayoutManager) recyclerView.getLayoutManager();
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -56,6 +58,7 @@ public class TabFragment extends Fragment {
 
     public void setupWith(List<MusicTrackPOJO> list, int source){
         this.list = list;
+        this.tracksSource = source;
     }
 
     public void updateList(){
@@ -72,6 +75,7 @@ public class TabFragment extends Fragment {
 
     public void setCurrentTrackPosition(int position){
         if (adapter != null) {
+            this.position = position;
             adapter.setCurrentTrackPosition(position);
         }
     }

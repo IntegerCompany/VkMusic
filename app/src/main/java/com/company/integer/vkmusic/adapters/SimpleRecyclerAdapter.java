@@ -46,6 +46,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
                 if (currentTrackPosition == i & activity.isPlaying()){
                     activity.pauseMusic();
                 }else {
+                    activity.setCurrentPlaylist(activity.getCurrentPlaylist());
                     activity.setPlayingTrack(i);
                     activity.playMusic();
                 }
