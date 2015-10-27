@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        mainFragment.switchToTab(AppState.getTab());
+        mainFragment.switchToTab(AppState.getTab(), false);
     }
 
     @Override

@@ -253,6 +253,23 @@ public class MainFragment extends Fragment {
 
         tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(getContext(), R.color.primaryColorDark));
         tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                makeSearchUIActions(false);
+                viewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
 
     public void updateList() {
@@ -318,10 +335,7 @@ public class MainFragment extends Fragment {
         ((MainActivity) getActivity()).setCurrentPlaylist(TracksLoaderInterface.SEARCH);
         adapter.updateTracks(searchPlaylist);
         adapter.notifyDataSetChanged();
-        adapter = new SimpleRecyclerAdapter(searchPlaylist, (MainActivity) getActivity());
-        recyclerView.setAdapter(adapter);
-        adapter.updateTracks(searchPlaylist);
-        adapter.notifyDataSetChanged();
+
 
     }
 
@@ -337,16 +351,16 @@ public class MainFragment extends Fragment {
         }
     }
 
-    public void switchToTab(int tab) {
+    public void switchToTab(int tab, boolean smooth) {
         switch (tab) {
             case TracksLoaderInterface.MY_TRACKS:
-                viewPager.setCurrentItem(1, false);
+                viewPager.setCurrentItem(1, smooth);
                 break;
             case TracksLoaderInterface.RECOMMENDATIONS:
-                viewPager.setCurrentItem(2, false);
+                viewPager.setCurrentItem(2, smooth);
                 break;
             case TracksLoaderInterface.SAVED:
-                viewPager.setCurrentItem(3, false);
+                viewPager.setCurrentItem(3, smooth);
                 break;
 
         }
