@@ -78,7 +78,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
             File vkMusicDirectory = new File(Environment
                     .getExternalStorageDirectory().toString()
                     + AppState.FOLDER);
-            File path = new File(vkMusicDirectory + "/" + tracks.get(i).getArtist() + "-" + tracks.get(i).getTitle() + ".mp3");
+            final File path = new File(vkMusicDirectory + "/" + tracks.get(i).getArtist() + "-" + tracks.get(i).getTitle() + ".mp3");
 
 
             if (!path.exists()) {
@@ -87,12 +87,15 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
                 trackViewHolder.downloadImage.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ok));
             }
         if (currentSource == TracksLoaderInterface.SAVED) {
-            trackViewHolder.downloadImage.setVisibility(View.INVISIBLE);
-            trackViewHolder.downloadImage.setClickable(false);
+            trackViewHolder.downloadImage.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.remove));
+            trackViewHolder.downloadImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    path.delete();
+                    activity.getSavedTracks();
+                }
+            });
         }else{
-            trackViewHolder.downloadImage.setVisibility(View.VISIBLE);
-            trackViewHolder.downloadImage.setClickable(true);
-        }
             trackViewHolder.downloadImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -101,6 +104,8 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
 
                 }
             });
+        }
+
 
 
     }
