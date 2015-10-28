@@ -240,6 +240,11 @@ public class TracksDataLoader implements TracksLoaderInterface {
         ).start();
     }
 
+    @Override
+    public void addTrackToVkPlaylist(final MusicTrackPOJO track) {
+
+    }
+
     private synchronized int getNewID() {
         return notificationID++;
     }

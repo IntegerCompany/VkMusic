@@ -55,4 +55,10 @@ public interface TracksLoaderInterface {
 
     void downloadTrack(MusicTrackPOJO trackToDownload);
 
+    /**
+     * 
+     * @param track
+     */
+    void addTrackToVkPlaylist(MusicTrackPOJO track);
+
 }

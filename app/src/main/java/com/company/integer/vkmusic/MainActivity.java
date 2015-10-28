@@ -316,6 +316,11 @@ public class MainActivity extends AppCompatActivity implements
         tracksDataLoader.downloadTrack(trackToDownload);
     }
 
+    @Override
+    public void addTrackToVkPlaylist(MusicTrackPOJO track) {
+        tracksDataLoader.downloadTrack(track);
+    }
+
     public void registerMyBroadcastReceiver() {
         broadcastReceiver = new BroadcastReceiver() {
             @Override
