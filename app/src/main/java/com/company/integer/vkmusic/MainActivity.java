@@ -69,10 +69,6 @@ public class MainActivity extends AppCompatActivity implements
         }
         setContentView(R.layout.activity_main);
 
-        tracksDataLoader = new TracksDataLoader(this);
-        tracksDataLoader.setTracksLoadingListener(this);
-        tracksDataLoader.getTracksByUserId(AppState.getLoggedUser().getUserId(), 0, 10);
-        tracksDataLoader.getRecommendationsByUserID(AppState.getLoggedUser().getUserId(), 0, 10);
 
         mainFragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         fabPrevious = (FloatingActionButton) findViewById(R.id.fab_previous);
@@ -82,6 +78,12 @@ public class MainActivity extends AppCompatActivity implements
         fabPlayPause.setBackgroundTintList(ColorStateList.valueOf(AppState.getColors().getColorPrimaryID()));
         fabPrevious.setBackgroundTintList(ColorStateList.valueOf(AppState.getColors().getColorAccentID()));
         fabNext.setBackgroundTintList(ColorStateList.valueOf(AppState.getColors().getColorAccentID()));
+
+        tracksDataLoader = new TracksDataLoader(this);
+        tracksDataLoader.setTracksLoadingListener(this);
+        tracksDataLoader.getTracksByUserId(AppState.getLoggedUser().getUserId(), 0, 10);
+        tracksDataLoader.getRecommendationsByUserID(AppState.getLoggedUser().getUserId(), 0, 10);
+        tracksDataLoader.getSavedTracks();
 
         fabPlayPause.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -222,6 +224,11 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void getSavedTracks() {
+        tracksDataLoader.getSavedTracks();
+    }
+
+    @Override
     public void setTracksLoadingListener(TracksLoaderListener tracksLoaderListener) {
         //dataLoadingCallbackForUI = tracksLoaderListener;
     }
@@ -245,7 +252,9 @@ public class MainActivity extends AppCompatActivity implements
                 mainFragment.updateList();
                 break;
             case TracksLoaderInterface.SAVED:
+                savedPlaylist.clear();
                 savedPlaylist.addAll(newTracks);
+                mainFragment.updateList();
                 break;
             case TracksLoaderInterface.SEARCH:
                 searchPlaylist.addAll(newTracks);
@@ -279,10 +288,12 @@ public class MainActivity extends AppCompatActivity implements
     public void trackDownloadFinished(final MusicTrackPOJO track) {
         Log.d(LOG_TAG, "Download complete: " + track.getTitle());
 
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 Toast.makeText(MainActivity.this, "Downloaded: " + track.getTitle(), Toast.LENGTH_SHORT).show();
+                getSavedTracks();
             }
         });
     }

@@ -5,6 +5,8 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaMetadata;
+import android.media.MediaMetadataRetriever;
 import android.os.Environment;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
@@ -18,6 +20,11 @@ import com.company.integer.vkmusic.supportclasses.AppState;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.mpatric.mp3agic.ID3v2;
+import com.mpatric.mp3agic.ID3v24Tag;
+import com.mpatric.mp3agic.InvalidDataException;
+import com.mpatric.mp3agic.Mp3File;
+import com.mpatric.mp3agic.UnsupportedTagException;
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKParameters;
@@ -27,7 +34,9 @@ import com.vk.sdk.api.VKResponse;
 import org.json.JSONException;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -141,6 +150,40 @@ public class TracksDataLoader implements TracksLoaderInterface {
     }
 
     @Override
+    public void getSavedTracks() {
+        ArrayList<MusicTrackPOJO> savedTracks = new ArrayList<>();
+
+        File vkMusicDirectory = new File(Environment
+                .getExternalStorageDirectory().toString()
+                + AppState.FOLDER);
+        if (!vkMusicDirectory.exists() && !vkMusicDirectory.isDirectory()) {
+            tracksLoaderListener.tracksLoadingError("No vk music folder");
+            return;
+        }
+        FileFilter mp3Filter = new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                if (!pathname.isDirectory() && getFileExtension(pathname).equals("mp3")) return true;
+                return false;
+            }
+        };
+
+        for (File trackFile : vkMusicDirectory.listFiles(mp3Filter)){
+            MusicTrackPOJO savedTrack = new MusicTrackPOJO();
+            savedTrack.setIsFromFile(true);
+            savedTrack.setGeneralTrackName(trackFile.getName().substring(0, trackFile.getName().length() - 4));
+            savedTrack.setUrl(trackFile.getPath());
+            initFromMetadata(savedTrack);
+            savedTracks.add(savedTrack);
+        }
+
+        tracksLoaderListener.tracksLoaded(savedTracks, SAVED);
+
+
+
+    }
+
+    @Override
     public void setTracksLoadingListener(TracksLoaderListener tracksLoaderListener) {
         this.tracksLoaderListener = tracksLoaderListener;
     }
@@ -187,13 +230,14 @@ public class TracksDataLoader implements TracksLoaderInterface {
 
                             vkMusicDirectory.mkdir();
                             File path = new File(vkMusicDirectory + "/" + trackToDownload.getArtist() + "-" + trackToDownload.getTitle() + ".mp3");
+
                             if (path.exists()) {
                                 tracksLoaderListener.tracksLoadingError("File already exists");
                                 return;
                             }
                             int id = getNewID();
                             mNotifyManager.notify(id, mBuilder.build());
-                            URL url = new URL(trackToDownload.getUrl());
+                            URL url = new URL(trackToDownload.getPath());
                             URLConnection connection = url.openConnection();
                             connection.connect();
                             // this will be useful so that you can show a typical 0-100%
@@ -222,6 +266,7 @@ public class TracksDataLoader implements TracksLoaderInterface {
 
                             }
                             if (total == lengthOfFile) {
+                                saveTrackMetadata(trackToDownload, path);
                                 tracksLoaderListener.trackDownloadFinished(trackToDownload);
                                 // When the loop is finished, updates the notification
                                 mBuilder.setContentTitle("Download complete");
@@ -249,6 +294,53 @@ public class TracksDataLoader implements TracksLoaderInterface {
         return notificationID++;
     }
 
+    private String getFileExtension(File file) {
+        int i = file.getName().lastIndexOf('.');
+        if (i > 0) {
+            return file.getName().substring(i+1);
+        }
+        return "error";
+    }
 
+    private void initFromMetadata(MusicTrackPOJO track) {
+
+        Mp3File song = null;
+        try {
+            song = new Mp3File(track.getPath());
+            if (song.hasId3v2Tag()) {
+                ID3v2 tag = song.getId3v2Tag();
+                track.setTitle(tag.getTitle());
+                track.setArtist(tag.getArtist());
+                track.setDuration((int) song.getLengthInMilliseconds() / 1000);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (UnsupportedTagException e) {
+            e.printStackTrace();
+        } catch (InvalidDataException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void saveTrackMetadata(MusicTrackPOJO track, File file)  {
+
+        Mp3File song = null;
+        try {
+            song = new Mp3File(file.getPath());
+            ID3v2 id3v2tag = new ID3v24Tag();
+            id3v2tag.setTitle(track.getTitle());
+            id3v2tag.setArtist(track.getArtist());
+            song.setId3v2Tag(id3v2tag);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (UnsupportedTagException e) {
+            e.printStackTrace();
+        } catch (InvalidDataException e) {
+            e.printStackTrace();
+        }
+
+    }
 
 }

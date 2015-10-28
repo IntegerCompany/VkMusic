@@ -69,6 +69,7 @@ public class TabFragment extends Fragment {
 
     public void updateList(){
         if (adapter != null) adapter.notifyDataSetChanged();
+
     }
 
     public void nextTrack(){

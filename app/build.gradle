@@ -29,7 +29,7 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile "org.robolectric:robolectric:3.0"
+    testCompile 'org.robolectric:robolectric:3.0'
     compile 'com.android.support:appcompat-v7:23.0.1'
     compile 'com.vk:androidsdk:1.5.10'
     compile 'com.android.support:design:23.0.1'
@@ -39,5 +39,5 @@ dependencies {
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'de.hdodenhof:circleimageview:2.0.0'
     compile 'com.google.android.gms:play-services-ads:8.1.0'
-
+    compile files('libs/mp3agic-0.8.1.jar')
 }
