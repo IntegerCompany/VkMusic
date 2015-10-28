@@ -29,6 +29,17 @@ public class MusicPlayer implements MusicPlayerInterface {
                 musicPlayerListener.onPlayerTrackUpdating(percent);
             }
         });
+        player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                try {
+                    nextTrack();
+                    play();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override
