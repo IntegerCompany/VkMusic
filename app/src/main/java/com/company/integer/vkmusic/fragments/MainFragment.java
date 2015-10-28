@@ -197,6 +197,7 @@ public class MainFragment extends Fragment {
                         ((MainActivity) getActivity()).setCurrentPlaylist(TracksLoaderInterface.RECOMMENDATIONS);
                         break;
                     case 2:
+                        ((MainActivity) getActivity()).setCurrentPlaylist(TracksLoaderInterface.SAVED);
                         break;
 
                 }

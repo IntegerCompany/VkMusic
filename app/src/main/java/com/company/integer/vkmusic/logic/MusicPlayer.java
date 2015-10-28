@@ -158,7 +158,7 @@ public class MusicPlayer implements MusicPlayerInterface {
     private void playCurrentTrack() throws IOException {
         if (!cachedMusicTrack.equals(currentTrack)) {
             player.reset();
-            player.setDataSource(currentTrack.getUrl());
+            player.setDataSource(currentTrack.getPath());
             player.prepare();
             cachedMusicTrack = currentTrack;
         }

@@ -43,58 +43,69 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
 
     @Override
     public void onBindViewHolder(final TrackViewHolder trackViewHolder, final int i) {
-        trackViewHolder.author.setText(tracks.get(i).getArtist());
+            trackViewHolder.author.setText(tracks.get(i).getArtist());
 
-        trackViewHolder.title.setText(tracks.get(i).getTitle());
-        trackViewHolder.duration.setText(getDurationString(tracks.get(i).getDuration()));
-        trackViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (currentTrackPosition == i & activity.isPlaying()){
-                    activity.pauseMusic();
-                }else {
-                    activity.setCurrentPlaylist(activity.getCurrentPlaylist());
-                    activity.setPlayingTrack(i);
-                    activity.playMusic();
+            trackViewHolder.title.setText(tracks.get(i).getTitle());
+            trackViewHolder.duration.setText(getDurationString(tracks.get(i).getDuration()));
+            trackViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (currentTrackPosition == i & activity.isPlaying()) {
+                        activity.pauseMusic();
+                    } else {
+                        activity.setCurrentPlaylist(activity.getCurrentPlaylist());
+                        activity.setPlayingTrack(i);
+                        activity.playMusic();
+                    }
+                    currentTrackPosition = i;
+                    notifyDataSetChanged();
                 }
-                currentTrackPosition = i;
-                notifyDataSetChanged();
+            });
+            if (currentTrackPosition == i) {
+                if (activity.isPlaying()) {
+                    trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.pause_item));
+                }
+                trackViewHolder.itemView.setBackgroundColor(AppState.getColors().getColorAccentID());
+            } else {
+                trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.play_item));
+                trackViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(activity, R.color.listViewItemBackground));
             }
-        });
-        if (currentTrackPosition == i){
-            if (activity.isPlaying()) {
-                trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.pause_item));
-            }
-            trackViewHolder.itemView.setBackgroundColor(AppState.getColors().getColorAccentID());
-        }else{
-            trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.play_item));
-            trackViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(activity, R.color.listViewItemBackground));
-        }
 //        if (!Environment.getExternalStorageDirectory().canWrite()) {
 //            ActivityCompat.requestPermissions(activity,
 //                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
 //                    0);
 //        }
-        File vkMusicDirectory = new File(Environment
-                .getExternalStorageDirectory().toString()
-                + AppState.FOLDER);
-        File path = new File(vkMusicDirectory + "/" + tracks.get(i).getArtist() + "-" + tracks.get(i).getTitle() + ".mp3");
+            File vkMusicDirectory = new File(Environment
+                    .getExternalStorageDirectory().toString()
+                    + AppState.FOLDER);
+            File path = new File(vkMusicDirectory + "/" + tracks.get(i).getArtist() + "-" + tracks.get(i).getTitle() + ".mp3");
 
-        if (!path.exists()) {
-            trackViewHolder.downloadImage.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.download));
-        }else{
-            trackViewHolder.downloadImage.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ok));
-        }
-        trackViewHolder.downloadImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                activity.downloadTrack(tracks.get(i));
+
+            if (!path.exists()) {
+                trackViewHolder.downloadImage.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.download));
+            } else {
                 trackViewHolder.downloadImage.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ok));
-                
             }
-        });
+        if (currentSource == TracksLoaderInterface.SAVED) {
+            trackViewHolder.downloadImage.setVisibility(View.INVISIBLE);
+            trackViewHolder.downloadImage.setClickable(false);
+        }else{
+            trackViewHolder.downloadImage.setVisibility(View.VISIBLE);
+            trackViewHolder.downloadImage.setClickable(true);
+        }
+            trackViewHolder.downloadImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    activity.downloadTrack(tracks.get(i));
+                    trackViewHolder.downloadImage.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ok));
+
+                }
+            });
+
 
     }
+
+
 
     @Override
     public int getItemCount() {
