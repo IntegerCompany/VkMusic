@@ -318,7 +318,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void addTrackToVkPlaylist(MusicTrackPOJO track) {
-        tracksDataLoader.downloadTrack(track);
+        tracksDataLoader.addTrackToVkPlaylist(track);
     }
 
     public void registerMyBroadcastReceiver() {

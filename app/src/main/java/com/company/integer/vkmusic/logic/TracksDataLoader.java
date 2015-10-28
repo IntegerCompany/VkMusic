@@ -242,8 +242,24 @@ public class TracksDataLoader implements TracksLoaderInterface {
 
     @Override
     public void addTrackToVkPlaylist(final MusicTrackPOJO track) {
+       // AppState.getLoggedUser().getUserId();
+        VKRequest requestAudio = new VKRequest("audio.add", VKParameters.from(VKApiConst.OWNER_ID, track.getOwnerId(), "audio_id", track.getId()));
+        requestAudio.executeWithListener(new VKRequest.VKRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                super.onComplete(response);
 
+            }
+
+            @Override
+            public void onError(VKError error) {
+                super.onError(error);
+                tracksLoaderListener.tracksLoadingError(error.errorMessage);
+            }
+        });
     }
+
+
 
     private synchronized int getNewID() {
         return notificationID++;

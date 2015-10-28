@@ -1,9 +1,7 @@
 package com.company.integer.vkmusic.adapters;
 
 
-import android.Manifest;
 import android.os.Environment;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,7 +15,6 @@ import com.company.integer.vkmusic.R;
 import com.company.integer.vkmusic.interfaces.TracksLoaderInterface;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
 import com.company.integer.vkmusic.supportclasses.AppState;
-import com.vk.sdk.VKSdk;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -90,7 +87,6 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
             public void onClick(View v) {
                 activity.downloadTrack(tracks.get(i));
                 trackViewHolder.downloadImage.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ok));
-                
             }
         });
 

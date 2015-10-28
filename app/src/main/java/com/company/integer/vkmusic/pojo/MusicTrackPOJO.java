@@ -3,9 +3,12 @@ package com.company.integer.vkmusic.pojo;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 public class MusicTrackPOJO implements Parcelable {
 
     private String id;
+    @SerializedName("owner_id")
     private String ownerId;
     private String artist;
     private String title;
