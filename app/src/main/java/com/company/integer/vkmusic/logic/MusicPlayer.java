@@ -113,7 +113,7 @@ public class MusicPlayer implements MusicPlayerInterface {
 
     @Override
     public int getCurrentTrackPosition() {
-        Log.d(LOG_TAG, "Get current track position");
+        Log.d(LOG_TAG, "Get current track position" + currentTrackPosition);
         return currentTrackPosition;
     }
 
@@ -138,7 +138,7 @@ public class MusicPlayer implements MusicPlayerInterface {
 
     @Override
     public MusicTrackPOJO getCurrentTrack() {
-        Log.d(LOG_TAG, "Get current track");
+        Log.d(LOG_TAG, "Get current track" );
         return currentTrack;
     }
 

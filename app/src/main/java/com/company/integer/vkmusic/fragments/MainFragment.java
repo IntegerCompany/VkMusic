@@ -72,6 +72,7 @@ public class MainFragment extends Fragment {
     }
 
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -181,33 +182,33 @@ public class MainFragment extends Fragment {
         });
 
         viewPager = (ViewPager) view.findViewById(R.id.vp_main);
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                switch (position){
-                    case 0:
-                        ((MainActivity) getActivity()).setCurrentPlaylist(TracksLoaderInterface.MY_TRACKS);
-                        break;
-                    case 1:
-                        ((MainActivity) getActivity()).setCurrentPlaylist(TracksLoaderInterface.RECOMMENDATIONS);
-                        break;
-                    case 2:
-                        ((MainActivity) getActivity()).setCurrentPlaylist(TracksLoaderInterface.SAVED);
-                        break;
-
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
+//        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+//            @Override
+//            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+//
+//            }
+//
+//            @Override
+//            public void onPageSelected(int position) {
+//                switch (position){
+//                    case 0:
+//                        ((MainActivity) getActivity()).setCurrentPlaylist(TracksLoaderInterface.MY_TRACKS);
+//                        break;
+//                    case 1:
+//                        ((MainActivity) getActivity()).setCurrentPlaylist(TracksLoaderInterface.RECOMMENDATIONS);
+//                        break;
+//                    case 2:
+//                        ((MainActivity) getActivity()).setCurrentPlaylist(TracksLoaderInterface.SAVED);
+//                        break;
+//
+//                }
+//            }
+//
+//            @Override
+//            public void onPageScrollStateChanged(int state) {
+//
+//            }
+//        });
 
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -292,6 +293,7 @@ public class MainFragment extends Fragment {
 
     public void setCurrentTrack(MusicTrackPOJO musicTrack, int position) {
         if(musicTrack!=null){
+            Log.d("debug", "position" + position);
             tvNameOfSongPlayerLine.setText(musicTrack.getTitle());
             tvNameOfSongFragment.setText(musicTrack.getTitle());
             tvAuthorPlayerLine.setText(musicTrack.getArtist());
@@ -301,6 +303,7 @@ public class MainFragment extends Fragment {
                     myMusicFragment.setCurrentTrackPosition(position);
                     break;
                 case TracksLoaderInterface.RECOMMENDATIONS:
+                    Log.d("debug", "set recommendations track" + position);
                     recommendedFragment.setCurrentTrackPosition(position);
                     break;
                 case TracksLoaderInterface.SAVED:
