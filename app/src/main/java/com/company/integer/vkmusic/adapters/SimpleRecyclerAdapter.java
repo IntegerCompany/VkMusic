@@ -43,7 +43,6 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     public void onBindViewHolder(final TrackViewHolder trackViewHolder, final int i) {
             trackViewHolder.author.setText(tracks.get(i).getArtist());
             trackViewHolder.title.setText(tracks.get(i).getTitle());
-            trackViewHolder.duration.setText(getDurationString(tracks.get(i).getDuration()));
             trackViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -102,6 +101,20 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
                 }
             });
         }
+        if (adapterSource == TracksLoaderInterface.RECOMMENDATIONS | adapterSource == TracksLoaderInterface.SEARCH){
+            trackViewHolder.addToVkPlaylist.setVisibility(View.VISIBLE);
+        }else{
+            trackViewHolder.addToVkPlaylist.setVisibility(View.GONE);
+        }
+
+
+        trackViewHolder.addToVkPlaylist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                activity.addTrackToVkPlaylist(tracks.get(i));
+
+            }
+        });
 
 
 
@@ -150,16 +163,16 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     class TrackViewHolder extends RecyclerView.ViewHolder {
         TextView title;
         TextView author;
-        TextView duration;
         ImageView playPause;
         ImageView downloadImage;
+        ImageView addToVkPlaylist;
 
         public TrackViewHolder(View itemView) {
             super(itemView);
 
             author = (TextView) itemView.findViewById(R.id.tv_author_name_item);
+            addToVkPlaylist = (ImageView) itemView.findViewById(R.id.btn_add_item);
             title = (TextView) itemView.findViewById(R.id.tv_song_name_item);
-            duration = (TextView) itemView.findViewById(R.id.tv_duration_item);
             playPause = (ImageView) itemView.findViewById(R.id.btn_play_pause_item);
             downloadImage = (ImageView) itemView.findViewById(R.id.btn_download_item);
         }
