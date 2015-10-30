@@ -1,6 +1,8 @@
 package com.company.integer.vkmusic.adapters;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Environment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -8,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,6 +19,10 @@ import com.company.integer.vkmusic.R;
 import com.company.integer.vkmusic.interfaces.TracksLoaderInterface;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
 import com.company.integer.vkmusic.supportclasses.AppState;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -27,10 +34,19 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     MainActivity activity;
     int currentTrackPosition = 0;
     int adapterSource = TracksLoaderInterface.MY_TRACKS;
+    InterstitialAd interstitial;
 
     public SimpleRecyclerAdapter(List<MusicTrackPOJO> tracks, MainActivity activity) {
         this.tracks = tracks;
         this.activity = activity;
+        interstitial = new InterstitialAd(activity);
+        interstitial.setAdUnitId("ca-app-pub-7672991449155931/5396554003");
+
+        // Create ad request.
+        AdRequest adRequest = new AdRequest.Builder().build();
+
+        // Begin loading your interstitial.
+        interstitial.loadAd(adRequest);
     }
 
     @Override
@@ -101,6 +117,11 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
             trackViewHolder.downloadImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    AppState.adclick++;
+                    if (AppState.adclick >= 3){
+                        AppState.adclick = 0;
+                        showAd(tracks.get(i), trackViewHolder);
+                    }
                     activity.downloadTrack(tracks.get(i));
                     trackViewHolder.downloadImage.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ok));
 
@@ -126,6 +147,13 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
 
     }
 
+    private void showAd(final MusicTrackPOJO track, final TrackViewHolder trackViewHolder) {
+        if (interstitial.isLoaded()) {
+            interstitial.show();
+        }
+
+
+    }
 
 
     @Override
@@ -188,4 +216,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     public void setAdapterSource(int adapterSource) {
         this.adapterSource = adapterSource;
     }
+
+
+
 }

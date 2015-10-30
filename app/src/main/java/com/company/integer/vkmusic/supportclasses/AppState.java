@@ -21,6 +21,7 @@ public class AppState {
     private static SharedPreferences sharedPreferences;
     private static Gson gson;
     private static int tab;
+    public static int adclick;
 
     public static void setupAppState(Context ctx) {
         context = ctx;
