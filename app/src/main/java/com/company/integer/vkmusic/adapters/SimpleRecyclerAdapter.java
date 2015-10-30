@@ -57,7 +57,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
 
     @Override
     public void onBindViewHolder(final TrackViewHolder trackViewHolder, final int i) {
-            trackViewHolder.author.setText(tracks.get(i).getArtist());
+            trackViewHolder.author.setText(getDurationString(tracks.get(i).getDuration()) + " | " +tracks.get(i).getArtist());
             trackViewHolder.title.setText(tracks.get(i).getTitle());
             trackViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
