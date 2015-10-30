@@ -10,6 +10,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.company.integer.vkmusic.interfaces.MusicPlayerListener;
+import com.company.integer.vkmusic.interfaces.TracksLoaderInterface;
 import com.company.integer.vkmusic.logic.MusicPlayer;
 import com.company.integer.vkmusic.notificationPanel.NotificationPanel;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
@@ -25,6 +26,7 @@ public class MusicPlayerService extends Service implements MusicPlayerListener {
     private NotificationPanel nPanel;
     private Handler handler = new Handler();
     private boolean isAlreadyCreated;
+    private int currentPlaylist = TracksLoaderInterface.MY_TRACKS;
 
     @Override
     public void onCreate() {
@@ -96,15 +98,18 @@ public class MusicPlayerService extends Service implements MusicPlayerListener {
                         e.printStackTrace();
                     }
                 } else if (action.equalsIgnoreCase("com.example.app.ACTION_UPDATE_TRACK")) {
+                    Log.d("Music Player", "ACTION_UPDATE_TRACK" + musicPlayer.getCurrentTrackPosition());
                     onCurrentTrackChanged(musicPlayer.getCurrentTrack());
                 } else if (action.equalsIgnoreCase("com.example.app.ACTION_TIME_CHANGED")) {
                     int time = intent.getExtras().getInt("CurrentTrackTime");
                     musicPlayer.setCurrentTrackTime(time);
                 }else if(action.equalsIgnoreCase("com.example.app.ACTION_SET_TRACK")){
-                    musicPlayer.setCurrentTrackPosition(intent.getIntExtra("newTrackPosition", 0));
+                    musicPlayer.setCurrentTrackPosition(intent.getIntExtra("newTrackPosition", musicPlayer.getCurrentTrackPosition()));
+                    currentPlaylist = intent.getIntExtra("currentPlaylist", currentPlaylist);
                     onCurrentTrackChanged(musicPlayer.getCurrentTrack());
                 }else if(action.equalsIgnoreCase("com.example.app.ACTION_CHANGE_PLAYLIST")){
-                    musicPlayer.setPlayList((ArrayList<MusicTrackPOJO>) intent.getSerializableExtra("playlist"), intent.getIntExtra("track", 0));
+                    currentPlaylist = intent.getIntExtra("currentPlaylist", currentPlaylist);
+                    musicPlayer.setPlayList((ArrayList<MusicTrackPOJO>) intent.getSerializableExtra("playlist"), intent.getIntExtra("track", musicPlayer.getCurrentTrackPosition()));
                 }else if(action.equalsIgnoreCase("com.example.app.ACTION_DESTROY")){
                     Log.d("Panel", "receive intent");
                     if(!musicPlayer.isPlaying()){
@@ -135,6 +140,7 @@ public class MusicPlayerService extends Service implements MusicPlayerListener {
     private void seekBarProgressUpdater() {
         Intent in = new Intent("com.example.app.ACTION_TRACK_PROGRESS");
         in.putExtra("currentTrackTime", musicPlayer.getCurrentTrackTime());
+        in.putExtra("currentTrack", musicPlayer.getCurrentTrackPosition());
         sendBroadcast(in);
         if (musicPlayer.isPlaying()) {
             Runnable notification = new Runnable() {
@@ -161,11 +167,14 @@ public class MusicPlayerService extends Service implements MusicPlayerListener {
 
     @Override
     public void onCurrentTrackChanged(MusicTrackPOJO musicTrack) {
+        Log.d("debug service", "onCurrentTrackChanged" + musicPlayer.getCurrentTrackPosition() + "(1)");
         Intent in = new Intent("com.example.app.ACTION_TRACK_CHANGED");
-        in.putExtra("CurrentTrackTime",musicPlayer.getCurrentTrackTime());
-        in.putExtra("musicTrack",musicTrack);
+        in.putExtra("CurrentTrackTime", musicPlayer.getCurrentTrackTime());
+        in.putExtra("musicTrack", musicTrack);
         in.putExtra("musicTrackPosition", musicPlayer.getCurrentTrackPosition());
-        in.putExtra("isPlaying",musicPlayer.isPlaying());
+        in.putExtra("isPlaying", musicPlayer.isPlaying());
+        in.putExtra("currentPlaylist", currentPlaylist);
+        Log.d("debug service", "onCurrentTrackChanged" + musicPlayer.getCurrentTrackPosition() + "(2)");
         sendBroadcast(in);
     }
 }

@@ -1,11 +1,10 @@
 package com.company.integer.vkmusic.adapters;
 
 
-import android.Manifest;
 import android.os.Environment;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,6 @@ import com.company.integer.vkmusic.R;
 import com.company.integer.vkmusic.interfaces.TracksLoaderInterface;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
 import com.company.integer.vkmusic.supportclasses.AppState;
-import com.vk.sdk.VKSdk;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -28,7 +26,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     List<MusicTrackPOJO> tracks;
     MainActivity activity;
     int currentTrackPosition = 0;
-    int currentSource = TracksLoaderInterface.MY_TRACKS;
+    int adapterSource = TracksLoaderInterface.MY_TRACKS;
 
     public SimpleRecyclerAdapter(List<MusicTrackPOJO> tracks, MainActivity activity) {
         this.tracks = tracks;
@@ -44,7 +42,6 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     @Override
     public void onBindViewHolder(final TrackViewHolder trackViewHolder, final int i) {
             trackViewHolder.author.setText(tracks.get(i).getArtist());
-
             trackViewHolder.title.setText(tracks.get(i).getTitle());
             trackViewHolder.duration.setText(getDurationString(tracks.get(i).getDuration()));
             trackViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -53,7 +50,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
                     if (currentTrackPosition == i & activity.isPlaying()) {
                         activity.pauseMusic();
                     } else {
-                        activity.setCurrentPlaylist(activity.getCurrentPlaylist());
+                        activity.setCurrentPlaylist(adapterSource);
                         activity.setPlayingTrack(i);
                         activity.playMusic();
                     }
@@ -61,7 +58,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
                     notifyDataSetChanged();
                 }
             });
-            if (currentTrackPosition == i) {
+            if (currentTrackPosition == i & adapterSource == activity.getCurrentPlaylist()) {
                 if (activity.isPlaying()) {
                     trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.pause_item));
                 }
@@ -86,7 +83,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
             } else {
                 trackViewHolder.downloadImage.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ok));
             }
-        if (currentSource == TracksLoaderInterface.SAVED) {
+        if (adapterSource == TracksLoaderInterface.SAVED) {
             trackViewHolder.downloadImage.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.remove));
             trackViewHolder.downloadImage.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -118,7 +115,10 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     }
 
     public void setCurrentTrackPosition(int currentTrackPosition){
+
+
         this.currentTrackPosition = currentTrackPosition;
+        Log.d("debug", "currentTrackPosition " + currentTrackPosition);
         notifyDataSetChanged();
     }
 
@@ -166,7 +166,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     }
 
 
-    public void setCurrentSource(int currentSource) {
-        this.currentSource = currentSource;
+    public void setAdapterSource(int adapterSource) {
+        this.adapterSource = adapterSource;
     }
 }

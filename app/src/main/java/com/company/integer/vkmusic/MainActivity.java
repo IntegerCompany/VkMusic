@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements
     private int currentPlaylist = TracksLoaderInterface.MY_TRACKS;
     private int currentTrack = 0;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,8 +67,6 @@ public class MainActivity extends AppCompatActivity implements
             getWindow().setStatusBarColor(AppState.getColors().getColorAccentID());
         }
         setContentView(R.layout.activity_main);
-
-
         mainFragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         fabPrevious = (FloatingActionButton) findViewById(R.id.fab_previous);
         fabPlayPause = (FloatingActionButton) findViewById(R.id.fab_play_pause);
@@ -84,6 +81,8 @@ public class MainActivity extends AppCompatActivity implements
         tracksDataLoader.getTracksByUserId(AppState.getLoggedUser().getUserId(), 0, 10);
         tracksDataLoader.getRecommendationsByUserID(AppState.getLoggedUser().getUserId(), 0, 10);
         tracksDataLoader.getSavedTracks();
+
+
 
         fabPlayPause.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,7 +127,12 @@ public class MainActivity extends AppCompatActivity implements
         }
 
 
+
     }
+
+
+
+
 
     @Override
     protected void onStart() {
@@ -177,6 +181,7 @@ public class MainActivity extends AppCompatActivity implements
     public void setPlayingTrack(int position) {
         Intent changePlayingTrackIntent = new Intent("com.example.app.ACTION_SET_TRACK");
         changePlayingTrackIntent.putExtra("newTrackPosition", position);
+        changePlayingTrackIntent.putExtra("currentPlaylist", currentPlaylist);
         sendBroadcast(changePlayingTrackIntent);
     }
 
@@ -354,8 +359,11 @@ public class MainActivity extends AppCompatActivity implements
                     MusicTrackPOJO musicTrack = intent.getParcelableExtra("musicTrack");
                     int time = intent.getExtras().getInt("CurrentTrackTime");
                     if (musicTrack != null) {
-                        currentTrack = intent.getIntExtra("musicTrackPosition", 0);
-                        mainFragment.setCurrentTrack(musicTrack, intent.getIntExtra("musicTrackPosition", 0));
+                        Log.d("debug", "current track before = " + currentTrack);
+                        currentTrack = intent.getIntExtra("musicTrackPosition", currentTrack);
+                        Log.d("debug", "current track after = " + currentTrack);
+                        mainFragment.setCurrentTrack(musicTrack, currentTrack);
+                        setCurrentPlaylist(intent.getIntExtra("currentPlaylist", currentPlaylist));
                         mainFragment.setMediaFileLengthInMilliseconds(musicTrack.getDuration() * 1000);
                         mainFragment.getSeekBar().setProgress((int) (((float) time / mainFragment.getMediaFileLengthInMilliseconds()) * 100)); // This math construction give a percentage of "was playing"/"song length"
                         if (time == 0) {
@@ -365,16 +373,21 @@ public class MainActivity extends AppCompatActivity implements
                             playMusicUIAction();
                             isPlaying = true;
                         }
+
                     }
                 } else if (action.equalsIgnoreCase("com.example.app.ACTION_LOADING_PROGRESS")) {
                     int percent = intent.getExtras().getInt("percent");
                     mainFragment.getSeekBar().setSecondaryProgress(percent);
                 } else if (action.equalsIgnoreCase("com.example.app.ACTION_TRACK_PROGRESS")) {
                     int trackTime = intent.getExtras().getInt("currentTrackTime");
+
+                    currentTrack = intent.getIntExtra("currentTrack", currentTrack);
+                    setCurrentPlaylist(intent.getIntExtra("currentPlaylist", currentPlaylist));
                     mainFragment.updateSeekBarAndTextViews(trackTime);
                 }
             }
         };
+
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
@@ -485,6 +498,8 @@ public class MainActivity extends AppCompatActivity implements
                 changePlaylist.putExtra("playlist", searchPlaylist);
                 break;
         }
+        changePlaylist.putExtra("currentPlaylist", currentPlaylist);
+
         sendBroadcast(changePlaylist);
     }
 
