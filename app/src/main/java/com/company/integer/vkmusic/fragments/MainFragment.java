@@ -125,13 +125,27 @@ public class MainFragment extends Fragment {
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 if (((MainActivity) getActivity()).getSearchPlaylist().size() != 0) {
-                    if (lm.findLastVisibleItemPosition() > ((MainActivity) getActivity()).getSearchPlaylist().size() -2) {
-                        if (!scrollDownLock) ((MainActivity) getActivity()).uploadMore(TracksLoaderInterface.SEARCH);
+                    if (lm.findLastVisibleItemPosition() > ((MainActivity) getActivity()).getSearchPlaylist().size() - 2) {
+                        if (!scrollDownLock)
+                            ((MainActivity) getActivity()).uploadMore(TracksLoaderInterface.SEARCH);
                         scrollDownLock = true;
-                    }else{
+                    } else {
                         scrollDownLock = false;
                     }
                 }
+            }
+        });
+
+        fabAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+             //   ((MainActivity) getActivity()).addTrac                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      kToVkPlaylist(((MainActivity) getActivity()).getCurrentMusicTrack());
+            }
+        });
+        fabDownload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) getActivity()).downloadTrack(((MainActivity) getActivity()).getCurrentMusicTrack());
             }
         });
 

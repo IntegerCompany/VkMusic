@@ -16,7 +16,7 @@
         android:layout_height="48dp"
         android:padding="12dp"
         android:src="@mipmap/play_item" />
-
+s
     <TextView
         android:id="@+id/tv_song_name_item"
         android:layout_width="wrap_content"

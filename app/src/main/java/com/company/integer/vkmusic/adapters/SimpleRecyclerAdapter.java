@@ -83,15 +83,21 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
                 trackViewHolder.downloadImage.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ok));
             }
         if (adapterSource == TracksLoaderInterface.SAVED) {
+            trackViewHolder.downloadImage.setVisibility(View.INVISIBLE);
+            trackViewHolder.downloadImage.setClickable(false);
             trackViewHolder.downloadImage.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.remove));
             trackViewHolder.downloadImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Log.d("Adapter", "Deleting" + path.getName() + " Title: " + tracks.get(i).getTitle() + " Artist " + tracks.get(i).getArtist());
+                    Log.d("Adapter", "Path exists " + path.exists() + path.getAbsolutePath());
                     path.delete();
                     activity.getSavedTracks();
                 }
             });
         }else{
+            trackViewHolder.downloadImage.setVisibility(View.VISIBLE);
+            trackViewHolder.downloadImage.setClickable(true);
             trackViewHolder.downloadImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
