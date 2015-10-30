@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +41,7 @@ public class TabFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         adapter = new SimpleRecyclerAdapter(list,(MainActivity) getActivity());
         adapter.setCurrentTrackPosition(position);
-        adapter.setCurrentSource(tracksSource);
+        adapter.setAdapterSource(tracksSource);
         recyclerView.setAdapter(adapter);
         lm = (LinearLayoutManager) recyclerView.getLayoutManager();
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -69,6 +70,7 @@ public class TabFragment extends Fragment {
 
     public void updateList(){
         if (adapter != null) adapter.notifyDataSetChanged();
+
     }
 
     public void nextTrack(){
@@ -81,7 +83,9 @@ public class TabFragment extends Fragment {
 
     public void setCurrentTrackPosition(int position){
         this.position = position;
+        Log.d("debug", "setCurrentTrackPosition " + position);
         if (adapter != null) {
+            Log.d("debug", "adapter not null, setting " + position);
             adapter.setCurrentTrackPosition(position);
         }
     }

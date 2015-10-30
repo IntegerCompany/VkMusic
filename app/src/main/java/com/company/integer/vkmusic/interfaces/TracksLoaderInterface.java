@@ -27,12 +27,17 @@ public interface TracksLoaderInterface {
     void getTracksByUserId(String userId, int from, int count);
 
     /**
-     * Returns recommendations from VK
+     * Creates async request for recommendations from VK
      * @param userId recommendations for that user
      * @param from from track with that number we will load new ones
      * @param count how many tracks will be returned in response
      */
     void getRecommendationsByUserID(String userId, int from, int count);
+
+    /**
+     * Creates async request for tracks from vkmusic folder
+     */
+    void getSavedTracks();
 
     /**
      * Callback for track loading

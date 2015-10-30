@@ -4,6 +4,7 @@ package com.company.integer.vkmusic.adapters;
 import android.os.Environment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +26,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     List<MusicTrackPOJO> tracks;
     MainActivity activity;
     int currentTrackPosition = 0;
-    int currentSource = TracksLoaderInterface.MY_TRACKS;
+    int adapterSource = TracksLoaderInterface.MY_TRACKS;
 
     public SimpleRecyclerAdapter(List<MusicTrackPOJO> tracks, MainActivity activity) {
         this.tracks = tracks;
@@ -40,63 +41,73 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
 
     @Override
     public void onBindViewHolder(final TrackViewHolder trackViewHolder, final int i) {
-        trackViewHolder.author.setText(getDurationString(tracks.get(i).getDuration())+ " | " +tracks.get(i).getArtist());
-
-        trackViewHolder.title.setText(tracks.get(i).getTitle());
-        trackViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (currentTrackPosition == i & activity.isPlaying()){
-                    activity.pauseMusic();
-                }else {
-                    activity.setCurrentPlaylist(activity.getCurrentPlaylist());
-                    activity.setPlayingTrack(i);
-                    activity.playMusic();
+            trackViewHolder.author.setText(tracks.get(i).getArtist());
+            trackViewHolder.title.setText(tracks.get(i).getTitle());
+            trackViewHolder.duration.setText(getDurationString(tracks.get(i).getDuration()));
+            trackViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (currentTrackPosition == i & activity.isPlaying()) {
+                        activity.pauseMusic();
+                    } else {
+                        activity.setCurrentPlaylist(adapterSource);
+                        activity.setPlayingTrack(i);
+                        activity.playMusic();
+                    }
+                    currentTrackPosition = i;
+                    notifyDataSetChanged();
                 }
-                currentTrackPosition = i;
-                notifyDataSetChanged();
+            });
+            if (currentTrackPosition == i & adapterSource == activity.getCurrentPlaylist()) {
+                if (activity.isPlaying()) {
+                    trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.pause_item));
+                }
+                trackViewHolder.itemView.setBackgroundColor(AppState.getColors().getColorAccentID());
+            } else {
+                trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.play_item));
+                trackViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(activity, R.color.listViewItemBackground));
             }
-        });
-        if (currentTrackPosition == i){
-            if (activity.isPlaying()) {
-                trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.pause_item));
-            }
-            trackViewHolder.itemView.setBackgroundColor(AppState.getColors().getColorAccentID());
-        }else{
-            trackViewHolder.playPause.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.play_item));
-            trackViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(activity, R.color.listViewItemBackground));
-        }
 //        if (!Environment.getExternalStorageDirectory().canWrite()) {
 //            ActivityCompat.requestPermissions(activity,
 //                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
 //                    0);
 //        }
-        File vkMusicDirectory = new File(Environment
-                .getExternalStorageDirectory().toString()
-                + AppState.FOLDER);
-        File path = new File(vkMusicDirectory + "/" + tracks.get(i).getArtist() + "-" + tracks.get(i).getTitle() + ".mp3");
+            File vkMusicDirectory = new File(Environment
+                    .getExternalStorageDirectory().toString()
+                    + AppState.FOLDER);
+            final File path = new File(vkMusicDirectory + "/" + tracks.get(i).getArtist() + "-" + tracks.get(i).getTitle() + ".mp3");
 
-        if (!path.exists()) {
-            trackViewHolder.downloadImage.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.download));
-        }else{
-            trackViewHolder.downloadImage.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ok));
-        }
-        trackViewHolder.downloadImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                activity.downloadTrack(tracks.get(i));
+
+            if (!path.exists()) {
+                trackViewHolder.downloadImage.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.download));
+            } else {
                 trackViewHolder.downloadImage.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ok));
             }
-        });
+        if (adapterSource == TracksLoaderInterface.SAVED) {
+            trackViewHolder.downloadImage.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.remove));
+            trackViewHolder.downloadImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    path.delete();
+                    activity.getSavedTracks();
+                }
+            });
+        }else{
+            trackViewHolder.downloadImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    activity.downloadTrack(tracks.get(i));
+                    trackViewHolder.downloadImage.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ok));
 
-        trackViewHolder.addToVkPlayList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                activity.addTrackToVkPlaylist(tracks.get(i));
-            }
-        });
+                }
+            });
+        }
+
+
 
     }
+
+
 
     @Override
     public int getItemCount() {
@@ -104,7 +115,10 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     }
 
     public void setCurrentTrackPosition(int currentTrackPosition){
+
+
         this.currentTrackPosition = currentTrackPosition;
+        Log.d("debug", "currentTrackPosition " + currentTrackPosition);
         notifyDataSetChanged();
     }
 
@@ -136,8 +150,8 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     class TrackViewHolder extends RecyclerView.ViewHolder {
         TextView title;
         TextView author;
+        TextView duration;
         ImageView playPause;
-        ImageView addToVkPlayList;
         ImageView downloadImage;
 
         public TrackViewHolder(View itemView) {
@@ -145,14 +159,14 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
 
             author = (TextView) itemView.findViewById(R.id.tv_author_name_item);
             title = (TextView) itemView.findViewById(R.id.tv_song_name_item);
+            duration = (TextView) itemView.findViewById(R.id.tv_duration_item);
             playPause = (ImageView) itemView.findViewById(R.id.btn_play_pause_item);
-            addToVkPlayList = (ImageView) itemView.findViewById(R.id.btn_add_item);
             downloadImage = (ImageView) itemView.findViewById(R.id.btn_download_item);
         }
     }
 
 
-    public void setCurrentSource(int currentSource) {
-        this.currentSource = currentSource;
+    public void setAdapterSource(int adapterSource) {
+        this.adapterSource = adapterSource;
     }
 }
