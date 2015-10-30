@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements
     FloatingActionButton fabPlayPause;
     FloatingActionButton fabNext;
     MainFragment mainFragment;
+    MusicTrackPOJO currentMusicTrack;
 
     private TracksDataLoader tracksDataLoader;
     private int lastSource = TracksLoaderInterface.MY_TRACKS;
@@ -360,13 +361,14 @@ public class MainActivity extends AppCompatActivity implements
                     int time = intent.getExtras().getInt("CurrentTrackTime");
                     if (musicTrack != null) {
                         Log.d("debug", "current track before = " + currentTrack);
+                        currentMusicTrack = musicTrack;
                         currentTrack = intent.getIntExtra("musicTrackPosition", currentTrack);
                         Log.d("debug", "current track after = " + currentTrack);
                         mainFragment.setCurrentTrack(musicTrack, currentTrack);
                         setCurrentPlaylist(intent.getIntExtra("currentPlaylist", currentPlaylist));
                         mainFragment.setMediaFileLengthInMilliseconds(musicTrack.getDuration() * 1000);
                         mainFragment.getSeekBar().setProgress((int) (((float) time / mainFragment.getMediaFileLengthInMilliseconds()) * 100)); // This math construction give a percentage of "was playing"/"song length"
-                        if (time == 0) {
+                            if (time == 0) {
                             mainFragment.getSeekBar().setProgress(0);
                         }
                         if (intent.getExtras().getBoolean("isPlaying")) {
@@ -564,5 +566,7 @@ public class MainActivity extends AppCompatActivity implements
         return isPlayListEmpty;
     }
 
-
+    public MusicTrackPOJO getCurrentMusicTrack() {
+        return currentMusicTrack;
+    }
 }

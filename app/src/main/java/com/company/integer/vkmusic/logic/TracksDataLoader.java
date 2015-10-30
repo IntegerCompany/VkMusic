@@ -328,6 +328,7 @@ public class TracksDataLoader implements TracksLoaderInterface {
         Mp3File song = null;
         try {
             song = new Mp3File(file.getPath());
+            song.removeId3v2Tag();
             ID3v2 id3v2tag = new ID3v24Tag();
             id3v2tag.setTitle(track.getTitle());
             id3v2tag.setArtist(track.getArtist());
