@@ -24,6 +24,7 @@ import com.mpatric.mp3agic.ID3v2;
 import com.mpatric.mp3agic.ID3v24Tag;
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
+import com.mpatric.mp3agic.NotSupportedException;
 import com.mpatric.mp3agic.UnsupportedTagException;
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKError;
@@ -37,10 +38,12 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.lang.reflect.Type;
 import java.net.URL;
 import java.net.URLConnection;
@@ -342,6 +345,7 @@ public class TracksDataLoader implements TracksLoaderInterface {
     private void saveTrackMetadata(MusicTrackPOJO track, File file)  {
 
         Mp3File song = null;
+        RandomAccessFile var2 = null;
         try {
             song = new Mp3File(file.getPath());
             song.removeId3v2Tag();
@@ -349,13 +353,30 @@ public class TracksDataLoader implements TracksLoaderInterface {
             id3v2tag.setTitle(track.getTitle());
             id3v2tag.setArtist(track.getArtist());
             song.setId3v2Tag(id3v2tag);
+            String path = file.getPath();
+            var2 = new RandomAccessFile(file, "rw");
+            if(song.hasId3v2Tag()) {
+                var2.write(song.getId3v2Tag().toBytes());
+            }
 
-        } catch (IOException e) {
+
+    } catch (IOException e) {
             e.printStackTrace();
         } catch (UnsupportedTagException e) {
             e.printStackTrace();
         } catch (InvalidDataException e) {
             e.printStackTrace();
+        } catch (NotSupportedException e) {
+            e.printStackTrace();
+        }
+        finally {
+            try {
+                if (var2 != null) {
+                    var2.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
     }
