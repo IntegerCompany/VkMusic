@@ -448,7 +448,8 @@ public class MainActivity extends AppCompatActivity implements
         return true;
     }
 
-    private void makeSearch(String query) {
+    public void makeSearch(String query) {
+        mainFragment.setSlidingUpPanelLayoutPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
         getSearchPlaylist().clear();
         mainFragment.updateList();
         search(query, 0, 10);

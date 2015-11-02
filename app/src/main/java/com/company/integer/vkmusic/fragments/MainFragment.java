@@ -61,6 +61,7 @@ public class MainFragment extends Fragment {
     private ImageView ivDivider;
     private ImageView ivClosePanel;
     private ImageView ivAlbumPhoto;
+    private ImageView imgSearchByArtist;
     private SeekBar seekBar;
     private RecyclerView recyclerView;
     private ViewPager viewPager;
@@ -107,6 +108,7 @@ public class MainFragment extends Fragment {
         ivClosePanel = (ImageView) view.findViewById(R.id.iv_close_panel);
         ivDivider = (ImageView) view.findViewById(R.id.iv_divider);
         ivAlbumPhoto = (ImageView) view.findViewById(R.id.iv_album_photo);
+        imgSearchByArtist = (ImageView) view.findViewById(R.id.imgSearchByArtist);
         ivAlbumPhoto.setImageDrawable(ContextCompat.getDrawable(getContext(), AppState.getColors().getImageDrawableID()));
 
         seekBar = (SeekBar) view.findViewById(R.id.seekBar);
@@ -254,6 +256,13 @@ public class MainFragment extends Fragment {
 
         });
         initAdverts();
+
+        imgSearchByArtist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) getActivity()).makeSearch(((MainActivity) getActivity()).getCurrentMusicTrack().getArtist());
+            }
+        });
 
         return view;
     }
