@@ -109,7 +109,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
                 @Override
                 public void onClick(View v) {
                     AppState.adclick++;
-                    if (AppState.adclick >= 3){
+                    if (AppState.adclick >= 3) {
                         AppState.adclick = 0;
                         showAd(tracks.get(i), trackViewHolder);
                     }
@@ -121,16 +121,31 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         }
         if (adapterSource == TracksLoaderInterface.RECOMMENDATIONS | adapterSource == TracksLoaderInterface.SEARCH){
             trackViewHolder.addToVkPlaylist.setVisibility(View.VISIBLE);
+            for (int id : AppState.getSavedIds()){
+                if (Integer.parseInt(tracks.get(i).getId()) == id){
+                    trackViewHolder.addToVkPlaylist.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ok));
+                    trackViewHolder.addToVkPlaylist.setClickable(false);
+                    break;
+                }else {
+                    trackViewHolder.addToVkPlaylist.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.add));
+                    trackViewHolder.addToVkPlaylist.setClickable(true);
+                }
+            }
         }else{
             trackViewHolder.addToVkPlaylist.setVisibility(View.GONE);
         }
+
+
+
 
 
         trackViewHolder.addToVkPlaylist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 activity.addTrackToVkPlaylist(tracks.get(i));
-
+                AppState.saveTrackId(Integer.parseInt(tracks.get(i).getId()));
+                trackViewHolder.addToVkPlaylist.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ok));
+                trackViewHolder.addToVkPlaylist.setClickable(false);
             }
         });
 
