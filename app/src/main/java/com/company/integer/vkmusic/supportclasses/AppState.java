@@ -4,11 +4,16 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
 
+import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
 import com.company.integer.vkmusic.pojo.StylePOJO;
 import com.company.integer.vkmusic.pojo.UserPOJO;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AppState {
 
@@ -21,6 +26,7 @@ public class AppState {
     private static SharedPreferences sharedPreferences;
     private static Gson gson;
     private static int tab;
+    private static ArrayList<Integer> ids = new ArrayList<>();
     public static int adclick;
 
     public static void setupAppState(Context ctx) {
@@ -68,5 +74,19 @@ public class AppState {
         stylePOJO.setImageDrawableID(sharedPreferences.getInt("albumImage", 0));
         stylePOJO.setTabDividerColorID(sharedPreferences.getInt("tabIndicatorColor", 0));
         return stylePOJO;
+    }
+
+    public static void saveTrackId(int id){
+        ids.add(id);
+        sharedPreferences.edit().putString("ids", gson.toJson(ids)).apply();
+    }
+
+    public static ArrayList<Integer> getSavedIds(){
+        Type listOfTestObject = new TypeToken<ArrayList<Integer>>() {
+        }.getType();
+        ArrayList ids = gson.fromJson(sharedPreferences.getString("ids", ""), listOfTestObject);
+        if (ids == null) ids = new ArrayList();
+
+        return ids;
     }
 }
