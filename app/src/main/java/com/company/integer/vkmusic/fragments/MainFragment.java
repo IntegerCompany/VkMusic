@@ -115,6 +115,7 @@ public class MainFragment extends Fragment {
         evaluator = new ArgbEvaluator();
         recyclerView = (RecyclerView) view.findViewById(R.id.searchList);
         adapter = new SimpleRecyclerAdapter(new ArrayList<MusicTrackPOJO>(),(MainActivity) getActivity());
+        adapter.setAdapterSource(TracksLoaderInterface.SEARCH);
         recyclerView.setAdapter(adapter);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity().getBaseContext());
