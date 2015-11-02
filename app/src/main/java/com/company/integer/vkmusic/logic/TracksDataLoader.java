@@ -353,11 +353,9 @@ public class TracksDataLoader implements TracksLoaderInterface {
             id3v2tag.setTitle(track.getTitle());
             id3v2tag.setArtist(track.getArtist());
             song.setId3v2Tag(id3v2tag);
-            String path = file.getPath();
             var2 = new RandomAccessFile(file, "rw");
-            if(song.hasId3v2Tag()) {
-                var2.write(song.getId3v2Tag().toBytes());
-            }
+            var2.write(song.getId3v2Tag().toBytes());
+
 
 
     } catch (IOException e) {

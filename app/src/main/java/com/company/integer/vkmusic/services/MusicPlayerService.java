@@ -104,8 +104,8 @@ public class MusicPlayerService extends Service implements MusicPlayerListener {
                     int time = intent.getExtras().getInt("CurrentTrackTime");
                     musicPlayer.setCurrentTrackTime(time);
                 }else if(action.equalsIgnoreCase("com.example.app.ACTION_SET_TRACK")){
-                    musicPlayer.setCurrentTrackPosition(intent.getIntExtra("newTrackPosition", musicPlayer.getCurrentTrackPosition()));
                     currentPlaylist = intent.getIntExtra("currentPlaylist", currentPlaylist);
+                    musicPlayer.setCurrentTrackPosition(intent.getIntExtra("newTrackPosition", musicPlayer.getCurrentTrackPosition()));
                     onCurrentTrackChanged(musicPlayer.getCurrentTrack());
                 }else if(action.equalsIgnoreCase("com.example.app.ACTION_CHANGE_PLAYLIST")){
                     currentPlaylist = intent.getIntExtra("currentPlaylist", currentPlaylist);
