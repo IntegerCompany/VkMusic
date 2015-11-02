@@ -409,7 +409,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d("Panel","Sending intent");
+        Log.d("Panel", "Sending intent");
         Intent stopService = new Intent("com.example.app.ACTION_DESTROY");
         sendBroadcast(stopService);
         unregisterReceiver(broadcastReceiver);
@@ -428,10 +428,7 @@ public class MainActivity extends AppCompatActivity implements
             public boolean onQueryTextSubmit(String query) {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(getWindow().getDecorView().getRootView().getWindowToken(), 0);
-                getSearchPlaylist().clear();
-                mainFragment.updateList();
-                search(etSearchText.getQuery().toString(), 0, 10);
-                mainFragment.makeSearchUIActions(true);
+                makeSearch(etSearchText.getQuery().toString());
                 return true;
             }
 
@@ -449,6 +446,13 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
         return true;
+    }
+
+    private void makeSearch(String query) {
+        getSearchPlaylist().clear();
+        mainFragment.updateList();
+        search(query, 0, 10);
+        mainFragment.makeSearchUIActions(true);
     }
 
     @Override
