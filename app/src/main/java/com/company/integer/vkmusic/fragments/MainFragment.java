@@ -5,6 +5,7 @@ import android.animation.ArgbEvaluator;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -35,6 +36,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -141,11 +143,16 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 ((MainActivity) getActivity()).addTrackToVkPlaylist(((MainActivity) getActivity()).getCurrentMusicTrack());
+                AppState.saveTrackId(Integer.parseInt(((MainActivity) getActivity()).getCurrentMusicTrack().getId()));
+                fabAdd.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.mipmap.ok));
+                fabAdd.setClickable(false);
+
             }
         });
         fabDownload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                fabDownload.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.mipmap.ok));
                 ((MainActivity) getActivity()).downloadTrack(((MainActivity) getActivity()).getCurrentMusicTrack());
             }
         });
@@ -328,6 +335,31 @@ public class MainFragment extends Fragment {
                     adapter.setCurrentTrackPosition(position);
                     break;
             }
+
+            File vkMusicDirectory = new File(Environment
+                    .getExternalStorageDirectory().toString()
+                    + AppState.FOLDER);
+            final File path = new File(vkMusicDirectory + "/" + musicTrack.getArtist() + "-" + musicTrack.getTitle() + ".mp3");
+
+            if (!path.exists()) {
+                fabDownload.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.mipmap.download));
+            } else {
+                fabDownload.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.mipmap.ok));
+            }
+
+            if (((MainActivity) getActivity()).getCurrentPlaylist() == TracksLoaderInterface.RECOMMENDATIONS | ((MainActivity) getActivity()).getCurrentPlaylist() == TracksLoaderInterface.SEARCH) {
+                for (int id : AppState.getSavedIds()) {
+                    if (Integer.parseInt(musicTrack.getId()) == id) {
+                        fabAdd.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.mipmap.ok));
+                        fabAdd.setClickable(false);
+                        break;
+                    } else {
+                        fabAdd.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.mipmap.add));
+                        fabAdd.setClickable(true);
+                    }
+                }
+            }
+
         }
     }
 
