@@ -57,7 +57,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
             trackViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (currentTrackPosition == i & activity.isPlaying()) {
+                    if (currentTrackPosition == i & activity.isPlaying() & adapterSource == activity.getCurrentPlaylist()) {
                         activity.pauseMusic();
                     } else {
                         activity.setCurrentPlaylist(adapterSource);
@@ -94,8 +94,6 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
                 trackViewHolder.downloadImage.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ok));
             }
         if (adapterSource == TracksLoaderInterface.SAVED) {
-            trackViewHolder.downloadImage.setVisibility(View.INVISIBLE);
-            trackViewHolder.downloadImage.setClickable(false);
             trackViewHolder.downloadImage.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.remove));
             trackViewHolder.downloadImage.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -107,8 +105,6 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
                 }
             });
         }else{
-            trackViewHolder.downloadImage.setVisibility(View.VISIBLE);
-            trackViewHolder.downloadImage.setClickable(true);
             trackViewHolder.downloadImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
