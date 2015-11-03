@@ -29,8 +29,6 @@ import com.company.integer.vkmusic.adapters.SimpleRecyclerAdapter;
 import com.company.integer.vkmusic.adapters.ViewPagerAdapter;
 import com.company.integer.vkmusic.interfaces.TracksLoaderInterface;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.company.integer.vkmusic.supportclasses.AppState;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -332,16 +330,20 @@ public class MainFragment extends Fragment {
             switch (((MainActivity) getActivity()).getCurrentPlaylist()){
                 case TracksLoaderInterface.MY_TRACKS:
                     myMusicFragment.setCurrentTrackPosition(position);
+                    fabAdd.setVisibility(View.VISIBLE);
                     break;
                 case TracksLoaderInterface.RECOMMENDATIONS:
                     Log.d("debug", "set recommendations track" + position);
                     recommendedFragment.setCurrentTrackPosition(position);
+                    fabAdd.setVisibility(View.VISIBLE);
                     break;
                 case TracksLoaderInterface.SAVED:
                     savedFragment.setCurrentTrackPosition(position);
+                    fabAdd.setVisibility(View.INVISIBLE);
                     break;
                 case TracksLoaderInterface.SEARCH:
                     adapter.setCurrentTrackPosition(position);
+                    fabAdd.setVisibility(View.VISIBLE);
                     break;
             }
 
@@ -402,6 +404,7 @@ public class MainFragment extends Fragment {
 
 
     public void makeSearchUIActions(boolean isSearch) {
+
         if (isSearch) {
             viewPager.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);

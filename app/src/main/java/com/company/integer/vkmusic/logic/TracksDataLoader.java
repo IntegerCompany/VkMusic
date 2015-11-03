@@ -5,8 +5,6 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
-import android.media.MediaMetadata;
-import android.media.MediaMetadataRetriever;
 import android.os.Environment;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
@@ -35,10 +33,8 @@ import com.vk.sdk.api.VKResponse;
 import org.json.JSONException;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -174,7 +170,7 @@ public class TracksDataLoader implements TracksLoaderInterface {
         for (File trackFile : vkMusicDirectory.listFiles(mp3Filter)){
             MusicTrackPOJO savedTrack = new MusicTrackPOJO();
             savedTrack.setIsFromFile(true);
-            savedTrack.setGeneralTrackName(trackFile.getName().substring(0, trackFile.getName().length() - 4));
+            savedTrack.setFileCreatingTime(trackFile.lastModified());
             savedTrack.setUrl(trackFile.getPath());
             initFromMetadata(savedTrack);
             savedTracks.add(savedTrack);

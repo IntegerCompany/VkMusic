@@ -12,13 +12,13 @@ public class MusicTrackPOJO implements Parcelable {
     private String ownerId = "";
     private String artist = "";
     private String title = "";
-    private String generalTrackName = "";
     private String url = "";
     private int duration;
     private int genreId;
     private long date;
     private long lyricsId;
     boolean isFromFile = false;
+    private long fileCreatingTime;
 
     public MusicTrackPOJO(Parcel in) {
         id = in.readString();
@@ -26,10 +26,10 @@ public class MusicTrackPOJO implements Parcelable {
         artist = in.readString();
         title = in.readString();
         url = in.readString();
-        generalTrackName = in.readString();
         duration = in.readInt();
         genreId = in.readInt();
         date = in.readLong();
+        fileCreatingTime = in.readLong();
         lyricsId = in.readLong();
         isFromFile = in.readByte() != 0;
     }
@@ -126,12 +126,12 @@ public class MusicTrackPOJO implements Parcelable {
         return isFromFile;
     }
 
-    public String getGeneralTrackName() {
-        return generalTrackName;
+    public long getFileCreatingTime() {
+        return fileCreatingTime;
     }
 
-    public void setGeneralTrackName(String generalTrackName) {
-        this.generalTrackName = generalTrackName;
+    public void setFileCreatingTime(long fileCreatingTime) {
+        this.fileCreatingTime = fileCreatingTime;
     }
 
     public void setIsFromFile(boolean isFromFile) {
@@ -150,10 +150,10 @@ public class MusicTrackPOJO implements Parcelable {
         dest.writeString(artist);
         dest.writeString(title);
         dest.writeString(url);
-        dest.writeString(generalTrackName);
         dest.writeInt(duration);
         dest.writeInt(genreId);
         dest.writeLong(date);
+        dest.writeLong(fileCreatingTime);
         dest.writeLong(lyricsId);
         dest.writeByte((byte) (isFromFile ? 1 : 0));
     }

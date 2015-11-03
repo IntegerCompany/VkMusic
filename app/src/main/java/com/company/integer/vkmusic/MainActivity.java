@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.ColorStateList;
+import android.database.MatrixCursor;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.util.DisplayMetrics;
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements
     FloatingActionButton fabPlayPause;
     FloatingActionButton fabNext;
     MainFragment mainFragment;
+    SearchView etSearchText;
     MusicTrackPOJO currentMusicTrack;
 
     private TracksDataLoader tracksDataLoader;
@@ -420,8 +423,21 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        final SearchView etSearchText = (SearchView) menu.findItem(R.id.action_search)
+        etSearchText = (SearchView) menu.findItem(R.id.action_search)
                 .getActionView();
+        etSearchText.setSuggestionsAdapter(createSearchViewAdapter());
+        etSearchText.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+            @Override
+            public boolean onSuggestionSelect(int position) {
+                return false;
+            }
+
+            @Override
+            public boolean onSuggestionClick(int position) {
+                etSearchText.setQuery(AppState.getSearchHistory().get(position), true);
+                return true;
+            }
+        });
 
         etSearchText.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -449,11 +465,14 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void makeSearch(String query) {
+        etSearchText.setQuery(query, false);
+        AppState.addToSearchHistory(query);
         mainFragment.setSlidingUpPanelLayoutPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
         getSearchPlaylist().clear();
         mainFragment.updateList();
         search(query, 0, 10);
         mainFragment.makeSearchUIActions(true);
+        etSearchText.setSuggestionsAdapter(createSearchViewAdapter());
     }
 
     @Override
@@ -573,5 +592,22 @@ public class MainActivity extends AppCompatActivity implements
 
     public MusicTrackPOJO getCurrentMusicTrack() {
         return currentMusicTrack;
+    }
+
+    private SimpleCursorAdapter createSearchViewAdapter(){
+        String[] columnNames = {"_id","text"};
+        MatrixCursor cursor = new MatrixCursor(columnNames);
+        String[] array = new String[AppState.getSearchHistory().size()];
+        array = AppState.getSearchHistory().toArray(array);
+        String[] temp = new String[2];
+        int id = 0;
+        for(String item : array){
+            temp[0] = Integer.toString(id++);
+            temp[1] = item;
+            cursor.addRow(temp);
+        }
+        String[] from = {"text"};
+        int[] to = {R.id.tv_search_history_text};
+        return new SimpleCursorAdapter(this, R.layout.searchview_autocomplete_item, cursor, from, to);
     }
 }
