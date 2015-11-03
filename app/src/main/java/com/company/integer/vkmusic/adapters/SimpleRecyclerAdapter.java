@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.company.integer.vkmusic.MainActivity;
 import com.company.integer.vkmusic.R;
@@ -21,6 +22,8 @@ import com.google.android.gms.ads.InterstitialAd;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -66,6 +69,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
                     }
                     currentTrackPosition = i;
                     notifyDataSetChanged();
+
                 }
             });
             if (currentTrackPosition == i & adapterSource == activity.getCurrentPlaylist()) {
@@ -100,7 +104,9 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
                 public void onClick(View v) {
                     Log.d("Adapter", "Deleting" + path.getName() + " Title: " + tracks.get(i).getTitle() + " Artist " + tracks.get(i).getArtist());
                     Log.d("Adapter", "Path exists " + path.exists() + path.getAbsolutePath());
-                    path.delete();
+                    if (path.delete()) Toast.makeText(activity, "File succesfully deleted", Toast.LENGTH_SHORT).show();
+                    else Toast.makeText(activity, "Error! File can't be deleted, maybe file already deleted", Toast.LENGTH_SHORT).show();
+
                     activity.getSavedTracks();
                 }
             });
@@ -169,10 +175,10 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
 
     public void setCurrentTrackPosition(int currentTrackPosition){
 
-
         this.currentTrackPosition = currentTrackPosition;
         Log.d("debug", "currentTrackPosition " + currentTrackPosition);
         notifyDataSetChanged();
+
     }
 
 
@@ -198,6 +204,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
 
     public void updateTracks(ArrayList<MusicTrackPOJO> tracks){
         this.tracks = tracks;
+        if (adapterSource == TracksLoaderInterface.SAVED) sortTracksByAddingTime();
     }
 
     class TrackViewHolder extends RecyclerView.ViewHolder {
@@ -221,7 +228,35 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
 
     public void setAdapterSource(int adapterSource) {
         this.adapterSource = adapterSource;
+        if (adapterSource == TracksLoaderInterface.SAVED) sortTracksByAddingTime();
     }
+
+    public void sortTracksByAddingTime(){
+        Collections.sort(tracks, new Comparator<MusicTrackPOJO>() {
+            @Override
+            public int compare(MusicTrackPOJO lhs, MusicTrackPOJO rhs) {
+                if (lhs.getFileCreatingTime() < rhs.getFileCreatingTime()) return 1;
+                else if (lhs.getFileCreatingTime() == rhs.getFileCreatingTime()) return 0;
+                else return -1;
+            }
+        });
+    }
+
+    public void checkCurrentTrack(){
+        if (activity.getCurrentMusicTrack() != null) {
+            if (!tracks.get(currentTrackPosition).getPath().equals(activity.getCurrentMusicTrack().getPath())) {
+                if (tracks.get(currentTrackPosition + 1).getPath().equals(activity.getCurrentMusicTrack().getPath())) {
+                    setCurrentTrackPosition(currentTrackPosition + 1);
+                }
+            }
+        }
+    }
+
+
+
+
+
+
 
 
 

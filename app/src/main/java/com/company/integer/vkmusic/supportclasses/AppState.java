@@ -2,18 +2,14 @@ package com.company.integer.vkmusic.supportclasses;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Environment;
 
-import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
 import com.company.integer.vkmusic.pojo.StylePOJO;
 import com.company.integer.vkmusic.pojo.UserPOJO;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.List;
 
 public class AppState {
 
@@ -27,6 +23,7 @@ public class AppState {
     private static Gson gson;
     private static int tab;
     private static ArrayList<Integer> ids = new ArrayList<>();
+    private static ArrayList<String> searchHistory = new ArrayList<>();
     public static int adclick;
 
     public static void setupAppState(Context ctx) {
@@ -82,11 +79,33 @@ public class AppState {
     }
 
     public static ArrayList<Integer> getSavedIds(){
-        Type listOfTestObject = new TypeToken<ArrayList<Integer>>() {
+        Type type = new TypeToken<ArrayList<Integer>>() {
         }.getType();
-        ArrayList ids = gson.fromJson(sharedPreferences.getString("ids", ""), listOfTestObject);
-        if (ids == null) ids = new ArrayList();
+        ArrayList ids = gson.fromJson(sharedPreferences.getString("ids", ""), type);
+        if (ids == null) ids = new ArrayList<>();
 
         return ids;
+    }
+
+    public static ArrayList<String> getSearchHistory(){
+        Type type = new TypeToken<ArrayList<String>>() {
+        }.getType();
+        searchHistory = gson.fromJson(sharedPreferences.getString("searchHistory", ""), type);
+        if (searchHistory == null) searchHistory = new ArrayList<>();
+        return searchHistory;
+    }
+
+    public static void clearSearchHistory(){
+        searchHistory.clear();
+        sharedPreferences.edit().putString("searchHistory", "").apply();
+    }
+
+    public static void addToSearchHistory(String query){
+        if (searchHistory.contains(query)){
+            searchHistory.remove(query);
+        }
+        searchHistory.add(0, query);
+
+        sharedPreferences.edit().putString("searchHistory", gson.toJson(searchHistory)).apply();
     }
 }

@@ -69,7 +69,14 @@ public class TabFragment extends Fragment {
     }
 
     public void updateList(){
-        if (adapter != null) adapter.notifyDataSetChanged();
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+
+            if (tracksSource == TracksLoaderInterface.SAVED) {
+                adapter.sortTracksByAddingTime();
+                adapter.checkCurrentTrack();
+            }
+        }
 
     }
 
