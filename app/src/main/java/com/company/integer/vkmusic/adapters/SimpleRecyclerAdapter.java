@@ -1,6 +1,7 @@
 package com.company.integer.vkmusic.adapters;
 
 
+import android.content.pm.PackageManager;
 import android.os.Environment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -243,7 +244,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     }
 
     public void checkCurrentTrack(){
-        if (activity.getCurrentMusicTrack() != null) {
+        if (activity.getCurrentMusicTrack() != null & tracks.size() - 1 > currentTrackPosition) {
             if (!tracks.get(currentTrackPosition).getPath().equals(activity.getCurrentMusicTrack().getPath())) {
                 if (tracks.get(currentTrackPosition + 1).getPath().equals(activity.getCurrentMusicTrack().getPath())) {
                     setCurrentTrackPosition(currentTrackPosition + 1);
@@ -251,8 +252,6 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
             }
         }
     }
-
-
 
 
 

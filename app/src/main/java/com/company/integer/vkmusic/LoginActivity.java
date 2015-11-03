@@ -1,9 +1,12 @@
 package com.company.integer.vkmusic;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -31,6 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AppState.setupAppState(this);
         setDefaultStyle();
         setContentView(R.layout.activity_login);
         initViewsById();
@@ -41,6 +45,7 @@ public class LoginActivity extends AppCompatActivity {
             VKSdk.login(this, VKScope.AUDIO);
         }
         launchingIntent = getIntent();
+
     }
 
     @Override
@@ -77,6 +82,7 @@ public class LoginActivity extends AppCompatActivity {
         loginStateCallback = new VKCallback<VKSdk.LoginState>() {
             @Override
             public void onResult(VKSdk.LoginState loginState) {
+
                 if (loginState == VKSdk.LoginState.LoggedIn) {
                     startMainActivity();
                 }else{

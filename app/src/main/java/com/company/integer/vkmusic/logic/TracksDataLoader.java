@@ -150,15 +150,12 @@ public class TracksDataLoader implements TracksLoaderInterface {
 
     @Override
     public void getSavedTracks() {
+        if (!Environment.getExternalStorageDirectory().canWrite()) return;
         ArrayList<MusicTrackPOJO> savedTracks = new ArrayList<>();
 
         File vkMusicDirectory = new File(Environment
                 .getExternalStorageDirectory().toString()
                 + AppState.FOLDER);
-        if (!vkMusicDirectory.exists() && !vkMusicDirectory.isDirectory()) {
-            tracksLoaderListener.tracksLoadingError("No vk music folder");
-            return;
-        }
         FileFilter mp3Filter = new FileFilter() {
             @Override
             public boolean accept(File pathname) {
@@ -166,6 +163,11 @@ public class TracksDataLoader implements TracksLoaderInterface {
                 return false;
             }
         };
+        if (!vkMusicDirectory.exists() && !vkMusicDirectory.isDirectory() || vkMusicDirectory.listFiles(mp3Filter) == null ) {
+            vkMusicDirectory.mkdirs();
+
+        }
+
 
         for (File trackFile : vkMusicDirectory.listFiles(mp3Filter)){
             MusicTrackPOJO savedTrack = new MusicTrackPOJO();
