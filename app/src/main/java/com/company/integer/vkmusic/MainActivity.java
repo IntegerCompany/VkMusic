@@ -34,6 +34,8 @@ import com.company.integer.vkmusic.logic.TracksDataLoader;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
 import com.company.integer.vkmusic.services.MusicPlayerService;
 import com.company.integer.vkmusic.supportclasses.AppState;
+import com.company.integer.vkmusic.supportclasses.VkMusicAnalytic;
+import com.google.android.gms.analytics.HitBuilders;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.vk.sdk.VKSdk;
 
@@ -67,7 +69,8 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        VkMusicAnalytic.getInstance().getTracker().setScreenName("MainActivity");
+        VkMusicAnalytic.getInstance().getTracker().send(new HitBuilders.ScreenViewBuilder().build());
         setTheme(AppState.getTheme());
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(AppState.getColors().getColorAccentID());

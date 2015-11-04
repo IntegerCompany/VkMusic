@@ -55,6 +55,9 @@ public class LoginActivity extends AppCompatActivity {
             public void onResult(VKAccessToken res) {
                 startMainActivity();
                 AppState.setLoggedUser(new UserPOJO(res.userId));
+                res.save();
+
+
             }
 
             @Override
