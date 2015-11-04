@@ -30,6 +30,7 @@ import com.company.integer.vkmusic.adapters.ViewPagerAdapter;
 import com.company.integer.vkmusic.interfaces.TracksLoaderInterface;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
 import com.company.integer.vkmusic.supportclasses.AppState;
+import com.company.integer.vkmusic.supportclasses.VkMusicAnalytic;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
@@ -58,7 +59,7 @@ public class MainFragment extends Fragment {
     private ArgbEvaluator evaluator;
     private ImageView ivDivider;
     private ImageView ivClosePanel;
-    private ImageView ivAlbumPhoto;
+  //  private ImageView ivAlbumPhoto;
     private ImageView imgSearchByArtist;
     private SeekBar seekBar;
     private RecyclerView recyclerView;
@@ -105,9 +106,9 @@ public class MainFragment extends Fragment {
         playerLine = view.findViewById(R.id.player_line);
         ivClosePanel = (ImageView) view.findViewById(R.id.iv_close_panel);
         ivDivider = (ImageView) view.findViewById(R.id.iv_divider);
-        ivAlbumPhoto = (ImageView) view.findViewById(R.id.iv_album_photo);
+      //  ivAlbumPhoto = (ImageView) view.findViewById(R.id.some_id);
         imgSearchByArtist = (ImageView) view.findViewById(R.id.imgSearchByArtist);
-        ivAlbumPhoto.setImageDrawable(ContextCompat.getDrawable(getContext(), AppState.getColors().getImageDrawableID()));
+      //  ivAlbumPhoto.setImageDrawable(ContextCompat.getDrawable(getContext(), AppState.getColors().getImageDrawableID()));
 
         seekBar = (SeekBar) view.findViewById(R.id.seekBar);
         seekBar.setSecondaryProgress(0);
@@ -146,7 +147,7 @@ public class MainFragment extends Fragment {
                 AppState.saveTrackId(Integer.parseInt(((MainActivity) getActivity()).getCurrentMusicTrack().getId()));
                 fabAdd.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.mipmap.ok));
                 fabAdd.setClickable(false);
-
+                VkMusicAnalytic.getInstance().addToPlaylistPressed();
             }
         });
         fabDownload.setOnClickListener(new View.OnClickListener() {
@@ -163,7 +164,7 @@ public class MainFragment extends Fragment {
             @Override
             public void onPanelSlide(View view, float v) {
                 int[] location = new int[2];
-                ivAlbumPhoto.getLocationOnScreen(location);
+           //     ivAlbumPhoto.getLocationOnScreen(location);
                 ((MainActivity) getActivity()).setTranslations(v);
                 fabAdd.setScaleX(v);
                 fabAdd.setScaleY(v);

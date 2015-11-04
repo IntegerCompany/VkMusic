@@ -5,12 +5,16 @@ import android.content.Intent;
 import android.widget.Toast;
 
 import com.company.integer.vkmusic.supportclasses.AppState;
+import com.company.integer.vkmusic.supportclasses.VkMusicAnalytic;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKAccessTokenTracker;
 import com.vk.sdk.VKSdk;
 
 public class VkMusicApplication extends Application {
 
+    private Tracker mTracker;
     private VKAccessTokenTracker vkAccessTokenTracker = new VKAccessTokenTracker() {
         @Override
         public void onVKAccessTokenChanged(VKAccessToken oldToken, VKAccessToken newToken) {
@@ -27,6 +31,7 @@ public class VkMusicApplication extends Application {
         vkAccessTokenTracker.startTracking();
         VKSdk.initialize(this);
         AppState.setupAppState(this);
+        VkMusicAnalytic.getInstance().setup(getDefaultTracker());
     }
 
     private void startMainActivity() {
@@ -37,4 +42,18 @@ public class VkMusicApplication extends Application {
 
 
 
-}
+    /**
+     * Gets the default {@link Tracker} for this {@link Application}.
+     *
+     * @return tracker
+     */
+    synchronized public Tracker getDefaultTracker() {
+        if (mTracker == null) {
+            GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+            // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
+            mTracker = analytics.newTracker("UA-55928846-4");
+        }
+        return mTracker;
+    }
+
+    }
