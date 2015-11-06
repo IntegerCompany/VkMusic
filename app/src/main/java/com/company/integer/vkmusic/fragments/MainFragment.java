@@ -69,6 +69,7 @@ public class MainFragment extends Fragment {
     private SlidingUpPanelLayout slidingUpPanelLayout;
     private View view;
     private AdView playerAdvert;
+    private boolean isSearch;
     public MainFragment() {
         // Required empty public constructor
     }
@@ -266,6 +267,7 @@ public class MainFragment extends Fragment {
         return view;
     }
 
+
     public SlidingUpPanelLayout.PanelState getSlidingUpPanelLayoutPanelState() {
         return slidingUpPanelLayout.getPanelState();
     }
@@ -282,6 +284,7 @@ public class MainFragment extends Fragment {
         adapter.addFrag(recommendedFragment, "Recommended");
         adapter.addFrag(savedFragment, "Saved");
         viewPager.setAdapter(adapter);
+
 
         tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(getContext(), R.color.primaryColorDark));
         tabLayout.setupWithViewPager(viewPager);
@@ -402,14 +405,24 @@ public class MainFragment extends Fragment {
 
     }
 
+    public void searchCompleted(ArrayList<MusicTrackPOJO> searchPlaylist, int position) {
+        ((MainActivity) getActivity()).setCurrentPlaylist(TracksLoaderInterface.SEARCH);
+        adapter.updateTracks(searchPlaylist);
+        adapter.setCurrentTrackPosition(position);
+        adapter.notifyDataSetChanged();
+
+
+    }
+
 
 
     public void makeSearchUIActions(boolean isSearch) {
-
+        this.isSearch = isSearch;
         if (isSearch) {
             viewPager.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
         } else {
+            ((MainActivity) getActivity()).clearSearchQuery();
             viewPager.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.GONE);
         }
@@ -450,4 +463,10 @@ public class MainFragment extends Fragment {
         tvCurrentTimePlayerLine.setText("Loading...");
         tvCurrentTimePlayer.setText("Loading...");
     }
+
+    public boolean isOnSearchScreen(){
+        return isSearch;
+    }
+
+
 }

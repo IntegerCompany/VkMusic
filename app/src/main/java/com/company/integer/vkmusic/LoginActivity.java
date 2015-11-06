@@ -1,9 +1,7 @@
 package com.company.integer.vkmusic;
 
-import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -17,6 +15,7 @@ import com.company.integer.vkmusic.pojo.StylePOJO;
 import com.company.integer.vkmusic.pojo.UserPOJO;
 import com.company.integer.vkmusic.supportclasses.AppState;
 import com.vk.sdk.VKAccessToken;
+import com.vk.sdk.VKAccessTokenTracker;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
@@ -31,6 +30,15 @@ public class LoginActivity extends AppCompatActivity {
     VKCallback<VKSdk.LoginState> loginStateCallback;
     Intent launchingIntent;
 
+//    private VKAccessTokenTracker vkAccessTokenTracker = new VKAccessTokenTracker() {
+//        @Override
+//        public void onVKAccessTokenChanged(VKAccessToken oldToken, VKAccessToken newToken) {
+//            if (newToken == null) {
+//                startMainActivity();
+//            }
+//        }
+//    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,9 +49,12 @@ public class LoginActivity extends AppCompatActivity {
         setListeners();
         showLoading();
         VKSdk.wakeUpSession(this, loginStateCallback);
-        if (!VKSdk.isLoggedIn()) {
-            VKSdk.login(this, VKScope.AUDIO);
-        }
+
+        //vkAccessTokenTracker.startTracking();
+
+//        if (!VKSdk.isLoggedIn()) {
+//
+//        }
         launchingIntent = getIntent();
 
     }
@@ -89,8 +100,10 @@ public class LoginActivity extends AppCompatActivity {
                 if (loginState == VKSdk.LoginState.LoggedIn) {
                     startMainActivity();
                 }else{
+                    VKSdk.login(LoginActivity.this, VKScope.AUDIO);
                     tvSigningIn.setText("Check your internet connection!");
                     showErrorScreen();
+
                 }
             }
 
@@ -108,7 +121,7 @@ public class LoginActivity extends AppCompatActivity {
         btnTrySignInAgain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                VKSdk.login(LoginActivity.this, VKScope.AUDIO);
+                VKSdk.wakeUpSession(LoginActivity.this, loginStateCallback);
                 showLoading();
             }
         });

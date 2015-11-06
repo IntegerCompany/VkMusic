@@ -55,6 +55,8 @@ public class SettingsActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 AppState.setTheme(themeArray.getResourceId(position,0),
                         stylePOJOs[position]);
+                startActivity(new Intent(SettingsActivity.this, MainActivity.class));
+                finish();
             }
         });
     }

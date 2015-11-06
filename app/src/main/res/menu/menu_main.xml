@@ -16,18 +16,18 @@
         android:icon="@mipmap/options"
         app:showAsAction="always">
         <menu>
-            <item
-                android:id="@+id/action_my_music"
-                app:showAsAction="ifRoom"
-                android:title="My music" />
-            <item
-                android:id="@+id/action_friends"
-                app:showAsAction="ifRoom"
-                android:title="Friend`s music" />
-            <item
-                android:id="@+id/action_group"
-                app:showAsAction="never"
-                android:title="Group`s music" />
+            <!--<item-->
+                <!--android:id="@+id/action_my_music"-->
+                <!--app:showAsAction="ifRoom"-->
+                <!--android:title="My music" />-->
+            <!--<item-->
+                <!--android:id="@+id/action_friends"-->
+                <!--app:showAsAction="ifRoom"-->
+                <!--android:title="Friend`s music" />-->
+            <!--<item-->
+                <!--android:id="@+id/action_group"-->
+                <!--app:showAsAction="never"-->
+                <!--android:title="Group`s music" />-->
 
             <item
                 android:id="@+id/action_settings"
