@@ -303,7 +303,11 @@ public class MainActivity extends AppCompatActivity implements
     public void tracksLoaded(ArrayList<MusicTrackPOJO> newTracks, int source) {
         //Starting service on track loaded
         Intent i = new Intent(this, MusicPlayerService.class);
-
+        if (source == currentPlaylist && currentMusicTrack == null) {
+            currentTrack = 0;
+            currentMusicTrack = newTracks.get(currentTrack);
+            mainFragment.setCurrentTrack(currentMusicTrack, currentTrack);
+        }
         switch (source) {
             case TracksLoaderInterface.MY_TRACKS:
                 myTracksPlaylist.addAll(newTracks);
@@ -676,4 +680,6 @@ public class MainActivity extends AppCompatActivity implements
         sharedPreferences.putInt("currentTrack", 0);
         sharedPreferences.apply();
     }
+
+
 }
