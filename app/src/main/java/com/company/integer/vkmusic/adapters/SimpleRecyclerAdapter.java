@@ -116,7 +116,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
                 @Override
                 public void onClick(View v) {
                     AppState.adclick++;
-                    if (AppState.adclick >= 3) {
+                    if (AppState.adclick >= 7) {
                         AppState.adclick = 0;
                         showAd(tracks.get(i), trackViewHolder);
                     }

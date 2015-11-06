@@ -1,12 +1,9 @@
 package com.company.integer.vkmusic;
 
-import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -31,6 +28,15 @@ public class LoginActivity extends AppCompatActivity {
     VKCallback<VKSdk.LoginState> loginStateCallback;
     Intent launchingIntent;
 
+//    private VKAccessTokenTracker vkAccessTokenTracker = new VKAccessTokenTracker() {
+//        @Override
+//        public void onVKAccessTokenChanged(VKAccessToken oldToken, VKAccessToken newToken) {
+//            if (newToken == null) {
+//                startMainActivity();
+//            }
+//        }
+//    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,37 +47,45 @@ public class LoginActivity extends AppCompatActivity {
         setListeners();
         showLoading();
         VKSdk.wakeUpSession(this, loginStateCallback);
-        if (!VKSdk.isLoggedIn()) {
-            VKSdk.login(this, VKScope.AUDIO);
-        }
+
+        //vkAccessTokenTracker.startTracking();
+
+//        if (!VKSdk.isLoggedIn()) {
+//
+//        }
         launchingIntent = getIntent();
 
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (!VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>() {
-            @Override
-            public void onResult(VKAccessToken res) {
-                startMainActivity();
-                AppState.setLoggedUser(new UserPOJO(res.userId));
-                res.save();
+        try {
+            if (!VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>() {
+                @Override
+                public void onResult(VKAccessToken res) {
+                    startMainActivity();
+                    AppState.setLoggedUser(new UserPOJO(res.userId));
+                    res.save();
 
 
-            }
-
-            @Override
-            public void onError(VKError error) {
-                if(error.errorMessage == null){
-                    tvSigningIn.setText("Check your internet connection!");
-                }else {
-                    tvSigningIn.setText(error.errorMessage);
                 }
-                showErrorScreen();
+
+                @Override
+                public void onError(VKError error) {
+                    if (error.errorMessage == null) {
+                        tvSigningIn.setText("Check your internet connection!");
+                    } else {
+                        tvSigningIn.setText(error.errorMessage);
+                    }
+                    showErrorScreen();
+                }
+            })) {
+                super.onActivityResult(requestCode, resultCode, data);
             }
-        })) {
-            super.onActivityResult(requestCode, resultCode, data);
+        }catch (NullPointerException e){
+            //Only happens on android 4.*
         }
+
     }
 
     private void initViewsById() {
@@ -89,8 +103,10 @@ public class LoginActivity extends AppCompatActivity {
                 if (loginState == VKSdk.LoginState.LoggedIn) {
                     startMainActivity();
                 }else{
+                    VKSdk.login(LoginActivity.this, VKScope.AUDIO);
                     tvSigningIn.setText("Check your internet connection!");
                     showErrorScreen();
+
                 }
             }
 
@@ -108,7 +124,7 @@ public class LoginActivity extends AppCompatActivity {
         btnTrySignInAgain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                VKSdk.login(LoginActivity.this, VKScope.AUDIO);
+                VKSdk.wakeUpSession(LoginActivity.this, loginStateCallback);
                 showLoading();
             }
         });

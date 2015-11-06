@@ -1,5 +1,6 @@
 package com.company.integer.vkmusic.logic;
 
+import android.annotation.TargetApi;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
@@ -64,6 +65,7 @@ public class TracksDataLoader implements TracksLoaderInterface {
     }
 
     public String getLastSearchQuery() {
+        if (lastSearchQuery.equals("")) lastSearchQuery = context.getSharedPreferences("save", Context.MODE_PRIVATE).getString("searchQuery", "");
         return lastSearchQuery;
     }
 
@@ -200,6 +202,7 @@ public class TracksDataLoader implements TracksLoaderInterface {
         return null;
     }
 
+    @TargetApi(16)
     @Override
     public void downloadTrack(final MusicTrackPOJO trackToDownload) {
         mNotifyManager =

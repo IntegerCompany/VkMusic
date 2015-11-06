@@ -2,33 +2,22 @@ package com.company.integer.vkmusic;
 
 import android.app.Application;
 import android.content.Intent;
-import android.widget.Toast;
 
 import com.company.integer.vkmusic.supportclasses.AppState;
 import com.company.integer.vkmusic.supportclasses.VkMusicAnalytic;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
-import com.vk.sdk.VKAccessToken;
-import com.vk.sdk.VKAccessTokenTracker;
 import com.vk.sdk.VKSdk;
 
 public class VkMusicApplication extends Application {
 
     private Tracker mTracker;
-    private VKAccessTokenTracker vkAccessTokenTracker = new VKAccessTokenTracker() {
-        @Override
-        public void onVKAccessTokenChanged(VKAccessToken oldToken, VKAccessToken newToken) {
-            if (newToken == null) {
-                startMainActivity();
-                Toast.makeText(VkMusicApplication.this, "Your password was changed", Toast.LENGTH_SHORT).show();
-            }
-        }
-    };
+
 
     @Override
     public void onCreate() {
         super.onCreate();
-        vkAccessTokenTracker.startTracking();
+
         VKSdk.initialize(this);
         AppState.setupAppState(this);
         VkMusicAnalytic.getInstance().setup(getDefaultTracker());
@@ -40,7 +29,11 @@ public class VkMusicApplication extends Application {
         startActivity(intent);
     }
 
-
+//    @Override
+//    protected void attachBaseContext(Context base) {
+//        super.attachBaseContext(base);
+//        MultiDex.install(this);
+//    }
 
     /**
      * Gets the default {@link Tracker} for this {@link Application}.

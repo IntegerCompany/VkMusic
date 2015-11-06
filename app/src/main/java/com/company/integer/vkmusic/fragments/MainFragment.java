@@ -69,6 +69,7 @@ public class MainFragment extends Fragment {
     private SlidingUpPanelLayout slidingUpPanelLayout;
     private View view;
     private AdView playerAdvert;
+    private boolean isSearch;
     public MainFragment() {
         // Required empty public constructor
     }
@@ -266,6 +267,7 @@ public class MainFragment extends Fragment {
         return view;
     }
 
+
     public SlidingUpPanelLayout.PanelState getSlidingUpPanelLayoutPanelState() {
         return slidingUpPanelLayout.getPanelState();
     }
@@ -282,6 +284,7 @@ public class MainFragment extends Fragment {
         adapter.addFrag(recommendedFragment, "Recommended");
         adapter.addFrag(savedFragment, "Saved");
         viewPager.setAdapter(adapter);
+
 
         tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(getContext(), R.color.primaryColorDark));
         tabLayout.setupWithViewPager(viewPager);
@@ -402,14 +405,24 @@ public class MainFragment extends Fragment {
 
     }
 
+    public void searchCompleted(ArrayList<MusicTrackPOJO> searchPlaylist, int position) {
+        ((MainActivity) getActivity()).setCurrentPlaylist(TracksLoaderInterface.SEARCH);
+        adapter.updateTracks(searchPlaylist);
+        adapter.setCurrentTrackPosition(position);
+        adapter.notifyDataSetChanged();
+
+
+    }
+
 
 
     public void makeSearchUIActions(boolean isSearch) {
-
+        this.isSearch = isSearch;
         if (isSearch) {
             viewPager.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
         } else {
+            ((MainActivity) getActivity()).clearSearchQuery();
             viewPager.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.GONE);
         }
@@ -418,13 +431,13 @@ public class MainFragment extends Fragment {
     public void switchToTab(int tab, boolean smooth) {
         switch (tab) {
             case TracksLoaderInterface.MY_TRACKS:
-                viewPager.setCurrentItem(1, smooth);
+                viewPager.setCurrentItem(0, smooth);
                 break;
             case TracksLoaderInterface.RECOMMENDATIONS:
-                viewPager.setCurrentItem(2, smooth);
+                viewPager.setCurrentItem(1, smooth);
                 break;
             case TracksLoaderInterface.SAVED:
-                viewPager.setCurrentItem(3, smooth);
+                viewPager.setCurrentItem(2, smooth);
                 break;
 
         }
@@ -450,4 +463,11 @@ public class MainFragment extends Fragment {
         tvCurrentTimePlayerLine.setText("Loading...");
         tvCurrentTimePlayer.setText("Loading...");
     }
+
+    public boolean isOnSearchScreen(){
+        return isSearch;
+    }
+
+
+
 }

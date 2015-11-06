@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.database.MatrixCursor;
@@ -12,6 +13,7 @@ import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.PersistableBundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -32,13 +34,17 @@ import com.company.integer.vkmusic.interfaces.TracksLoaderInterface;
 import com.company.integer.vkmusic.interfaces.TracksLoaderListener;
 import com.company.integer.vkmusic.logic.TracksDataLoader;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
+import com.company.integer.vkmusic.pojo.UserPOJO;
 import com.company.integer.vkmusic.services.MusicPlayerService;
 import com.company.integer.vkmusic.supportclasses.AppState;
 import com.company.integer.vkmusic.supportclasses.VkMusicAnalytic;
 import com.google.android.gms.analytics.HitBuilders;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.vk.sdk.VKSdk;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 
@@ -65,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements
     private boolean isPlaying = false;
     private int currentPlaylist = TracksLoaderInterface.MY_TRACKS;
     private int currentTrack = 0;
+    private String searchQuery = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,9 +94,12 @@ public class MainActivity extends AppCompatActivity implements
 
         tracksDataLoader = new TracksDataLoader(this);
         tracksDataLoader.setTracksLoadingListener(this);
+
+        UserPOJO user = AppState.getLoggedUser();
         tracksDataLoader.getTracksByUserId(AppState.getLoggedUser().getUserId(), 0, 10);
         tracksDataLoader.getRecommendationsByUserID(AppState.getLoggedUser().getUserId(), 0, 10);
         tracksDataLoader.getSavedTracks();
+
 
 
 
@@ -167,9 +177,35 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        if (mainFragment.isOnSearchScreen()) {
+            Gson gson = new Gson();
+            SharedPreferences.Editor sharedPreferences = getSharedPreferences("save", Context.MODE_PRIVATE).edit();
+            sharedPreferences.putBoolean("isSearch", mainFragment.isOnSearchScreen());
+            sharedPreferences.putString("searchQuery", etSearchText.getQuery().toString());
+            sharedPreferences.putString("tracks", gson.toJson(searchPlaylist));
+            sharedPreferences.putInt("currentTrack", currentTrack);
+            sharedPreferences.apply();
+        }
+
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+        SharedPreferences sharedPreferences = getSharedPreferences("save", Context.MODE_PRIVATE);
         mainFragment.switchToTab(AppState.getTab(), false);
+        if (sharedPreferences.getBoolean("isSearch", false)) {
+            Gson gson = new Gson();
+            Type type = new TypeToken<ArrayList<MusicTrackPOJO>>() {
+            }.getType();
+            searchQuery = sharedPreferences.getString("searchQuery", "");
+            searchPlaylist = gson.fromJson(sharedPreferences.getString("tracks", ""), type);
+            currentTrack = sharedPreferences.getInt("currentTrack", 0);
+            if (searchPlaylist == null) searchPlaylist = new ArrayList<>();
+            mainFragment.searchCompleted(searchPlaylist, currentTrack);
+        }else mainFragment.makeSearchUIActions(false);
     }
 
     @Override
@@ -267,7 +303,11 @@ public class MainActivity extends AppCompatActivity implements
     public void tracksLoaded(ArrayList<MusicTrackPOJO> newTracks, int source) {
         //Starting service on track loaded
         Intent i = new Intent(this, MusicPlayerService.class);
-
+        if (source == currentPlaylist && currentMusicTrack == null) {
+            currentTrack = 0;
+            currentMusicTrack = newTracks.get(currentTrack);
+            mainFragment.setCurrentTrack(currentMusicTrack, currentTrack);
+        }
         switch (source) {
             case TracksLoaderInterface.MY_TRACKS:
                 myTracksPlaylist.addAll(newTracks);
@@ -478,9 +518,14 @@ public class MainActivity extends AppCompatActivity implements
             public boolean onClose() {
                 setCurrentPlaylist(TracksLoaderInterface.MY_TRACKS);
                 mainFragment.makeSearchUIActions(false);
+                searchQuery = "";
+                mainFragment.switchToTab(TracksLoaderInterface.MY_TRACKS, true);
                 return false;
             }
         });
+        if (!searchQuery.equals("")) etSearchText.setQuery(searchQuery, false);
+        mainFragment.makeSearchUIActions(getSharedPreferences("save", MODE_PRIVATE).getBoolean("isSearch", false));
+
         return true;
     }
 
@@ -499,12 +544,7 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         //todo add logic to options
         switch (item.getItemId()) {
-            case R.id.action_my_music:
-                return true;
-            case R.id.action_friends:
-                return true;
-            case R.id.action_group:
-                return true;
+
             case R.id.action_settings:
                 Intent in = new Intent(this, SettingsActivity.class);
                 startActivity(in);
@@ -630,4 +670,16 @@ public class MainActivity extends AppCompatActivity implements
         int[] to = {R.id.tv_search_history_text};
         return new SimpleCursorAdapter(this, R.layout.searchview_autocomplete_item, cursor, from, to);
     }
+
+
+    public void clearSearchQuery(){
+        searchQuery = "";
+        SharedPreferences.Editor sharedPreferences = getSharedPreferences("save", Context.MODE_PRIVATE).edit();
+        sharedPreferences.putBoolean("isSearch", false);
+        sharedPreferences.putString("tracks", "");
+        sharedPreferences.putInt("currentTrack", 0);
+        sharedPreferences.apply();
+    }
+
+
 }
