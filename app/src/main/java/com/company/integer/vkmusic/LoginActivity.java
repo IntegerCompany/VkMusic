@@ -61,28 +61,33 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (!VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>() {
-            @Override
-            public void onResult(VKAccessToken res) {
-                startMainActivity();
-                AppState.setLoggedUser(new UserPOJO(res.userId));
-                res.save();
+        try {
+            if (!VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>() {
+                @Override
+                public void onResult(VKAccessToken res) {
+                    startMainActivity();
+                    AppState.setLoggedUser(new UserPOJO(res.userId));
+                    res.save();
 
 
-            }
-
-            @Override
-            public void onError(VKError error) {
-                if(error.errorMessage == null){
-                    tvSigningIn.setText("Check your internet connection!");
-                }else {
-                    tvSigningIn.setText(error.errorMessage);
                 }
-                showErrorScreen();
+
+                @Override
+                public void onError(VKError error) {
+                    if (error.errorMessage == null) {
+                        tvSigningIn.setText("Check your internet connection!");
+                    } else {
+                        tvSigningIn.setText(error.errorMessage);
+                    }
+                    showErrorScreen();
+                }
+            })) {
+                super.onActivityResult(requestCode, resultCode, data);
             }
-        })) {
-            super.onActivityResult(requestCode, resultCode, data);
+        }catch (NullPointerException e){
+            //Only happens on android 4.*
         }
+
     }
 
     private void initViewsById() {

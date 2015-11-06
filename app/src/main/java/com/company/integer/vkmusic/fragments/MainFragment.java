@@ -431,13 +431,13 @@ public class MainFragment extends Fragment {
     public void switchToTab(int tab, boolean smooth) {
         switch (tab) {
             case TracksLoaderInterface.MY_TRACKS:
-                viewPager.setCurrentItem(1, smooth);
+                viewPager.setCurrentItem(0, smooth);
                 break;
             case TracksLoaderInterface.RECOMMENDATIONS:
-                viewPager.setCurrentItem(2, smooth);
+                viewPager.setCurrentItem(1, smooth);
                 break;
             case TracksLoaderInterface.SAVED:
-                viewPager.setCurrentItem(3, smooth);
+                viewPager.setCurrentItem(2, smooth);
                 break;
 
         }

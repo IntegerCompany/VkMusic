@@ -34,6 +34,7 @@ import com.company.integer.vkmusic.interfaces.TracksLoaderInterface;
 import com.company.integer.vkmusic.interfaces.TracksLoaderListener;
 import com.company.integer.vkmusic.logic.TracksDataLoader;
 import com.company.integer.vkmusic.pojo.MusicTrackPOJO;
+import com.company.integer.vkmusic.pojo.UserPOJO;
 import com.company.integer.vkmusic.services.MusicPlayerService;
 import com.company.integer.vkmusic.supportclasses.AppState;
 import com.company.integer.vkmusic.supportclasses.VkMusicAnalytic;
@@ -94,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements
         tracksDataLoader = new TracksDataLoader(this);
         tracksDataLoader.setTracksLoadingListener(this);
 
+        UserPOJO user = AppState.getLoggedUser();
         tracksDataLoader.getTracksByUserId(AppState.getLoggedUser().getUserId(), 0, 10);
         tracksDataLoader.getRecommendationsByUserID(AppState.getLoggedUser().getUserId(), 0, 10);
         tracksDataLoader.getSavedTracks();
@@ -513,6 +515,7 @@ public class MainActivity extends AppCompatActivity implements
                 setCurrentPlaylist(TracksLoaderInterface.MY_TRACKS);
                 mainFragment.makeSearchUIActions(false);
                 searchQuery = "";
+                mainFragment.switchToTab(TracksLoaderInterface.MY_TRACKS, true);
                 return false;
             }
         });
