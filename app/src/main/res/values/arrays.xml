@@ -53,13 +53,13 @@
 
     <array name="albumPhotos">
         <item>@drawable/ic_guitar</item>
-        <item>@drawable/guitar_blue_green</item>
-        <item>@drawable/guitar_blue_green</item>
-        <item>@drawable/guitar_blue_green</item>
-        <item>@drawable/guitar_blue_green</item>
-        <item>@drawable/guitar_blue_green</item>
-        <item>@drawable/guitar_blue_green</item>
-        <item>@drawable/guitar_blue_green</item>
+        <item>@drawable/vk_m_1</item>
+        <item>@drawable/vk_m_7</item>
+        <item>@drawable/vk_m_6</item>
+        <item>@drawable/vk_m_5</item>
+        <item>@drawable/vk_m_4</item>
+        <item>@drawable/vk_m_3</item>
+        <item>@drawable/vk_m_2</item>
     </array>
 
 

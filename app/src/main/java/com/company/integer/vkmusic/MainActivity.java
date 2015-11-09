@@ -1,8 +1,10 @@
 package com.company.integer.vkmusic;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -551,7 +553,25 @@ public class MainActivity extends AppCompatActivity implements
                 finish();
                 return true;
             case R.id.action_log_out:
-                VKSdk.logout();
+
+                new AlertDialog.Builder(this)
+                        .setTitle("Logout?")
+                        .setPositiveButton("Yes, logout", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                VKSdk.logout();
+                                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

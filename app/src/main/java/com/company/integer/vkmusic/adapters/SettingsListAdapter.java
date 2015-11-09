@@ -2,6 +2,7 @@ package com.company.integer.vkmusic.adapters;
 
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ public class SettingsListAdapter extends BaseAdapter{
     Context ctx;
     StylePOJO[] stylePOJOs;
     LayoutInflater lInflater;
+    int[] stylePictures = {R.drawable.vk_m_1, R.drawable.vk_m_2, R.drawable.vk_m_3, R.drawable.vk_m_4, R.drawable.vk_m_5, R.drawable.vk_m_6, R.drawable.vk_m_7 };
 
     public SettingsListAdapter(Context ctx, StylePOJO[] stylePOJOs) {
         this.ctx = ctx;
@@ -46,10 +48,8 @@ public class SettingsListAdapter extends BaseAdapter{
         }
 
         ImageView ivColorAccent = (ImageView) view.findViewById(R.id.iv_color_accent);
-        ImageView ivColorPrimary = (ImageView) view.findViewById(R.id.iv_color_primary);
 
-        ivColorAccent.setImageDrawable(new ColorDrawable(stylePOJOs[position].getColorAccentID()));
-        ivColorPrimary.setImageDrawable(new ColorDrawable(stylePOJOs[position].getColorPrimaryID()));
+        ivColorAccent.setImageDrawable(ContextCompat.getDrawable(ctx, stylePOJOs[position].getImageDrawableID()));
 
         return view;
     }
