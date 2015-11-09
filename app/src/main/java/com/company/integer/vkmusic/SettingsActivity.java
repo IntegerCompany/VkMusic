@@ -44,7 +44,7 @@ public class SettingsActivity extends AppCompatActivity {
             stylePOJOs[i].setColorPrimaryID(colorPrimaryArray[i]);
             stylePOJOs[i].setColorPrimaryDarkID(colorPrimaryDarkArray[i]);
             stylePOJOs[i].setTabDividerColorID(colorTabIndicatorArray[i]);
-            stylePOJOs[i].setImageDrawableID(albumPhotos.getResourceId(i,0));
+            stylePOJOs[i].setImageDrawableID(albumPhotos.getResourceId(i + 1,0));
         }
 
         SettingsListAdapter adapter = new SettingsListAdapter(this,stylePOJOs);
@@ -87,7 +87,7 @@ public class SettingsActivity extends AppCompatActivity {
     public void onBackPressed() {
         themeArray.recycle();
         albumPhotos.recycle();
-        Intent in = new Intent(this,LoginActivity.class);
+        Intent in = new Intent(this, MainActivity.class);
         startActivity(in);
         finish();
     }
