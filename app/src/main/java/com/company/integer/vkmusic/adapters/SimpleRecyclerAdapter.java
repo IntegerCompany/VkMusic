@@ -1,6 +1,8 @@
 package com.company.integer.vkmusic.adapters;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Environment;
 import android.support.v4.content.ContextCompat;
@@ -103,12 +105,28 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
             trackViewHolder.downloadImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d("Adapter", "Deleting" + path.getName() + " Title: " + tracks.get(i).getTitle() + " Artist " + tracks.get(i).getArtist());
-                    Log.d("Adapter", "Path exists " + path.exists() + path.getAbsolutePath());
-                    if (path.delete()) Toast.makeText(activity, "File succesfully deleted", Toast.LENGTH_SHORT).show();
-                    else Toast.makeText(activity, "Error! File can't be deleted, maybe file already deleted", Toast.LENGTH_SHORT).show();
+                    new AlertDialog.Builder(activity)
+                            .setTitle("Delete track?")
+                            .setMessage("This will permanently delete track from SD card")
+                            .setPositiveButton("Yes, delete", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Log.d("Adapter", "Deleting" + path.getName() + " Title: " + tracks.get(i).getTitle() + " Artist " + tracks.get(i).getArtist());
+                                    Log.d("Adapter", "Path exists " + path.exists() + path.getAbsolutePath());
+                                    if (path.delete()) Toast.makeText(activity, "File succesfully deleted", Toast.LENGTH_SHORT).show();
+                                    else Toast.makeText(activity, "Error! File can't be deleted, maybe file already deleted", Toast.LENGTH_SHORT).show();
+                                    activity.getSavedTracks();
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .show();
 
-                    activity.getSavedTracks();
+
                 }
             });
         }else{
@@ -149,6 +167,11 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         trackViewHolder.addToVkPlaylist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                AppState.adclick++;
+                if (AppState.adclick >= 7) {
+                    AppState.adclick = 0;
+                    showAd(tracks.get(i), trackViewHolder);
+                }
                 activity.addTrackToVkPlaylist(tracks.get(i));
                 AppState.saveTrackId(Integer.parseInt(tracks.get(i).getId()));
                 trackViewHolder.addToVkPlaylist.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ok));

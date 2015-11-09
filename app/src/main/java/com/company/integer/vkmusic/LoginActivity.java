@@ -100,9 +100,11 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onResult(VKSdk.LoginState loginState) {
 
+                if (loginState == VKSdk.LoginState.Pending) return;
                 if (loginState == VKSdk.LoginState.LoggedIn) {
                     startMainActivity();
                 }else{
+
                     VKSdk.login(LoginActivity.this, VKScope.AUDIO);
                     tvSigningIn.setText("Check your internet connection!");
                     showErrorScreen();

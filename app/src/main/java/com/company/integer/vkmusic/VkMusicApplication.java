@@ -1,7 +1,6 @@
 package com.company.integer.vkmusic;
 
 import android.app.Application;
-import android.content.Intent;
 
 import com.company.integer.vkmusic.supportclasses.AppState;
 import com.company.integer.vkmusic.supportclasses.VkMusicAnalytic;
@@ -23,17 +22,6 @@ public class VkMusicApplication extends Application {
         VkMusicAnalytic.getInstance().setup(getDefaultTracker());
     }
 
-    private void startMainActivity() {
-        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
-
-//    @Override
-//    protected void attachBaseContext(Context base) {
-//        super.attachBaseContext(base);
-//        MultiDex.install(this);
-//    }
 
     /**
      * Gets the default {@link Tracker} for this {@link Application}.
