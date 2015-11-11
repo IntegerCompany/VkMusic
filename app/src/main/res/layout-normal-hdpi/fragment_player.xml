@@ -154,7 +154,6 @@
         android:layout_alignParentLeft="false"
         android:layout_alignParentStart="false"
         app:adSize="BANNER"
-        app:adUnitId="@string/player_advert_id"
-        android:visibility="invisible" />
+        app:adUnitId="@string/player_advert_id" />
 
 </RelativeLayout>
