@@ -78,8 +78,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        VkMusicAnalytic.getInstance().getTracker().setScreenName("MainActivity");
-        VkMusicAnalytic.getInstance().getTracker().send(new HitBuilders.ScreenViewBuilder().build());
+
         setTheme(AppState.getTheme());
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(AppState.getColors().getColorAccentID());
@@ -146,7 +145,10 @@ public class MainActivity extends AppCompatActivity implements
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     0);
         }
-
+        try {
+            VkMusicAnalytic.getInstance().getTracker().setScreenName("MainActivity");
+            VkMusicAnalytic.getInstance().getTracker().send(new HitBuilders.ScreenViewBuilder().build());
+        }catch (Exception ignored){}
 
 
     }

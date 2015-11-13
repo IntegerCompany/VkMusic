@@ -1,6 +1,7 @@
 package com.company.integer.vkmusic;
 
 import android.app.Application;
+import android.util.Log;
 
 import com.company.integer.vkmusic.supportclasses.AppState;
 import com.company.integer.vkmusic.supportclasses.VkMusicAnalytic;
@@ -16,10 +17,11 @@ public class VkMusicApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
+        VkMusicAnalytic.getInstance().setup(getDefaultTracker());
         VKSdk.initialize(this);
         AppState.setupAppState(this);
-        VkMusicAnalytic.getInstance().setup(getDefaultTracker());
+
+        Log.d("Testing", "debug completed");
     }
 
 
