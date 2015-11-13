@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements
                     getSavedTracks();
                 } else {
                     // Permission Denied
-                    Toast.makeText(MainActivity.this, "Saved tracks is deactivated due to insufficient permissions", Toast.LENGTH_SHORT)
+                    Toast.makeText(MainActivity.this, R.string.saved_deactivated, Toast.LENGTH_SHORT)
                             .show();
                 }
                 break;
@@ -355,18 +355,18 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void trackDownloadingProgress(MusicTrackPOJO track, int percent) {
-        Log.d(LOG_TAG, "Downloading: " + track.getTitle() + " | " + percent + "%");
+        Log.d(LOG_TAG, getString(R.string.downloading_notification) + track.getTitle() + " | " + percent + "%");
     }
 
     @Override
     public void trackDownloadFinished(final MusicTrackPOJO track) {
-        Log.d(LOG_TAG, "Download complete: " + track.getTitle());
+        Log.d(LOG_TAG, getString(R.string.download_complete_notification) + track.getTitle());
 
 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(MainActivity.this, "Downloaded: " + track.getTitle(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, getString(R.string.downloaded_notification) + track.getTitle(), Toast.LENGTH_SHORT).show();
                 getSavedTracks();
             }
         });

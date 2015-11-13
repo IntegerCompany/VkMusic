@@ -74,7 +74,7 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onError(VKError error) {
                     if (error.errorMessage == null) {
-                        tvSigningIn.setText("Check your internet connection!");
+                        tvSigningIn.setText(R.string.check_internet);
                     } else {
                         tvSigningIn.setText(error.errorMessage);
                     }
@@ -107,7 +107,7 @@ public class LoginActivity extends AppCompatActivity {
                 }else{
 
                     VKSdk.login(LoginActivity.this, VKScope.AUDIO);
-                    tvSigningIn.setText("Check your internet connection!");
+                    tvSigningIn.setText(R.string.check_internet);
                     showErrorScreen();
 
                 }
@@ -116,7 +116,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onError(VKError vkError) {
                 if(vkError.errorMessage.equals("")){
-                    tvSigningIn.setText("Check your internet connection!");
+                    tvSigningIn.setText(R.string.check_internet);
                 }else {
                     tvSigningIn.setText(vkError.errorMessage);
                 }

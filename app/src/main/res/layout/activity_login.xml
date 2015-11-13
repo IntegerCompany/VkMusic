@@ -30,13 +30,13 @@
             android:textColor="@color/colorBlack"
             android:id="@+id/tv_signin_error" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Try sign in again"
-            android:padding="8dp"
-            android:id="@+id/btn_try_signin_again"
-            android:layout_gravity="center_horizontal" />
     </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/try_signin_again"
+        android:padding="8dp"
+        android:id="@+id/btn_try_signin_again" />
 
 </LinearLayout>

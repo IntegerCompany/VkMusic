@@ -254,7 +254,7 @@ public class TracksDataLoader implements TracksLoaderInterface {
         mNotifyManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         mBuilder = new NotificationCompat.Builder(context);
-        mBuilder.setContentTitle("Downloading track")
+        mBuilder.setContentTitle(context.getString(R.string.downloading_notification))
                 .setContentText(trackToDownload.getTitle())
                 .setSmallIcon(R.mipmap.ic_launcher);
         Intent resultIntent = new Intent(context, LoginActivity.class);
@@ -282,7 +282,7 @@ public class TracksDataLoader implements TracksLoaderInterface {
                             File path = new File(vkMusicDirectory + "/" + trackToDownload.getArtist() + "-" + trackToDownload.getTitle() + ".mp3");
 
                             if (path.exists()) {
-                                tracksLoaderListener.tracksLoadingError("File already exists");
+                                tracksLoaderListener.tracksLoadingError(context.getString(R.string.file_exists));
                                 return;
                             }
                             int id = getNewID();
@@ -319,7 +319,7 @@ public class TracksDataLoader implements TracksLoaderInterface {
                                 saveTrackMetadata(trackToDownload, path);
                                 tracksLoaderListener.trackDownloadFinished(trackToDownload);
                                 // When the loop is finished, updates the notification
-                                mBuilder.setContentTitle("Download complete");
+                                mBuilder.setContentTitle(context.getString(R.string.download_complete_notification));
                                 mBuilder.setContentText(trackToDownload.getArtist() + " - " + trackToDownload.getTitle())
                                         // Removes the progress bar
                                         .setProgress(0, 0, false);

@@ -303,9 +303,9 @@ public class MainFragment extends Fragment {
     public void setupViewPager() {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager());
 
-        adapter.addFrag(myMusicFragment, "My music");
-        adapter.addFrag(recommendedFragment, "Recommended");
-        adapter.addFrag(savedFragment, "Saved");
+        adapter.addFrag(myMusicFragment, getActivity().getString(R.string.my_music));
+        adapter.addFrag(recommendedFragment, getActivity().getString(R.string.recommended));
+        adapter.addFrag(savedFragment, getActivity().getString(R.string.saved));
         viewPager.setAdapter(adapter);
 
 
@@ -351,7 +351,7 @@ public class MainFragment extends Fragment {
         if(musicTrack!=null){
             Log.d("debug", "position" + position);
             if (lyricsDialog != null && lyricsDialog.isShowing()) lyricsDialog.dismiss();
-            if (((MainActivity) getActivity()).getCurrentMusicTrack().getLyricsId() == 0) imgLyrics.setVisibility(View.INVISIBLE);
+            if (((MainActivity) getActivity()).getCurrentMusicTrack() == null && ((MainActivity) getActivity()).getCurrentMusicTrack().getLyricsId() == 0) imgLyrics.setVisibility(View.INVISIBLE);
             else imgLyrics.setVisibility(View.VISIBLE);
             tvNameOfSongPlayerLine.setText(musicTrack.getTitle());
             tvNameOfSongFragment.setText(musicTrack.getTitle());
@@ -416,7 +416,7 @@ public class MainFragment extends Fragment {
         int minutes = durationInSec / 60;
         int seconds = durationInSec - minutes * 60;
         if (seconds < 10) {
-            if (seconds == 0) return "Loading...";
+            if (seconds == 0) return getActivity().getString(R.string.loading);
             return minutes + ":0" + seconds;
         } else {
             return minutes + ":" + seconds;
@@ -486,8 +486,8 @@ public class MainFragment extends Fragment {
     }
 
     public void setLoading(){
-        tvCurrentTimePlayerLine.setText("Loading...");
-        tvCurrentTimePlayer.setText("Loading...");
+        tvCurrentTimePlayerLine.setText(getActivity().getString(R.string.loading));
+        tvCurrentTimePlayer.setText(getActivity().getString(R.string.loading));
     }
 
     public boolean isOnSearchScreen(){

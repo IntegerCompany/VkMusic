@@ -110,7 +110,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Name of the song"
+        android:text="@string/song_default_name"
         android:id="@+id/tv_name_of_song_fragment"
         android:layout_centerHorizontal="true"
         android:textSize="20sp"
@@ -119,7 +119,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Author"
+        android:text="@string/song_default_artist"
         android:id="@+id/tv_author_name_fragment"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"

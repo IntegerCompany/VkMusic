@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">VkMusic</string>
+    <string name="check_internet">Перевірте звязок з інтернетом</string>
+    <string name="download_complete_notification">Завантаження завершено: </string>
+    <string name="downloaded_notification">Завантажено: </string>
+    <string name="downloading_notification">Завантажується: </string>
+    <string name="loading">Завантаження...</string>
+    <string name="my_music">Моя музика</string>
+    <string name="recommended">Рекомендовані</string>
+    <string name="saved">Збережені</string>
+    <string name="saved_deactivated">Завантаження музики відімкнено через недостатні права </string>
+    <string name="song_default_artist">Виконавець</string>
+    <string name="song_default_name">Пісня</string>
+    <string name="title_activity_settings_ativity">Налаштування</string>
+    <string name="action_settings">Налаштування</string>
+    <string name="try_signin_again">Спробувати ще раз</string>
+    <string name="title_activity_login" translatable="false">VkMusic</string>
+</resources>
