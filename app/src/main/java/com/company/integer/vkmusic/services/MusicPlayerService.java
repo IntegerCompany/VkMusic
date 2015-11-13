@@ -117,6 +117,11 @@ public class MusicPlayerService extends Service implements MusicPlayerListener {
                         nPanel.notificationCancel();
                         stopSelf();
                     }
+                }else if(action.equalsIgnoreCase("com.example.app.ACTION_CLOSE_NOTIFICATION")){
+
+                        musicPlayer.pause();
+                        nPanel.notificationCancel();
+                        stopSelf();
                 }
             }
         };
@@ -133,6 +138,7 @@ public class MusicPlayerService extends Service implements MusicPlayerListener {
         intentFilter.addAction("com.example.app.ACTION_SET_TRACK");
         intentFilter.addAction("com.example.app.ACTION_CHANGE_PLAYLIST");
         intentFilter.addAction("com.example.app.ACTION_DESTROY");
+        intentFilter.addAction("com.example.app.ACTION_CLOSE_NOTIFICATION");
         // register the receiver
         registerReceiver(broadcastReceiver, intentFilter);
     }

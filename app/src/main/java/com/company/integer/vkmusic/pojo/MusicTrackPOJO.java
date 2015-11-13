@@ -7,6 +7,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class MusicTrackPOJO implements Parcelable {
 
+    @SerializedName("aid")
     private String id = "";
     @SerializedName("owner_id")
     private String ownerId = "";

@@ -57,4 +57,12 @@
         android:layout_marginStart="44dp"
         android:layout_below="@+id/previous" />
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imgCloseNotification"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"
+        android:layout_alignTop="@+id/song_image"
+        android:layout_alignLeft="@+id/song_image" />
+
 </RelativeLayout>

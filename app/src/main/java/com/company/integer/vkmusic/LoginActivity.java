@@ -40,6 +40,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("Testing", getPackageName());
         super.onCreate(savedInstanceState);
         AppState.setupAppState(this);
         setDefaultStyle();

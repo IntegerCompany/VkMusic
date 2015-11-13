@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.RemoteViews;
 
 import com.company.integer.vkmusic.LoginActivity;
@@ -20,6 +21,7 @@ public class NotificationPanel {
     private NotificationCompat.Builder nBuilder;
     private RemoteViews remoteViewPlay;
     private RemoteViews remoteViewPause;
+    private RemoteViews imgCloseNotification;
 
     private boolean isPlaying = false;
 
@@ -29,7 +31,7 @@ public class NotificationPanel {
         nBuilder = new NotificationCompat.Builder(parent)
                 .setContentTitle("Parking Meter")
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setAutoCancel(true)
+                .setAutoCancel(false)
                 ;
         nManager = (NotificationManager) parent.getSystemService(Context.NOTIFICATION_SERVICE);
         remoteViewPlay = new RemoteViews(parent.getPackageName(), R.layout.notificationview);
@@ -50,6 +52,7 @@ public class NotificationPanel {
             setListeners(remoteViewPlay);
             return nBuilder.build();
         }
+
 
     }
 
@@ -74,6 +77,10 @@ public class NotificationPanel {
         openActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingOpenActivityIntent = PendingIntent.getActivity(parent, 0, openActivity, 0);
         view.setOnClickPendingIntent(R.id.song_image, pendingOpenActivityIntent);
+
+        Intent closeNotification = new Intent("com.example.app.ACTION_CLOSE_NOTIFICATION");
+        PendingIntent pendingCloseNotification = PendingIntent.getBroadcast(parent, 100, closeNotification, 0);
+        view.setOnClickPendingIntent(R.id.imgCloseNotification, pendingCloseNotification);
 
     }
 
