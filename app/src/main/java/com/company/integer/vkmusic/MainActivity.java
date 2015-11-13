@@ -188,7 +188,8 @@ public class MainActivity extends AppCompatActivity implements
             SharedPreferences.Editor sharedPreferences = getSharedPreferences("save", Context.MODE_PRIVATE).edit();
             sharedPreferences.putBoolean("isSearch", mainFragment.isOnSearchScreen());
             sharedPreferences.putString("searchQuery", etSearchText.getQuery().toString());
-            sharedPreferences.putString("tracks", gson.toJson(searchPlaylist));
+            if (searchPlaylist.size() > 20) sharedPreferences.putString("tracks", gson.toJson(searchPlaylist.subList(0, 9)));
+            else sharedPreferences.putString("tracks", gson.toJson(searchPlaylist));
             sharedPreferences.putInt("currentTrack", currentTrack);
             sharedPreferences.apply();
         }
@@ -370,6 +371,12 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
     }
+
+    @Override
+    public void trackLyricsReceived(String lyrics) {
+        mainFragment.lyricsReceived(lyrics);
+
+    }
     // TracksDataLoader callbacks methods end-----------
 
     @Override
@@ -388,6 +395,11 @@ public class MainActivity extends AppCompatActivity implements
                 uploadMore(lastSource);
                 break;
         }
+    }
+
+    @Override
+    public void getTrackLyrics(String id) {
+        tracksDataLoader.getTrackLyrics(id);
     }
 
     @Override

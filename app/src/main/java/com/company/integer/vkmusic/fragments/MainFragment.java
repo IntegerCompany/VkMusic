@@ -2,6 +2,7 @@ package com.company.integer.vkmusic.fragments;
 
 
 import android.animation.ArgbEvaluator;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -60,7 +62,7 @@ public class MainFragment extends Fragment {
     private ImageView ivDivider;
     private ImageView ivClosePanel;
   //  private ImageView ivAlbumPhoto;
-    private ImageView imgSearchByArtist;
+    private ImageView imgSearchByArtist, imgLyrics;
     private SeekBar seekBar;
     private RecyclerView recyclerView;
     private ViewPager viewPager;
@@ -73,6 +75,7 @@ public class MainFragment extends Fragment {
     public MainFragment() {
         // Required empty public constructor
     }
+    AlertDialog lyricsDialog;
 
 
 
@@ -109,6 +112,7 @@ public class MainFragment extends Fragment {
         ivDivider = (ImageView) view.findViewById(R.id.iv_divider);
       //  ivAlbumPhoto = (ImageView) view.findViewById(R.id.some_id);
         imgSearchByArtist = (ImageView) view.findViewById(R.id.imgSearchByArtist);
+        imgLyrics = (ImageView) view.findViewById(R.id.img_lyrics);
       //  ivAlbumPhoto.setImageDrawable(ContextCompat.getDrawable(getContext(), AppState.getColors().getImageDrawableID()));
 
         seekBar = (SeekBar) view.findViewById(R.id.seekBar);
@@ -264,6 +268,16 @@ public class MainFragment extends Fragment {
             }
         });
 
+        imgLyrics.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lyricsDialog = new AlertDialog.Builder(getActivity())
+                        .setTitle(((MainActivity) getActivity()).getCurrentMusicTrack().getTitle())
+                        .setView(new ProgressBar(getActivity())).show();
+                ((MainActivity) getActivity()).getTrackLyrics(String.valueOf(((MainActivity) getActivity()).getCurrentMusicTrack().getLyricsId()));
+            }
+        });
+
         return view;
     }
 
@@ -276,6 +290,15 @@ public class MainFragment extends Fragment {
         slidingUpPanelLayout.setPanelState(state);
     }
 
+    public void lyricsReceived(String lyrics){
+        if (lyricsDialog.isShowing()){
+            lyricsDialog.dismiss();
+            new AlertDialog.Builder(getActivity())
+                    .setTitle(((MainActivity) getActivity()).getCurrentMusicTrack().getTitle())
+                    .setMessage(lyrics)
+                    .show();
+        }
+    }
 
     public void setupViewPager() {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager());
@@ -327,6 +350,9 @@ public class MainFragment extends Fragment {
     public void setCurrentTrack(MusicTrackPOJO musicTrack, int position) {
         if(musicTrack!=null){
             Log.d("debug", "position" + position);
+            if (lyricsDialog != null && lyricsDialog.isShowing()) lyricsDialog.dismiss();
+            if (((MainActivity) getActivity()).getCurrentMusicTrack().getLyricsId() == 0) imgLyrics.setVisibility(View.INVISIBLE);
+            else imgLyrics.setVisibility(View.VISIBLE);
             tvNameOfSongPlayerLine.setText(musicTrack.getTitle());
             tvNameOfSongFragment.setText(musicTrack.getTitle());
             tvAuthorPlayerLine.setText(musicTrack.getArtist());

@@ -217,6 +217,32 @@ public class TracksDataLoader implements TracksLoaderInterface {
     }
 
     @Override
+    public void getTrackLyrics(String id) {
+        if (id.equals("0")) {
+            tracksLoaderListener.tracksLoadingError("Track have no lyrics");
+            return;
+        }
+        VKRequest requestAudio = new VKRequest("audio.getLyrics", VKParameters.from("lyrics_id", id));
+        requestAudio.executeWithListener(new VKRequest.VKRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                super.onComplete(response);
+                try {
+                    tracksLoaderListener.trackLyricsReceived(response.json.getJSONObject("response").getString("text"));
+                } catch (JSONException e) {
+                    tracksLoaderListener.tracksLoadingError(e.getMessage());
+                }
+            }
+
+            @Override
+            public void onError(VKError error) {
+                super.onError(error);
+                tracksLoaderListener.tracksLoadingError(error.errorMessage);
+            }
+        });
+    }
+
+    @Override
     public ArrayList<MusicTrackPOJO> getTracksFromSource(int source) {
         //Unused
         return null;
@@ -362,6 +388,8 @@ public class TracksDataLoader implements TracksLoaderInterface {
             e.printStackTrace();
         }
     }
+
+
 
     private void saveTrackMetadata(MusicTrackPOJO track, File file)  {
 

@@ -75,6 +75,16 @@
         android:layout_toLeftOf="@+id/imageView2"
         android:padding="12dp"
         android:src="@drawable/abc_ic_search_api_mtrl_alpha" />
+    <ImageView
+        android:id="@+id/img_lyrics"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_above="@+id/player_advert"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentLeft="false"
+        android:layout_toLeftOf="@+id/imgSearchByArtist"
+        android:padding="12dp"
+        android:src="@mipmap/ic_lyrics" />
 
     <ImageView
         android:id="@+id/imageView2"

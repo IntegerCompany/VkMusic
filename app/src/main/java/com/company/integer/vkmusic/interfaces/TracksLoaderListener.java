@@ -25,4 +25,6 @@ public interface TracksLoaderListener {
     void trackDownloadingProgress(MusicTrackPOJO track, int percent);
 
     void trackDownloadFinished(MusicTrackPOJO track);
+
+    void trackLyricsReceived(String lyrics);
 }

@@ -16,7 +16,8 @@ public class MusicTrackPOJO implements Parcelable {
     private int duration;
     private int genreId;
     private long date;
-    private long lyricsId;
+    @SerializedName("lyrics_id")
+    private long lyricsId = 0;
     boolean isFromFile = false;
     private long fileCreatingTime;
 

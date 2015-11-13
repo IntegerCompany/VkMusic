@@ -51,6 +51,8 @@ public interface TracksLoaderInterface {
      */
     void uploadMore(int source);
 
+    void getTrackLyrics(String id);
+
     /**
      *
      * @param source for that source will be returned playlist
