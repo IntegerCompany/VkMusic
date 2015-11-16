@@ -84,9 +84,7 @@ public class TracksDataLoader implements TracksLoaderInterface {
                     ArrayList<MusicTrackPOJO> musicTracks;
                     Type musicTracksType = new TypeToken<ArrayList<MusicTrackPOJO>>() {
                     }.getType();
-                    JSONObject jsonObject = new JSONObject(response.responseString);
-                    jsonObject.getJSONArray("response").remove(0);
-                    musicTracks = gson.fromJson(jsonObject.getJSONArray("response").toString(), musicTracksType);
+                    musicTracks = gson.fromJson(response.json.getJSONObject("response").getJSONArray("items").toString(), musicTracksType);
                     tracksLoaderListener.tracksLoaded(musicTracks, TracksLoaderListener.SEARCH);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -113,9 +111,7 @@ public class TracksDataLoader implements TracksLoaderInterface {
                     ArrayList<MusicTrackPOJO> musicTracks;
                     Type musicTracksType = new TypeToken<ArrayList<MusicTrackPOJO>>() {
                     }.getType();
-                    JSONObject jsonObject = new JSONObject(response.responseString);
-                    jsonObject.getJSONArray("response").remove(0);
-                    musicTracks = gson.fromJson(jsonObject.getJSONArray("response").toString(), musicTracksType);
+                    musicTracks = gson.fromJson(response.json.getJSONObject("response").getJSONArray("items").toString(), musicTracksType);
                     tracksLoaderListener.tracksLoaded(musicTracks, TracksLoaderListener.MY_TRACKS);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -130,15 +126,7 @@ public class TracksDataLoader implements TracksLoaderInterface {
         });
     }
 
-    private ArrayList<MusicTrackPOJO> removeObjectAtZeroPosition(Type musicTracksType, JSONArray response) {
-        ArrayList<Object> list = gson.fromJson(response.toString(), musicTracksType);
-        list.remove(0);
-        ArrayList<MusicTrackPOJO> tracks = new ArrayList<>();
-        for (Object object : list){
-            tracks.add((MusicTrackPOJO) object);
-        }
-        return tracks;
-    }
+
 
 
     @Override
@@ -152,9 +140,7 @@ public class TracksDataLoader implements TracksLoaderInterface {
                     ArrayList<MusicTrackPOJO> musicTracks;
                     Type musicTracksType = new TypeToken<ArrayList<MusicTrackPOJO>>() {
                     }.getType();
-                    JSONObject jsonObject = new JSONObject(response.responseString);
-                    jsonObject.getJSONArray("response").remove(0);
-                    musicTracks = gson.fromJson(jsonObject.getJSONArray("response").toString(), musicTracksType);
+                    musicTracks = gson.fromJson(response.json.getJSONObject("response").getJSONArray("items").toString(), musicTracksType);
                     tracksLoaderListener.tracksLoaded(musicTracks, TracksLoaderListener.RECOMMENDATIONS);
                 } catch (JSONException e) {
                     e.printStackTrace();

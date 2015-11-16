@@ -61,10 +61,12 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        try {
-            if (!VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>() {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("Testing", "Activity onResult1");
+            VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>() {
                 @Override
                 public void onResult(VKAccessToken res) {
+                    Log.d("Testing", "Activity VK onResult");
                     startMainActivity();
                     AppState.setLoggedUser(new UserPOJO(res.userId));
                     res.save();
@@ -74,6 +76,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void onError(VKError error) {
+                    Log.d("Testing", "Activity VK onError");
                     if (error.errorMessage == null) {
                         tvSigningIn.setText(R.string.check_internet);
                     } else {
@@ -81,12 +84,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                     showErrorScreen();
                 }
-            })) {
-                super.onActivityResult(requestCode, resultCode, data);
-            }
-        }catch (NullPointerException e){
-            //Only happens on android 4.*
-        }
+            });
 
     }
 
@@ -103,10 +101,12 @@ public class LoginActivity extends AppCompatActivity {
             public void onResult(VKSdk.LoginState loginState) {
 
                 if (loginState == VKSdk.LoginState.Pending) return;
-                if (loginState == VKSdk.LoginState.LoggedIn) {
+                if (loginState == VKSdk.LoginState.LoggedIn && AppState.getLoggedUser() != null) {
                     startMainActivity();
                 }else{
 
+                    Log.d("Testing", "trying to login");
+                    VKSdk.logout();
                     VKSdk.login(LoginActivity.this, VKScope.AUDIO);
                     tvSigningIn.setText(R.string.check_internet);
                     showErrorScreen();

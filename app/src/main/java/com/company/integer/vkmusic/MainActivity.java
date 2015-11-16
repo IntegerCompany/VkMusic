@@ -97,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements
         tracksDataLoader = new TracksDataLoader(this);
         tracksDataLoader.setTracksLoadingListener(this);
 
+        //this user is null on android 4, vk returns null data
         UserPOJO user = AppState.getLoggedUser();
         tracksDataLoader.getTracksByUserId(AppState.getLoggedUser().getUserId(), 0, 10);
         tracksDataLoader.getRecommendationsByUserID(AppState.getLoggedUser().getUserId(), 0, 10);

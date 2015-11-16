@@ -77,7 +77,7 @@ public class VKSdk {
     /**
      * App id for current application
      */
-    private static int sCurrentAppId = 5129616;
+    private static int sCurrentAppId = 0;
     private static boolean isPaymentsEnable = false;
 
     private final Context applicationContext;

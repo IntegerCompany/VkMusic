@@ -63,8 +63,6 @@ public class VKHttpOperation<ResponseType> extends VKAbstractOperation {
     }
 
 
-
-
     /**
      * Start current prepared http-operation for result
      */

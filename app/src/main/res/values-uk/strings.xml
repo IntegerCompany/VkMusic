@@ -16,4 +16,5 @@
     <string name="action_settings">Налаштування</string>
     <string name="try_signin_again">Спробувати ще раз</string>
     <string name="title_activity_login" translatable="false">VkMusic</string>
+    <string name="file_exists">Файл вже існує</string>
 </resources>

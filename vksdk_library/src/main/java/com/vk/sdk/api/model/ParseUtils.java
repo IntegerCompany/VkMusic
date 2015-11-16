@@ -22,7 +22,6 @@
 package com.vk.sdk.api.model;
 
 import android.os.Parcelable;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -148,9 +147,6 @@ class ParseUtils {
             source = source.optJSONObject("response");
         }
         if (source == null) {
-
-            Log.d("ParseUtils", "source == null");
-
             return object;
         }
         for (Field field : object.getClass().getFields()) {

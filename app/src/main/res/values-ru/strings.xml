@@ -16,4 +16,5 @@
     <string name="title_activity_settings_ativity">Настройки</string>
     <string name="try_signin_again">Повторить еще раз</string>
     <string name="action_settings">Настройки</string>
+    <string name="file_exists">Файл уже существует</string>
 </resources>

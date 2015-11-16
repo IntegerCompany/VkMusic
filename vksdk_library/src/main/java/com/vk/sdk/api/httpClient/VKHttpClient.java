@@ -28,7 +28,6 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Pair;
 
 import com.vk.sdk.VKAccessToken;
@@ -245,34 +244,12 @@ public class VKHttpClient {
          * @return string presentation of http query
          * @throws UnsupportedEncodingException
          */
-
-        /*
         public String getQuery() throws UnsupportedEncodingException {
             if (this.parameters == null) {
                 return null;
             }
             ArrayList<String> params = new ArrayList<>(this.parameters.size());
             for (Pair<String, String> pair : this.parameters) {
-                params.add(String.format("%s=%s", URLEncoder.encode(pair.first, "UTF-8"), URLEncoder.encode(pair.second, "UTF-8")));
-            }
-            return TextUtils.join("&", params);
-        }
-        */
-
-        public String getQuery() throws UnsupportedEncodingException {
-            if (this.parameters == null) {
-                return null;
-            }
-            ArrayList<String> params = new ArrayList<>(this.parameters.size());
-            for (Pair<String, String> pair : this.parameters) {
-
-                if ((pair.first == null) ||(pair.second == null))
-                    break;
-
-
-                Log.d("INFO1", pair.first);
-                Log.d("INFO2", pair.second);
-
                 params.add(String.format("%s=%s", URLEncoder.encode(pair.first, "UTF-8"), URLEncoder.encode(pair.second, "UTF-8")));
             }
             return TextUtils.join("&", params);
