@@ -1,31 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string-array name="home_activities">
-        <item>FAB &amp; Toolbar Animation</item>
-        <item>Transparent Toolbar Test</item>
-        <item>Navigation Drawer</item>
-        <item>Toolbar Animation with Image</item>
-        <item>Material Style Tabs</item>
-        <item>Card View Toolbar</item>
-        <item>Quick Return Pattern</item>
-        <item>Reveal Animation</item>
-        <item>Gmail Style List</item>
+    <integer-array name="colorAccentArray">
+        <item>@color/accentColor</item>
+        <item>@color/styleBlue</item>
+        <item>@color/stylePink</item>
+        <item>@color/styleOrange</item>
+        <item>@color/stylePurple</item>
+        <item>@color/stylePink</item>
+        <item>@color/styleLime</item>
+    </integer-array>
+
+    <integer-array name="colorPrimaryArray">
+        <item>@color/primaryColor</item>
+        <item>@color/styleGreenPrimary</item>
+        <item>@color/styleDeepPurplePrimary</item>
+        <item>@color/styleDeepOrangePrimary</item>
+        <item>@color/styleAmberPrimary</item>
+        <item>@color/styleBlueGreyPrimary</item>
+        <item>@color/styleCyanPrimary</item>
+    </integer-array>
+
+    <integer-array name="colorPrimaryDarkArray">
+        <item>@color/primaryColorDark</item>
+        <item>@color/styleGreenPrimaryDark</item>
+        <item>@color/styleDeepPurplePrimaryDark</item>
+        <item>@color/styleDeepOrangePrimaryDark</item>
+        <item>@color/styleAmberPrimaryDark</item>
+        <item>@color/styleBlueGreyPrimary</item>
+        <item>@color/styleCyanPrimaryDark</item>
+    </integer-array>
+
+    <integer-array name="colorTabIndicatorArray">
+        <item>@color/primaryColorDark</item>
+        <item>@color/styleGreenPrimaryDark</item>
+        <item>@color/styleDeepPurplePrimaryDark</item>
+        <item>@color/styleDeepOrangePrimaryDark</item>
+        <item>@color/styleAmberPrimaryDark</item>
+        <item>@color/styleBlueGreyPrimary</item>
+        <item>@color/styleCyanPrimaryDark</item>
+    </integer-array>
+
+    <array name="themes">
+        <item>@style/AppTheme.Base</item>
+        <item>@style/AppTheme.Base.Green.Blue</item>
+        <item>@style/AppTheme.Base.DeepPurple.Pink</item>
+        <item>@style/AppTheme.Base.DeepOrange.Orange</item>
+        <item>@style/AppTheme.Base.Amber.Purple</item>
+        <item>@style/AppTheme.Base.BlueGrey.Pink</item>
+        <item>@style/AppTheme.Base.Cyan.Lime</item>
+    </array>
+
+    <array name="albumPhotos">
+        <item>@drawable/ic_guitar</item>
+        <item>@drawable/vk_m_1</item>
+        <item>@drawable/vk_m_7</item>
+        <item>@drawable/vk_m_6</item>
+        <item>@drawable/vk_m_5</item>
+        <item>@drawable/vk_m_4</item>
+        <item>@drawable/vk_m_3</item>
+        <item>@drawable/vk_m_2</item>
+    </array>
 
 
-    </string-array>
-
-    <string-array name="home_activities_subtitle">
-        <item>G+ like on scroll hide animation</item>
-        <item>Overlaid transparent Toolbar</item>
-        <item>Material Design drawer with scrim</item>
-        <item>Using the new Support Design Library</item>
-        <item>Tab strip with Design Support Lib</item>
-        <item>Nested Toolbar in card</item>
-        <item>UI Pattern using Design Support Lib</item>
-        <item>Circular Reveal for pre Lollipop</item>
-        <item>Colored list icons</item>
-
-    </string-array>
 
 </resources>

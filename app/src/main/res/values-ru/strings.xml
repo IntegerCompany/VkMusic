@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">VkMusic</string>
+    <string name="check_internet">Проверьте ваше интернет соединение!</string>
+    <string name="download_complete_notification">Загрузка завершена: </string>
+    <string name="downloaded_notification">Загружено: </string>
+    <string name="downloading_notification">Загружается: </string>
+    <string name="loading">Загрузка...</string>
+    <string name="my_music">Моя музыка</string>
+    <string name="recommended">Рекомендации</string>
+    <string name="saved">Сохраненные</string>
+    <string name="saved_deactivated">Скачивание музыки отключено из-за нехватки прав</string>
+    <string name="song_default_artist">Исполнитель</string>
+    <string name="song_default_name">Песня</string>
+    <string name="title_activity_login">VkMusic</string>
+    <string name="title_activity_settings_ativity">Настройки</string>
+    <string name="try_signin_again">Повторить еще раз</string>
+    <string name="action_settings">Настройки</string>
+    <string name="file_exists">Файл уже существует</string>
+</resources>
