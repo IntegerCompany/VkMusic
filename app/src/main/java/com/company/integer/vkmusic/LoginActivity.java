@@ -109,7 +109,6 @@ public class LoginActivity extends AppCompatActivity {
                     VKSdk.logout();
                     VKSdk.login(LoginActivity.this, VKScope.AUDIO);
                     tvSigningIn.setText(R.string.check_internet);
-                    showErrorScreen();
 
                 }
             }
