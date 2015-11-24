@@ -98,13 +98,11 @@ public class MainActivity extends AppCompatActivity implements
         tracksDataLoader.setTracksLoadingListener(this);
 
         //this user is null on android 4, vk returns null data
-        UserPOJO user = AppState.getLoggedUser();
-        tracksDataLoader.getTracksByUserId(AppState.getLoggedUser().getUserId(), 0, 10);
-        tracksDataLoader.getRecommendationsByUserID(AppState.getLoggedUser().getUserId(), 0, 10);
+        String user = AppState.getLoggedUserID();
+        Log.d("MainA :","user_id" + user);
+        tracksDataLoader.getTracksByUserId(user, 0, 10);
+        tracksDataLoader.getRecommendationsByUserID(user, 0, 10);
         tracksDataLoader.getSavedTracks();
-
-
-
 
         fabPlayPause.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -385,10 +383,10 @@ public class MainActivity extends AppCompatActivity implements
     public void uploadMore(int source) {
         switch (source) {
             case TracksLoaderInterface.MY_TRACKS:
-                getTracksByUserId(AppState.getLoggedUser().getUserId(), myTracksPlaylist.size() + 1, AppState.TRACKS_PER_LOADING);
+                getTracksByUserId(AppState.getLoggedUserID(), myTracksPlaylist.size() + 1, AppState.TRACKS_PER_LOADING);
                 break;
             case TracksLoaderInterface.RECOMMENDATIONS:
-                getRecommendationsByUserID(AppState.getLoggedUser().getUserId(), recommendationsPlaylist.size() + 1, AppState.TRACKS_PER_LOADING);
+                getRecommendationsByUserID(AppState.getLoggedUserID(), recommendationsPlaylist.size() + 1, AppState.TRACKS_PER_LOADING);
                 break;
             case TracksLoaderInterface.SEARCH:
                 search(tracksDataLoader.getLastSearchQuery(), searchPlaylist.size() + 1, AppState.TRACKS_PER_LOADING);

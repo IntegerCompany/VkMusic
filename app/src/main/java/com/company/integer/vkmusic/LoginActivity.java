@@ -10,9 +10,9 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.company.integer.vkmusic.pojo.StylePOJO;
-import com.company.integer.vkmusic.pojo.UserPOJO;
 import com.company.integer.vkmusic.supportclasses.AppState;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
@@ -62,29 +62,35 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("Testing", "Activity onResult1");
+        if (data != null) {
+            Log.d("Testing", "Activity onResult1");
             VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>() {
                 @Override
                 public void onResult(VKAccessToken res) {
                     Log.d("Testing", "Activity VK onResult");
                     startMainActivity();
-                    AppState.setLoggedUser(new UserPOJO(res.userId));
+                    AppState.setLoggedUserID(res.userId);
                     res.save();
-
-
                 }
 
                 @Override
                 public void onError(VKError error) {
-                    Log.d("Testing", "Activity VK onError");
-                    if (error.errorMessage == null) {
-                        tvSigningIn.setText(R.string.check_internet);
+                    if (error != null) {
+                        if (error.errorMessage == null) {
+                            tvSigningIn.setText(R.string.check_internet);
+                        } else {
+                            tvSigningIn.setText(error.errorMessage);
+                        }
                     } else {
-                        tvSigningIn.setText(error.errorMessage);
+                        Toast.makeText(LoginActivity.this,"Some error during login task",Toast.LENGTH_LONG).show();
+                        Log.d("Testing", "Activity VK onError");
                     }
-                    showErrorScreen();
                 }
             });
+        }
+        if (!AppState.getLoggedUserID().equals("")){
+            startMainActivity();
+        }
 
     }
 
@@ -99,28 +105,28 @@ public class LoginActivity extends AppCompatActivity {
         loginStateCallback = new VKCallback<VKSdk.LoginState>() {
             @Override
             public void onResult(VKSdk.LoginState loginState) {
-
-                if (loginState == VKSdk.LoginState.Pending) return;
-                if (loginState == VKSdk.LoginState.LoggedIn && AppState.getLoggedUser() != null) {
+                Log.d("Testing Login :", "loginState : " + loginState );
+//                if (loginState == VKSdk.LoginState.Pending) return;
+                if (loginState == VKSdk.LoginState.LoggedIn && !AppState.getLoggedUserID().equals("")) {
                     startMainActivity();
                 }else{
-
-                    Log.d("Testing", "trying to login");
+                    Log.d("Testing Login :", "trying to login");
                     VKSdk.logout();
                     VKSdk.login(LoginActivity.this, VKScope.AUDIO);
                     tvSigningIn.setText(R.string.check_internet);
-
                 }
             }
 
             @Override
             public void onError(VKError vkError) {
                 if(vkError.errorMessage.equals("")){
-                    tvSigningIn.setText(R.string.check_internet);
+                    Toast.makeText(LoginActivity.this,"Some error during login task",Toast.LENGTH_LONG).show();
                 }else {
-                    tvSigningIn.setText(vkError.errorMessage);
+                    Toast.makeText(LoginActivity.this,"Error "+vkError.errorMessage ,Toast.LENGTH_LONG).show();
                 }
-                showErrorScreen();
+                if (!AppState.getLoggedUserID().equals("")) {
+                    startMainActivity();
+                }
             }
         };
 

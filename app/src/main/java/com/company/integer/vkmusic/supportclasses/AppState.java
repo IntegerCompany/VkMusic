@@ -17,11 +17,11 @@ public class AppState {
     public static final String FOLDER = "/VkMusic/";
 
 
-    private static UserPOJO loggedUser;
+    private static String loggedUserID;
     private static Context context;
     private static SharedPreferences sharedPreferences;
     private static Gson gson;
-    private static int tab;
+    private static int tab = 0;
     private static ArrayList<Integer> ids = new ArrayList<>();
     private static ArrayList<String> searchHistory = new ArrayList<>();
     public static int adclick;
@@ -32,13 +32,13 @@ public class AppState {
         gson = new Gson();
     }
 
-    public static UserPOJO getLoggedUser() {
-        return gson.fromJson(sharedPreferences.getString("loggedUser", ""), UserPOJO.class);
+    public static String getLoggedUserID() {
+        return sharedPreferences.getString("loggedUserID", "");
     }
 
-    public static void setLoggedUser(UserPOJO loggedUser) {
-        AppState.loggedUser = loggedUser;
-        sharedPreferences.edit().putString("loggedUser", gson.toJson(loggedUser)).apply();
+    public static void setLoggedUserID(String _id) {
+        AppState.loggedUserID = _id;
+        sharedPreferences.edit().putString("loggedUserID", _id).apply();
     }
 
     public static int getTab() {
