@@ -19,7 +19,6 @@
         android:layout_marginRight="114dp"
         android:layout_marginBottom="24dp"
         android:layout_gravity="bottom|right"
-        app:backgroundTint="@color/primaryColorDark"
         android:src="@mipmap/previous"
 
         />
@@ -45,7 +44,6 @@
         android:layout_marginBottom="24dp"
         android:src="@mipmap/next"
 
-        app:backgroundTint="@color/primaryColorDark"
         android:layout_gravity="bottom|right"/>
 </FrameLayout>
 

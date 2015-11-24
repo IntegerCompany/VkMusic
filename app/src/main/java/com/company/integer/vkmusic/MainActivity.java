@@ -75,6 +75,8 @@ public class MainActivity extends AppCompatActivity implements
     private int currentTrack = 0;
     private String searchQuery = "";
 
+    float baseFabPlayX = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,9 +102,13 @@ public class MainActivity extends AppCompatActivity implements
         //this user is null on android 4, vk returns null data
         String user = AppState.getLoggedUserID();
         Log.d("MainA :","user_id" + user);
+        Log.d("MainA :","1");
         tracksDataLoader.getTracksByUserId(user, 0, 10);
+        Log.d("MainA :", "2");
         tracksDataLoader.getRecommendationsByUserID(user, 0, 10);
+        Log.d("MainA :", "3");
         tracksDataLoader.getSavedTracks();
+        Log.d("MainA :", "4");
 
         fabPlayPause.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,6 +146,7 @@ public class MainActivity extends AppCompatActivity implements
                 }
             }
         });
+        baseFabPlayX = fabPlayPause.getX();
         if (!Environment.getExternalStorageDirectory().canWrite()) {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
@@ -251,13 +258,16 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void setTranslations(float k) {
-        Log.d("sliding :", "" + k);
+        Log.d("DisplayTest :", "Sliding: " + k);
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
+        Log.d("DisplayTest", "Screen X: " + size.x + ",Y: " + size.y);
         int width = size.x;
         int height = size.y;
 
+        Log.d("DisplayTest", "FAB X: " + fabPlayPause.getX() + ",Y: " + fabPlayPause.getY());
+        Log.d("DisplayTest", "FAB translation X: " + (-(width / 2 - dpToPx(79)) * k) + ",Y: " + (-(height - dpToPx(446)) * k));
         fabPlayPause.setTranslationX(-(width / 2 - dpToPx(79)) * k);
         fabPlayPause.setTranslationY(-(height - dpToPx(446)) * k);
         fabPrevious.setTranslationX(-(width / 2 - dpToPx(79) + dpToPx(24)) * k);
@@ -305,40 +315,47 @@ public class MainActivity extends AppCompatActivity implements
 
     // TracksDataLoader callbacks methods-----------
     @Override
-    public void tracksLoaded(ArrayList<MusicTrackPOJO> newTracks, int source) {
-        //Starting service on track loaded
-        Intent i = new Intent(this, MusicPlayerService.class);
-        if (source == currentPlaylist && currentMusicTrack == null) {
-            currentTrack = 0;
-            currentMusicTrack = newTracks.get(currentTrack);
-            mainFragment.setCurrentTrack(currentMusicTrack, currentTrack);
-        }
-        switch (source) {
-            case TracksLoaderInterface.MY_TRACKS:
-                myTracksPlaylist.addAll(newTracks);
-                i.setAction("MY_TRACKS");
-                i.putParcelableArrayListExtra("MY_TRACKS", newTracks);
-                startService(i);
-                mainFragment.setupViewPager();
-                break;
-            case TracksLoaderInterface.RECOMMENDATIONS:
-                recommendationsPlaylist.addAll(newTracks);
-                mainFragment.updateList();
-                break;
-            case TracksLoaderInterface.SAVED:
-                savedPlaylist.clear();
-                savedPlaylist.addAll(newTracks);
-                mainFragment.updateList();
-                break;
-            case TracksLoaderInterface.SEARCH:
-                searchPlaylist.addAll(newTracks);
-                mainFragment.searchCompleted(searchPlaylist);
-                break;
+    public void tracksLoaded(final ArrayList<MusicTrackPOJO> newTracks, final int source) {
 
-        }
-        if (currentPlaylist == source) {
-            setCurrentPlaylist(source);
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //Starting service on track loaded
+                Intent i = new Intent(MainActivity.this, MusicPlayerService.class);
+                if (source == currentPlaylist && currentMusicTrack == null) {
+                    currentTrack = 0;
+                    currentMusicTrack = newTracks.get(currentTrack);
+                    mainFragment.setCurrentTrack(currentMusicTrack, currentTrack);
+                }
+                switch (source) {
+                    case TracksLoaderInterface.MY_TRACKS:
+                        myTracksPlaylist.addAll(newTracks);
+                        i.setAction("MY_TRACKS");
+                        i.putParcelableArrayListExtra("MY_TRACKS", newTracks);
+                        startService(i);
+                        mainFragment.setupViewPager();
+                        break;
+                    case TracksLoaderInterface.RECOMMENDATIONS:
+                        recommendationsPlaylist.addAll(newTracks);
+                        mainFragment.updateList();
+                        break;
+                    case TracksLoaderInterface.SAVED:
+                        savedPlaylist.clear();
+                        savedPlaylist.addAll(newTracks);
+                        mainFragment.updateList();
+                        break;
+                    case TracksLoaderInterface.SEARCH:
+                        searchPlaylist.addAll(newTracks);
+                        mainFragment.searchCompleted(searchPlaylist);
+                        break;
+
+                }
+                if (currentPlaylist == source) {
+                    setCurrentPlaylist(source);
+                }
+            }
+        });
+
     }
 
     @Override

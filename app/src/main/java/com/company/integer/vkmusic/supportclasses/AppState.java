@@ -2,6 +2,8 @@ package com.company.integer.vkmusic.supportclasses;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import com.company.integer.vkmusic.pojo.StylePOJO;
 import com.company.integer.vkmusic.pojo.UserPOJO;
@@ -107,5 +109,12 @@ public class AppState {
         searchHistory.add(0, query);
 
         sharedPreferences.edit().putString("searchHistory", gson.toJson(searchHistory)).apply();
+    }
+
+    public static boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

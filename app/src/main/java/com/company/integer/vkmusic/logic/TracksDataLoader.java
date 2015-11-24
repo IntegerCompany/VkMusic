@@ -161,35 +161,41 @@ public class TracksDataLoader implements TracksLoaderInterface {
 
     @Override
     public void getSavedTracks() {
-        if (!Environment.getExternalStorageDirectory().canWrite()) return;
-        ArrayList<MusicTrackPOJO> savedTracks = new ArrayList<>();
-
-        File vkMusicDirectory = new File(Environment
-                .getExternalStorageDirectory().toString()
-                + AppState.FOLDER);
-        FileFilter mp3Filter = new FileFilter() {
+        new Thread(new Runnable() {
             @Override
-            public boolean accept(File pathname) {
-                if (!pathname.isDirectory() && getFileExtension(pathname).equals("mp3")) return true;
-                return false;
+            public void run() {
+                if (!Environment.getExternalStorageDirectory().canWrite()) return;
+                ArrayList<MusicTrackPOJO> savedTracks = new ArrayList<>();
+
+                File vkMusicDirectory = new File(Environment
+                        .getExternalStorageDirectory().toString()
+                        + AppState.FOLDER);
+                FileFilter mp3Filter = new FileFilter() {
+                    @Override
+                    public boolean accept(File pathname) {
+                        if (!pathname.isDirectory() && getFileExtension(pathname).equals("mp3")) return true;
+                        return false;
+                    }
+                };
+                if (!vkMusicDirectory.exists() && !vkMusicDirectory.isDirectory() || vkMusicDirectory.listFiles(mp3Filter) == null ) {
+                    vkMusicDirectory.mkdirs();
+
+                }
+
+
+                for (File trackFile : vkMusicDirectory.listFiles(mp3Filter)){
+                    MusicTrackPOJO savedTrack = new MusicTrackPOJO();
+                    savedTrack.setIsFromFile(true);
+                    savedTrack.setFileCreatingTime(trackFile.lastModified());
+                    savedTrack.setUrl(trackFile.getPath());
+                    initFromMetadata(savedTrack);
+                    savedTracks.add(savedTrack);
+                }
+
+                tracksLoaderListener.tracksLoaded(savedTracks, SAVED);
             }
-        };
-        if (!vkMusicDirectory.exists() && !vkMusicDirectory.isDirectory() || vkMusicDirectory.listFiles(mp3Filter) == null ) {
-            vkMusicDirectory.mkdirs();
+        }).start();
 
-        }
-
-
-        for (File trackFile : vkMusicDirectory.listFiles(mp3Filter)){
-            MusicTrackPOJO savedTrack = new MusicTrackPOJO();
-            savedTrack.setIsFromFile(true);
-            savedTrack.setFileCreatingTime(trackFile.lastModified());
-            savedTrack.setUrl(trackFile.getPath());
-            initFromMetadata(savedTrack);
-            savedTracks.add(savedTrack);
-        }
-
-        tracksLoaderListener.tracksLoaded(savedTracks, SAVED);
 
 
 

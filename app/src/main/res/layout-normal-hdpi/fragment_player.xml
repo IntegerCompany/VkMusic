@@ -118,7 +118,6 @@
         android:layout_marginTop="247dp"
         android:alpha="1"
         android:src="@mipmap/add"
-        app:backgroundTint="@color/primaryColorDark"
         app:fabSize="mini" />
 
     <android.support.design.widget.FloatingActionButton
@@ -131,7 +130,6 @@
         android:layout_marginTop="247dp"
         android:alpha="1"
         android:src="@mipmap/download"
-        app:backgroundTint="@color/primaryColorDark"
         app:fabSize="mini" />
 
     <TextView

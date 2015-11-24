@@ -348,7 +348,7 @@ public class MainFragment extends Fragment {
     }
 
     public void setCurrentTrack(MusicTrackPOJO musicTrack, int position) {
-        if(musicTrack!=null){
+        if(musicTrack!=null && getActivity() != null){
             Log.d("debug", "position" + position);
             if (lyricsDialog != null && lyricsDialog.isShowing()) lyricsDialog.dismiss();
             if (((MainActivity) getActivity()).getCurrentMusicTrack() == null && ((MainActivity) getActivity()).getCurrentMusicTrack().getLyricsId() == 0) imgLyrics.setVisibility(View.INVISIBLE);

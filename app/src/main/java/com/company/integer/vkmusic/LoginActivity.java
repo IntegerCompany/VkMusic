@@ -29,15 +29,6 @@ public class LoginActivity extends AppCompatActivity {
     VKCallback<VKSdk.LoginState> loginStateCallback;
     Intent launchingIntent;
 
-//    private VKAccessTokenTracker vkAccessTokenTracker = new VKAccessTokenTracker() {
-//        @Override
-//        public void onVKAccessTokenChanged(VKAccessToken oldToken, VKAccessToken newToken) {
-//            if (newToken == null) {
-//                startMainActivity();
-//            }
-//        }
-//    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("Testing", getPackageName());
@@ -48,14 +39,24 @@ public class LoginActivity extends AppCompatActivity {
         initViewsById();
         setListeners();
         showLoading();
-        VKSdk.wakeUpSession(this, loginStateCallback);
+        launchingIntent = getIntent();
+        if (!VKSdk.isLoggedIn()) {
+            VKSdk.wakeUpSession(this, loginStateCallback);
+
+        }else {
+
+            startMainActivity();
+
+
+        }
+
 
         //vkAccessTokenTracker.startTracking();
 
 //        if (!VKSdk.isLoggedIn()) {
 //
 //        }
-        launchingIntent = getIntent();
+
 
     }
 
@@ -109,7 +110,7 @@ public class LoginActivity extends AppCompatActivity {
 //                if (loginState == VKSdk.LoginState.Pending) return;
                 if (loginState == VKSdk.LoginState.LoggedIn && !AppState.getLoggedUserID().equals("")) {
                     startMainActivity();
-                }else{
+                }else {
                     Log.d("Testing Login :", "trying to login");
                     VKSdk.login(LoginActivity.this, VKScope.AUDIO);
                     tvSigningIn.setText(R.string.check_internet);
@@ -149,6 +150,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void startMainActivity() {
+        if (!AppState.isNetworkAvailable()) {
+            showErrorScreen();
+            return;
+        }
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         AppState.setTab(launchingIntent.getIntExtra("tab", 0));
         startActivity(intent);

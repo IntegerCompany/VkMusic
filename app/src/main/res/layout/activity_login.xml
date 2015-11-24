@@ -12,7 +12,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/pb_signing_in"
         android:layout_gravity="center_horizontal"
-        android:indeterminate="true" />
+        android:indeterminate="true"
+        android:visibility="gone" />
 
     <LinearLayout
         android:orientation="vertical"
@@ -26,7 +27,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_margin="20dp"
-            android:text="Some Error"
+            android:text="Check your internet connection!"
             android:textColor="@color/colorBlack"
             android:id="@+id/tv_signin_error" />
 
