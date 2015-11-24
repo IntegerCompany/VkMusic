@@ -14,7 +14,6 @@ import com.vk.sdk.VKSdk;
 
 public class VkMusicApplication extends Application {
     private Tracker mTracker;
-    Intent launchingIntent;
 
     VKAccessTokenTracker vkAccessTokenTracker = new VKAccessTokenTracker() {
         @Override
@@ -29,7 +28,7 @@ public class VkMusicApplication extends Application {
                     Log.d("VkMusicApp", "NewToken : user_id = " + newToken.userId);
                     AppState.setupAppState(VkMusicApplication.this);
                     AppState.setLoggedUserID(newToken.userId);
-                    startMainActivity();
+//                    startMainActivity();
                 }
             }
         }
@@ -38,10 +37,10 @@ public class VkMusicApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        vkAccessTokenTracker.startTracking();
         AppState.setupAppState(this);
         VkMusicAnalytic.getInstance().setup(getDefaultTracker());
         VKSdk.initialize(this);
+        vkAccessTokenTracker.startTracking();
     }
 
     /**

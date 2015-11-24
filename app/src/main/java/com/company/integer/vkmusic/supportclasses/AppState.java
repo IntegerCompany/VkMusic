@@ -21,7 +21,7 @@ public class AppState {
     private static Context context;
     private static SharedPreferences sharedPreferences;
     private static Gson gson;
-    private static int tab = 0;
+    private static int tab = 1;
     private static ArrayList<Integer> ids = new ArrayList<>();
     private static ArrayList<String> searchHistory = new ArrayList<>();
     public static int adclick;

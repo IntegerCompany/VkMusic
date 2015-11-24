@@ -339,8 +339,6 @@ public class MainActivity extends AppCompatActivity implements
         if (currentPlaylist == source) {
             setCurrentPlaylist(source);
         }
-
-
     }
 
     @Override

@@ -111,7 +111,6 @@ public class LoginActivity extends AppCompatActivity {
                     startMainActivity();
                 }else{
                     Log.d("Testing Login :", "trying to login");
-                    VKSdk.logout();
                     VKSdk.login(LoginActivity.this, VKScope.AUDIO);
                     tvSigningIn.setText(R.string.check_internet);
                 }
