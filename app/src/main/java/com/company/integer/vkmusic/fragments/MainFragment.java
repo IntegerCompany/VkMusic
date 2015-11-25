@@ -61,7 +61,6 @@ public class MainFragment extends Fragment {
     private ArgbEvaluator evaluator;
     private ImageView ivDivider;
     private ImageView ivClosePanel;
-  //  private ImageView ivAlbumPhoto;
     private ImageView imgSearchByArtist, imgLyrics;
     private SeekBar seekBar;
     private RecyclerView recyclerView;
@@ -110,7 +109,6 @@ public class MainFragment extends Fragment {
         playerLine = view.findViewById(R.id.player_line);
         ivClosePanel = (ImageView) view.findViewById(R.id.iv_close_panel);
         ivDivider = (ImageView) view.findViewById(R.id.iv_divider);
-      //  ivAlbumPhoto = (ImageView) view.findViewById(R.id.some_id);
         imgSearchByArtist = (ImageView) view.findViewById(R.id.imgSearchByArtist);
         imgLyrics = (ImageView) view.findViewById(R.id.img_lyrics);
       //  ivAlbumPhoto.setImageDrawable(ContextCompat.getDrawable(getContext(), AppState.getColors().getImageDrawableID()));

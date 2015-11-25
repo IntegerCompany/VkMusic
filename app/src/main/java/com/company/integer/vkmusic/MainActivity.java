@@ -28,6 +28,7 @@ import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
@@ -76,11 +77,13 @@ public class MainActivity extends AppCompatActivity implements
     private String searchQuery = "";
 
     float baseFabPlayX = 0;
+    float baseFabNextX = 0;
+    float baseFabPreviousX = 0;
+    boolean firstMeasure = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
         setTheme(AppState.getTheme());
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -101,14 +104,10 @@ public class MainActivity extends AppCompatActivity implements
 
         //this user is null on android 4, vk returns null data
         String user = AppState.getLoggedUserID();
-        Log.d("MainA :","user_id" + user);
-        Log.d("MainA :","1");
         tracksDataLoader.getTracksByUserId(user, 0, 10);
-        Log.d("MainA :", "2");
         tracksDataLoader.getRecommendationsByUserID(user, 0, 10);
-        Log.d("MainA :", "3");
+        
         tracksDataLoader.getSavedTracks();
-        Log.d("MainA :", "4");
 
         fabPlayPause.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements
                 }
             }
         });
-        baseFabPlayX = fabPlayPause.getX();
+
         if (!Environment.getExternalStorageDirectory().canWrite()) {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
@@ -206,6 +205,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
+
         SharedPreferences sharedPreferences = getSharedPreferences("save", Context.MODE_PRIVATE);
         mainFragment.switchToTab(AppState.getTab(), false);
         if (sharedPreferences.getBoolean("isSearch", false)) {
@@ -258,21 +258,31 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void setTranslations(float k) {
-        Log.d("DisplayTest :", "Sliding: " + k);
+        if (firstMeasure){
+            baseFabPlayX = fabPlayPause.getX();
+            baseFabNextX = fabNext.getX();
+            baseFabPreviousX = fabPrevious.getX();
+            firstMeasure = false;
+        }
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        Log.d("DisplayTest", "Screen X: " + size.x + ",Y: " + size.y);
         int width = size.x;
         int height = size.y;
 
-        Log.d("DisplayTest", "FAB X: " + fabPlayPause.getX() + ",Y: " + fabPlayPause.getY());
-        Log.d("DisplayTest", "FAB translation X: " + (-(width / 2 - dpToPx(79)) * k) + ",Y: " + (-(height - dpToPx(446)) * k));
-        fabPlayPause.setTranslationX(-(width / 2 - dpToPx(79)) * k);
+
+        float endFabPlayX = ((size.x / 2) - fabPlayPause.getWidth()/2) * k;
+        float diff = baseFabPlayX - endFabPlayX;
+        float playX = diff * k;
+        playX = baseFabPlayX - playX;
+        float nextX = (playX + dpToPx(60)) + dpToPx((int) ((k - 0.01) * 10));
+        float previousX = playX - dpToPx(44) - dpToPx((int) ((k - 0.01) * 10));
+
+        fabPlayPause.setX(playX);
         fabPlayPause.setTranslationY(-(height - dpToPx(446)) * k);
-        fabPrevious.setTranslationX(-(width / 2 - dpToPx(79) + dpToPx(24)) * k);
+        fabPrevious.setX(previousX);
         fabPrevious.setTranslationY(-(height - dpToPx(446) + dpToPx(27)) * k);
-        fabNext.setTranslationX(-(width / 2 - dpToPx(79) - dpToPx(24)) * k);
+        fabNext.setX(nextX);
         fabNext.setTranslationY(-(height - dpToPx(446) + dpToPx(27)) * k);
     }
 
@@ -280,6 +290,8 @@ public class MainActivity extends AppCompatActivity implements
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         return (int) ((dp * displayMetrics.density) + 0.5);
     }
+
+
 
     /**
      * TRACK DATA LOADER START
