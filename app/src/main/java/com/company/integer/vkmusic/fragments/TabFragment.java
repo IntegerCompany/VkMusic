@@ -8,6 +8,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import com.company.integer.vkmusic.MainActivity;
 import com.company.integer.vkmusic.R;
@@ -22,9 +25,15 @@ public class TabFragment extends Fragment {
     SimpleRecyclerAdapter adapter;
     LinearLayoutManager lm;
     List<MusicTrackPOJO> list;
+
+    LinearLayout errorContainer;
+    Button btnTryAgain;
+    ProgressBar pbReconnect;
+
     int tracksSource = TracksLoaderInterface.MY_TRACKS;
     boolean scrollDownLock;
     int position = 0;
+    boolean loading = false, error = false;
 
     public TabFragment(){
         System.out.print("");
@@ -35,6 +44,9 @@ public class TabFragment extends Fragment {
         View view = inflater.inflate(R.layout.dummy_fragment, container, false);
 
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.dummyfrag_scrollableview);
+        btnTryAgain = (Button) view.findViewById(R.id.btn_try_again);
+        errorContainer = (LinearLayout) view.findViewById(R.id.error_container);
+        pbReconnect = (ProgressBar) view.findViewById(R.id.pb_reconnect);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity().getBaseContext());
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -59,6 +71,14 @@ public class TabFragment extends Fragment {
                 }
             }
         });
+        btnTryAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) getActivity()).tryLoginAgain();
+            }
+        });
+        showError(error);
+        showLoading(loading);
 
         return view;
     }
@@ -78,6 +98,28 @@ public class TabFragment extends Fragment {
             }
         }
 
+    }
+
+    public void showError(boolean showError){
+        error = showError;
+        if (errorContainer == null) return;
+        if (showError){
+            errorContainer.setVisibility(View.VISIBLE);
+            showLoading(false);
+        }else{
+            errorContainer.setVisibility(View.GONE);
+        }
+
+    }
+
+    public void showLoading(boolean showLoading){
+        loading = showLoading;
+        if (pbReconnect == null) return;
+        if (showLoading){
+            pbReconnect.setVisibility(View.VISIBLE);
+        }else{
+            pbReconnect.setVisibility(View.GONE);
+        }
     }
 
     public void nextTrack(){

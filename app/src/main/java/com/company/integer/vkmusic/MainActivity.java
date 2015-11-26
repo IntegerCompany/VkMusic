@@ -15,6 +15,7 @@ import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.os.PersistableBundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -106,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements
         String user = AppState.getLoggedUserID();
         tracksDataLoader.getTracksByUserId(user, 0, 10);
         tracksDataLoader.getRecommendationsByUserID(user, 0, 10);
-        
+
         tracksDataLoader.getSavedTracks();
 
         fabPlayPause.setOnClickListener(new View.OnClickListener() {
@@ -156,7 +157,10 @@ public class MainActivity extends AppCompatActivity implements
             VkMusicAnalytic.getInstance().getTracker().send(new HitBuilders.ScreenViewBuilder().build());
         }catch (Exception ignored){}
 
-
+        Intent i = new Intent(MainActivity.this, MusicPlayerService.class);
+        i.setAction("MY_TRACKS");
+        i.putParcelableArrayListExtra("MY_TRACKS", new ArrayList<Parcelable>());
+        startService(i);
     }
 
 
@@ -218,6 +222,7 @@ public class MainActivity extends AppCompatActivity implements
             if (searchPlaylist == null) searchPlaylist = new ArrayList<>();
             mainFragment.searchCompleted(searchPlaylist, currentTrack);
         }else mainFragment.makeSearchUIActions(false);
+        mainFragment.setupViewPager();
     }
 
     @Override
@@ -333,7 +338,6 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void run() {
                 //Starting service on track loaded
-                Intent i = new Intent(MainActivity.this, MusicPlayerService.class);
                 if (source == currentPlaylist && currentMusicTrack == null) {
                     currentTrack = 0;
                     currentMusicTrack = newTracks.get(currentTrack);
@@ -342,14 +346,14 @@ public class MainActivity extends AppCompatActivity implements
                 switch (source) {
                     case TracksLoaderInterface.MY_TRACKS:
                         myTracksPlaylist.addAll(newTracks);
-                        i.setAction("MY_TRACKS");
-                        i.putParcelableArrayListExtra("MY_TRACKS", newTracks);
-                        startService(i);
-                        mainFragment.setupViewPager();
+
+                        mainFragment.showError(false);
+
                         break;
                     case TracksLoaderInterface.RECOMMENDATIONS:
                         recommendationsPlaylist.addAll(newTracks);
                         mainFragment.updateList();
+                        mainFragment.showError(false);
                         break;
                     case TracksLoaderInterface.SAVED:
                         savedPlaylist.clear();
@@ -362,9 +366,13 @@ public class MainActivity extends AppCompatActivity implements
                         break;
 
                 }
+                mainFragment.showLoading(false);
+
+
                 if (currentPlaylist == source) {
                     setCurrentPlaylist(source);
                 }
+
             }
         });
 
@@ -375,7 +383,8 @@ public class MainActivity extends AppCompatActivity implements
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Internet connection problems. Loading only saved tracks", Toast.LENGTH_SHORT).show();
+                mainFragment.showError(true);
             }
         });
     }
@@ -743,4 +752,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
+    public void tryLoginAgain() {
+        tracksDataLoader.getTracksByUserId(AppState.getLoggedUserID(), 0, 10);
+        tracksDataLoader.getRecommendationsByUserID(AppState.getLoggedUserID(), 0, 10);
+    }
 }
