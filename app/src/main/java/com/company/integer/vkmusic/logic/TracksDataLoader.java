@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Environment;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
@@ -47,6 +48,7 @@ import java.lang.reflect.Type;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -165,32 +167,23 @@ public class TracksDataLoader implements TracksLoaderInterface {
             @Override
             public void run() {
                 if (!Environment.getExternalStorageDirectory().canWrite()) return;
-                ArrayList<MusicTrackPOJO> savedTracks = new ArrayList<>();
+                ArrayList<MusicTrackPOJO> savedTracks = new ArrayList<MusicTrackPOJO>();
 
                 File vkMusicDirectory = new File(Environment
                         .getExternalStorageDirectory().toString()
                         + AppState.FOLDER);
-                FileFilter mp3Filter = new FileFilter() {
-                    @Override
-                    public boolean accept(File pathname) {
-                        if (!pathname.isDirectory() && getFileExtension(pathname).equals("mp3")) return true;
-                        return false;
-                    }
-                };
-                if (!vkMusicDirectory.exists() && !vkMusicDirectory.isDirectory() || vkMusicDirectory.listFiles(mp3Filter) == null ) {
+
+                if (!vkMusicDirectory.exists() && !vkMusicDirectory.isDirectory()) {
                     vkMusicDirectory.mkdirs();
 
                 }
 
+                ArrayList<MusicTrackPOJO> tracksFromSharedPreferences = initTrackData();
+                    for (MusicTrackPOJO track : tracksFromSharedPreferences) {
+                        if (new File(track.getPath()).exists()) savedTracks.add(track);
+                    }
 
-                for (File trackFile : vkMusicDirectory.listFiles(mp3Filter)){
-                    MusicTrackPOJO savedTrack = new MusicTrackPOJO();
-                    savedTrack.setIsFromFile(true);
-                    savedTrack.setFileCreatingTime(trackFile.lastModified());
-                    savedTrack.setUrl(trackFile.getPath());
-                    initFromMetadata(savedTrack);
-                    savedTracks.add(savedTrack);
-                }
+
 
                 tracksLoaderListener.tracksLoaded(savedTracks, SAVED);
             }
@@ -274,6 +267,7 @@ public class TracksDataLoader implements TracksLoaderInterface {
                                     + AppState.FOLDER);
 
                             vkMusicDirectory.mkdir();
+
                             File path = new File(vkMusicDirectory + "/" + trackToDownload.getArtist() + "-" + trackToDownload.getTitle() + ".mp3");
 
                             if (path.exists()) {
@@ -311,7 +305,7 @@ public class TracksDataLoader implements TracksLoaderInterface {
 
                             }
                             if (total == lengthOfFile) {
-                                saveTrackMetadata(trackToDownload, path);
+                                saveTrack(trackToDownload, path);
                                 tracksLoaderListener.trackDownloadFinished(trackToDownload);
                                 // When the loop is finished, updates the notification
                                 mBuilder.setContentTitle(context.getString(R.string.download_complete_notification));
@@ -329,6 +323,8 @@ public class TracksDataLoader implements TracksLoaderInterface {
                 }
         ).start();
     }
+
+
 
     @Override
     public void addTrackToVkPlaylist(final MusicTrackPOJO track) {
@@ -363,63 +359,36 @@ public class TracksDataLoader implements TracksLoaderInterface {
         return "error";
     }
 
-    private void initFromMetadata(MusicTrackPOJO track) {
+    private ArrayList<MusicTrackPOJO> initTrackData() {
 
-        Mp3File song = null;
-        try {
-            song = new Mp3File(track.getPath());
-            if (song.hasId3v2Tag()) {
-                ID3v2 tag = song.getId3v2Tag();
-                track.setTitle(tag.getTitle());
-                track.setArtist(tag.getArtist());
-                track.setDuration((int) song.getLengthInMilliseconds() / 1000);
-            }
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (UnsupportedTagException e) {
-            e.printStackTrace();
-        } catch (InvalidDataException e) {
-            e.printStackTrace();
-        }
+        SharedPreferences sharedPreferences = context.getSharedPreferences("tracksNames", Context.MODE_PRIVATE);
+        HashMap<String, MusicTrackPOJO> tracks;
+        Type musicTracksType = new TypeToken<HashMap<String, MusicTrackPOJO>>() {
+        }.getType();
+        tracks = gson.fromJson(sharedPreferences.getString("tracks", ""), musicTracksType);
+        if (tracks == null) return new ArrayList<>();
+        return new ArrayList<>(tracks.values());
+
     }
 
 
 
-    private void saveTrackMetadata(MusicTrackPOJO track, File file)  {
+    private void saveTrack(MusicTrackPOJO track, File file)  {
 
-        Mp3File song = null;
-        RandomAccessFile var2 = null;
-        try {
-            song = new Mp3File(file.getPath());
-            song.removeId3v2Tag();
-            ID3v2 id3v2tag = new ID3v24Tag();
-            id3v2tag.setTitle(track.getTitle());
-            id3v2tag.setArtist(track.getArtist());
-            song.setId3v2Tag(id3v2tag);
-            var2 = new RandomAccessFile(file, "rw");
-            var2.write(song.getId3v2Tag().toBytes());
-
-
-
-    } catch (IOException e) {
-            e.printStackTrace();
-        } catch (UnsupportedTagException e) {
-            e.printStackTrace();
-        } catch (InvalidDataException e) {
-            e.printStackTrace();
-        } catch (NotSupportedException e) {
-            e.printStackTrace();
-        }
-        finally {
-            try {
-                if (var2 != null) {
-                    var2.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        SharedPreferences sharedPreferences = context.getSharedPreferences("tracksNames", Context.MODE_PRIVATE);
+        HashMap<String, MusicTrackPOJO> tracks;
+        Type musicTracksType = new TypeToken<HashMap<String, MusicTrackPOJO>>() {
+        }.getType();
+        track.setIsFromFile(true);
+        track.setFileCreatingTime(file.lastModified());
+        track.setUrl(file.getPath());
+        tracks = gson.fromJson(sharedPreferences.getString("tracks", ""), musicTracksType);
+        if (tracks == null) tracks = new HashMap<>();
+        tracks.put(track.getArtist() + "-" + track.getTitle() + ".mp3", track);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("tracks", gson.toJson(tracks));
+        editor.apply();
 
     }
 
