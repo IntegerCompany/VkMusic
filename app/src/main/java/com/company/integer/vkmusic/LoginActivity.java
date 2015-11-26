@@ -150,10 +150,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void startMainActivity() {
-        if (!AppState.isNetworkAvailable()) {
-            showErrorScreen();
-            return;
-        }
+//        if (!AppState.isNetworkAvailable()) {
+//            showErrorScreen();
+//            return;
+//        }
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         AppState.setTab(launchingIntent.getIntExtra("tab", 0));
         startActivity(intent);

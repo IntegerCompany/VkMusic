@@ -1,6 +1,7 @@
 package com.company.integer.vkmusic;
 
 import android.Manifest;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -102,11 +103,7 @@ public class MainActivity extends AppCompatActivity implements
         tracksDataLoader = new TracksDataLoader(this);
         tracksDataLoader.setTracksLoadingListener(this);
 
-        //this user is null on android 4, vk returns null data
-        String user = AppState.getLoggedUserID();
-        tracksDataLoader.getTracksByUserId(user, 0, 10);
-        tracksDataLoader.getRecommendationsByUserID(user, 0, 10);
-        
+        attemptToGetTracks();
         tracksDataLoader.getSavedTracks();
 
         fabPlayPause.setOnClickListener(new View.OnClickListener() {
@@ -156,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements
             VkMusicAnalytic.getInstance().getTracker().send(new HitBuilders.ScreenViewBuilder().build());
         }catch (Exception ignored){}
 
-
+        mainFragment.setupViewPager();
     }
 
 
@@ -334,6 +331,7 @@ public class MainActivity extends AppCompatActivity implements
             public void run() {
                 //Starting service on track loaded
                 Intent i = new Intent(MainActivity.this, MusicPlayerService.class);
+
                 if (source == currentPlaylist && currentMusicTrack == null) {
                     currentTrack = 0;
                     currentMusicTrack = newTracks.get(currentTrack);
@@ -342,19 +340,28 @@ public class MainActivity extends AppCompatActivity implements
                 switch (source) {
                     case TracksLoaderInterface.MY_TRACKS:
                         myTracksPlaylist.addAll(newTracks);
-                        i.setAction("MY_TRACKS");
-                        i.putParcelableArrayListExtra("MY_TRACKS", newTracks);
-                        startService(i);
-                        mainFragment.setupViewPager();
+                        if (!isServiceRunning()) {
+                            i.setAction("MY_TRACKS");
+                            i.putParcelableArrayListExtra("MY_TRACKS", newTracks);
+                            startService(i);
+                        }
+                        mainFragment.updateList();
+                        mainFragment.showError(false);
                         break;
                     case TracksLoaderInterface.RECOMMENDATIONS:
                         recommendationsPlaylist.addAll(newTracks);
                         mainFragment.updateList();
+                        mainFragment.showError(false);
                         break;
                     case TracksLoaderInterface.SAVED:
                         savedPlaylist.clear();
                         savedPlaylist.addAll(newTracks);
                         mainFragment.updateList();
+                        if (!isServiceRunning()) {
+                            i.setAction("MY_TRACKS");
+                            i.putParcelableArrayListExtra("MY_TRACKS", newTracks);
+                            startService(i);
+                        }
                         break;
                     case TracksLoaderInterface.SEARCH:
                         searchPlaylist.addAll(newTracks);
@@ -362,6 +369,7 @@ public class MainActivity extends AppCompatActivity implements
                         break;
 
                 }
+                mainFragment.showLoading(false);
                 if (currentPlaylist == source) {
                     setCurrentPlaylist(source);
                 }
@@ -370,11 +378,24 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
+    private boolean isServiceRunning() {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if ("com.company.integer.vkmusic.services.MusicPlayerService".equals(service.service.getClassName())) {
+                Log.d("TESTing2", "TRUE");
+                return true;
+            }
+        }
+        Log.d("TESTing2", "FALSE");
+        return false;
+    }
+
     @Override
     public void tracksLoadingError(final String errorMessage) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                mainFragment.showError(true);
                 Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
             }
         });
@@ -742,5 +763,10 @@ public class MainActivity extends AppCompatActivity implements
         sharedPreferences.apply();
     }
 
+
+    public void attemptToGetTracks(){
+        tracksDataLoader.getTracksByUserId(AppState.getLoggedUserID(), myTracksPlaylist.size(), 10);
+        tracksDataLoader.getRecommendationsByUserID(AppState.getLoggedUserID(), recommendationsPlaylist.size(), 10);
+    }
 
 }

@@ -492,6 +492,14 @@ public class MainFragment extends Fragment {
         return isSearch;
     }
 
+    public void showError(boolean showError) {
+            myMusicFragment.showError(showError);
+            recommendedFragment.showError(showError);
+        }
 
+    public void showLoading(boolean showLoading) {
+            myMusicFragment.showLoading(showLoading);
+            recommendedFragment.showLoading(showLoading);
+        }
 
 }
