@@ -32,4 +32,12 @@
     <color name="styleCyanPrimaryDark">#0097A7</color>
     <color name="styleLime">#CDDC39</color>
 
+    <color name="styleMilitaryPrimary">#525e41</color>
+    <color name="styleMilitaryPrimaryDark">#FF39412D</color>
+    <color name="styleMilitary">#7c655c</color>
+
+    <color name="styleIceCreamPrimary">#72d4b5</color>
+    <color name="styleIceCreamPrimaryDark">#FF4F947E</color>
+    <color name="styleIceCream">#e57373</color>
+
 </resources>

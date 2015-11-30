@@ -45,7 +45,19 @@
         <item name="colorPrimary">@color/styleGreenPrimary</item>
         <item name="colorPrimaryDark">@color/styleGreenPrimaryDark</item>
         <item name="colorAccent">@color/styleBlue</item>
-    </style>.
+    </style>
+
+    <style name="AppTheme.Base.Military" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/styleMilitaryPrimary</item>
+        <item name="colorPrimaryDark">@color/styleMilitaryPrimaryDark</item>
+        <item name="colorAccent">@color/styleMilitary</item>
+    </style>
+
+    <style name="AppTheme.Base.IceCream" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/styleIceCreamPrimary</item>
+        <item name="colorPrimaryDark">@color/styleIceCreamPrimaryDark</item>
+        <item name="colorAccent">@color/styleIceCream</item>
+    </style>
 
 
     <style name="My.Base.Widget.Design.TabLayout" parent="android:Widget">

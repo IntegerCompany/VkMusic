@@ -148,14 +148,14 @@ public class MusicPlayerService extends Service implements MusicPlayerListener {
         in.putExtra("currentTrackTime", musicPlayer.getCurrentTrackTime());
         in.putExtra("currentTrack", musicPlayer.getCurrentTrackPosition());
         sendBroadcast(in);
-        if (musicPlayer.isPlaying()) {
+
             Runnable notification = new Runnable() {
                 public void run() {
                     seekBarProgressUpdater();
                 }
             };
             handler.postDelayed(notification, 1000);
-        }
+
     }
 
     @Override

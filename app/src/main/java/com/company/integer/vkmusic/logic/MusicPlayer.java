@@ -40,6 +40,12 @@ public class MusicPlayer implements MusicPlayerInterface {
                 }
             }
         });
+        player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                player.start();
+            }
+        });
     }
 
     @Override
@@ -159,9 +165,13 @@ public class MusicPlayer implements MusicPlayerInterface {
         if (!cachedMusicTrack.equals(currentTrack)) {
             player.reset();
             player.setDataSource(currentTrack.getPath());
-            player.prepare();
             cachedMusicTrack = currentTrack;
+            if (currentTrack.isFromFile()){
+                player.prepare();
+                player.start();
+            }else{
+                player.prepareAsync();
+            }
         }
-        player.start();
     }
 }

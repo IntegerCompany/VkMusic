@@ -16,6 +16,7 @@ import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.os.PersistableBundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -202,7 +203,12 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-
+        if (!isServiceRunning()) {
+            Intent i = new Intent(MainActivity.this, MusicPlayerService.class);
+            i.setAction("MY_TRACKS");
+            i.putParcelableArrayListExtra("MY_TRACKS", new ArrayList<MusicTrackPOJO>());
+            startService(i);
+        }
         SharedPreferences sharedPreferences = getSharedPreferences("save", Context.MODE_PRIVATE);
         mainFragment.switchToTab(AppState.getTab(), false);
         if (sharedPreferences.getBoolean("isSearch", false)) {
@@ -540,7 +546,6 @@ public class MainActivity extends AppCompatActivity implements
         Intent stopService = new Intent("com.example.app.ACTION_DESTROY");
         sendBroadcast(stopService);
         unregisterReceiver(broadcastReceiver);
-        finish();
     }
 
     @Override
