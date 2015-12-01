@@ -162,6 +162,6 @@
         android:layout_alignParentLeft="false"
         android:layout_alignParentStart="false"
         app:adSize="BANNER"
-        app:adUnitId="@string/player_advert_id" />
+        app:adUnitId="ca-app-pub-2449602169675035/9743756105" />
 
 </RelativeLayout>

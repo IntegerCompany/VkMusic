@@ -52,7 +52,7 @@ public class VkMusicApplication extends Application {
         if (mTracker == null) {
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
             // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
-            mTracker = analytics.newTracker("UA-55928846-4");
+            mTracker = analytics.newTracker("UA-70779383-2");
         }
         return mTracker;
     }

@@ -41,7 +41,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         this.tracks = tracks;
         this.activity = activity;
         interstitial = new InterstitialAd(activity);
-        interstitial.setAdUnitId("ca-app-pub-7672991449155931/5396554003");
+        interstitial.setAdUnitId("ca-app-pub-2449602169675035/3697222501");
 
         // Create ad request.
         AdRequest adRequest = new AdRequest.Builder().build();

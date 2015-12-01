@@ -33,6 +33,8 @@
             </intent-filter>
         </activity>
 
+
+
         <service
             android:name=".services.MusicPlayerService"
             android:enabled="true"

@@ -4,8 +4,8 @@
     <string name="hello_world" translatable="false">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_login">VkMusic</string>
-    <integer name="com_vk_sdk_AppId">5073026</integer>
-    <string name="player_advert_id" translatable="false">ca-app-pub-7672991449155931/2422373206</string>
+    <integer name="com_vk_sdk_AppId">5170664</integer>
+    <string name="player_advert_id" translatable="false">ca-app-pub-2449602169675035/8267022908</string>
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>

@@ -472,6 +472,7 @@ public class MainFragment extends Fragment {
     private void initAdverts() {
         AdView mAdView = (AdView) view.findViewById(R.id.player_advert);
         AdRequest adRequest = new AdRequest.Builder().build();
+
         mAdView.loadAd(adRequest);
     }
 
